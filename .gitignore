@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.localnode/
+.DS_Store
+*.bak
+index.prototype-backup.html
+index.old-may.html.bak
+
+# Aperçu dev temporaire
+preview.html
+preview-main.js
+/studio
+/covers
+/blog
+
+# Claude local settings
+.claude/settings.local.json

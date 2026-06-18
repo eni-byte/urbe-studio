@@ -1,0 +1,54 @@
+# ── Urbe Studio · configuration de déploiement Netlify ──────────────
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# ── En-têtes de sécurité (toutes les pages) ─────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Empêche l'intégration du site dans une iframe tierce (anti-clickjacking)
+    X-Frame-Options = "DENY"
+    # Empêche le navigateur de "deviner" le type MIME
+    X-Content-Type-Options = "nosniff"
+    # Limite les infos de provenance envoyées aux autres sites
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # Désactive des API sensibles par défaut
+    Permissions-Policy = "geolocation=(), microphone=(), camera=(), payment=()"
+    # Force HTTPS pendant 1 an (à activer une fois le domaine en HTTPS stable)
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    # Politique de sécurité du contenu (CSP). Build Vite : plus de CDN ni 'unsafe-eval'.
+    # 'unsafe-inline' (scripts) reste pour la modale de réservation en JS inline.
+    # connect-src autorise les appels aux webhooks n8n (lead, chat, créneaux) + Google Analytics.
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self'; connect-src 'self' https://mpoi.app.n8n.cloud https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://open.spotify.com https://calendar.google.com https://js.stripe.com; base-uri 'self'; form-action 'self' mailto:; frame-ancestors 'none'; upgrade-insecure-requests"
+
+# ── Cache long pour les médias (images, vidéo, polices) ─────────────
+[[headers]]
+  for = "/studio/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/covers/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# ── Pas de cache pour les pages HTML (toujours la dernière version) ──
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# ── URL propre pour le blog : /blog → /blog/ ────────────────────────
+[[redirects]]
+  from = "/blog"
+  to = "/blog/"
+  status = 301
