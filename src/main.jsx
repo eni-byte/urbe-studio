@@ -92,37 +92,45 @@ const R = (path) => (window.__resources && window.__resources[path]) || path;
 const cardKeys = (fn) => ({ role: 'button', tabIndex: 0, onKeyDown: (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); fn(); } } });
 
 /* ─── HELPERS · Google Calendar + Stripe + Mailto ────────────── */
-function gcalDateString(date) {
+/* Horodatage "mur" (wall-clock) en Europe/Paris — indépendant du fuseau du navigateur.
+   On NE convertit PAS via Date/UTC (c'était la source du décalage d'1h selon la machine). */
+function wallStamps(dateStr, timeStr, hours) {
   const pad = (n) => String(n).padStart(2, '0');
-  const y = date.getUTCFullYear();
-  const m = pad(date.getUTCMonth() + 1);
-  const d = pad(date.getUTCDate());
-  const hh = pad(date.getUTCHours());
-  const mm = pad(date.getUTCMinutes());
-  return `${y}${m}${d}T${hh}${mm}00Z`;
+  const parts = String(timeStr || '00:00').split(':');
+  const hh = parseInt(parts[0], 10) || 0;
+  const mm = parseInt(parts[1], 10) || 0;
+  const startTotal = hh * 60 + mm;
+  const endTotal = startTotal + Math.round((Number(hours) || 1) * 60);
+  const dayAdd = Math.floor(endTotal / 1440);
+  const eh = Math.floor((endTotal % 1440) / 60);
+  const em = (endTotal % 1440) % 60;
+  let endDate = dateStr;
+  if (dayAdd > 0) { const d = new Date(dateStr + 'T00:00:00'); d.setDate(d.getDate() + dayAdd); endDate = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
+  const fmt = (ds, h, m) => `${ds.replace(/-/g, '')}T${pad(h)}${pad(m)}00`;
+  return { start: fmt(dateStr, hh, mm), end: fmt(endDate, eh, em) };
 }
-function buildGCalAddLink({ title, startDate, durationHours = 1, description = '', location }) {
-  const start = startDate instanceof Date ? startDate : new Date(startDate);
-  const end = new Date(start.getTime() + durationHours * 3600 * 1000);
+function buildGCalAddLink({ title, date, time, hours = 1, description = '', location }) {
+  const { start, end } = wallStamps(date, time, hours);
   const p = new URLSearchParams({
     action: 'TEMPLATE',
     text: title,
-    dates: `${gcalDateString(start)}/${gcalDateString(end)}`,
+    dates: `${start}/${end}`,
+    ctz: 'Europe/Paris',
     details: description,
     location: location || URBE_CONFIG.gcal.location,
   });
   return `https://www.google.com/calendar/render?${p.toString()}`;
 }
-function buildICSDataUrl({ title, startDate, durationHours = 1, description = '', location }) {
-  const start = startDate instanceof Date ? startDate : new Date(startDate);
-  const end = new Date(start.getTime() + durationHours * 3600 * 1000);
+function buildICSDataUrl({ title, date, time, hours = 1, description = '', location }) {
+  const { start, end } = wallStamps(date, time, hours);
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
   const ics = [
     'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Urbe Studio//FR',
     'BEGIN:VEVENT',
     `UID:${Date.now()}@urbestudio.fr`,
-    `DTSTAMP:${gcalDateString(new Date())}`,
-    `DTSTART:${gcalDateString(start)}`,
-    `DTEND:${gcalDateString(end)}`,
+    `DTSTAMP:${stamp}`,
+    `DTSTART;TZID=Europe/Paris:${start}`,
+    `DTEND;TZID=Europe/Paris:${end}`,
     `SUMMARY:${title}`,
     `DESCRIPTION:${(description || '').replace(/\n/g, '\\n')}`,
     `LOCATION:${location || URBE_CONFIG.gcal.location}`,
@@ -1456,8 +1464,9 @@ function BookingPage({ initialProductId }) {
     }
     const url = buildGCalAddLink({
       title: `Urbe Studio · ${summary.productLabel}`,
-      startDate: summary.startDate,
-      durationHours: product?.billing === 'hourly' ? sel.hours : 2,
+      date: summary.date,
+      time: summary.time,
+      hours: product?.billing === 'hourly' ? sel.hours : 2,
       description: `Réservation Urbe Studio\nProduit : ${summary.productLabel}\nTotal : ${summary.total}€\n\n${URBE_CONFIG.gcal.location}`,
     });
     window.open(url, '_blank', 'noopener,noreferrer');
@@ -1468,8 +1477,9 @@ function BookingPage({ initialProductId }) {
     if (!summary.startDate) return;
     const url = buildICSDataUrl({
       title: `Urbe Studio · ${summary.productLabel}`,
-      startDate: summary.startDate,
-      durationHours: product?.billing === 'hourly' ? sel.hours : 2,
+      date: summary.date,
+      time: summary.time,
+      hours: product?.billing === 'hourly' ? sel.hours : 2,
       description: `Réservation Urbe Studio · Total ${summary.total}€`,
     });
     const a = document.createElement('a');
