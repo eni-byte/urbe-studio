@@ -1361,17 +1361,36 @@ function BookingPage({ initialProductId }) {
     const noms = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
     return `${noms[d.getDay()]} ${d.getDate()}`;
   };
-  const dateKey = (d) => d.toISOString().split('T')[0];
+  // Clé de date en heure LOCALE (et non UTC) : toISOString() décalait d'un jour la nuit
+  // (minuit Paris = 22h UTC la veille), ce qui désalignait les créneaux occupés et la date envoyée à Stripe/agenda.
+  const dateKey = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
   const heures = ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'];
   // Heures déjà prises pour la date sélectionnée (lues sur le calendrier studio).
   // On n'AFFICHE que les créneaux libres (les occupés sont masqués, pas barrés).
+  const product = BOOKING_CATALOG.find((p) => p.id === sel.productId);
   const occupes = (sel.date && slotsBusy[sel.date]) || [];
+  // Chaque créneau occupé renvoyé par n8n = 1h pleine → on le convertit en intervalle de minutes.
+  const busyMin = occupes.map((h) => { const hh = parseInt(h, 10); return [hh * 60, hh * 60 + 60]; });
+  // Durée de la session à réserver : sessions horaires = sel.hours ; produits datés au forfait = 2h.
+  const bookingHours = (product && product.billing === 'hourly') ? (sel.hours || 2) : 2;
+  // Un créneau de DÉBUT n'est libre que si TOUTE la session [début → début+durée] ne chevauche AUCUN créneau occupé.
+  // (corrige le cas : 2h réservées à 9h qui mordaient sur une session déjà notée à 10h30).
+  const slotLibre = (h) => {
+    const hh = parseInt(h, 10);
+    const s = hh * 60, e = s + bookingHours * 60;
+    return !busyMin.some(([bs, be]) => s < be && e > bs);
+  };
   // Réservation possible au plus tôt 24h à l'avance : on masque les créneaux trop proches.
   const MIN_LEAD_MS = 24 * 60 * 60 * 1000;
   const nowTs = Date.now();
-  const heuresLibres = heures.filter((h) => !occupes.includes(h) && (sel.date ? (new Date(`${sel.date}T${h}:00`).getTime() - nowTs) >= MIN_LEAD_MS : false));
+  const heuresLibres = heures.filter((h) => slotLibre(h) && (sel.date ? (new Date(`${sel.date}T${h}:00`).getTime() - nowTs) >= MIN_LEAD_MS : false));
   const durees = [2, 3, 4, 6, 8];
+  // Si la durée change et rend l'heure choisie incompatible (chevauchement), on la désélectionne.
+  useEffect(() => {
+    if (sel.time && !heuresLibres.includes(sel.time)) setSel((p) => ({ ...p, time: null }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sel.hours, sel.date, slotsLoaded]);
 
   const addonsOpts = [
     { id: 'mix-standard', label: 'Ajouter Mixage', desc: 'Mix pro · 7j de livraison.', prix: 120 },
@@ -1380,7 +1399,6 @@ function BookingPage({ initialProductId }) {
     { id: 'pack-com-3', label: 'Pack Com · Shooting + 3 reels', desc: 'Shooting photo + 3 réels (2 studio + 1 extérieur).', prix: 450 },
   ];
 
-  const product = BOOKING_CATALOG.find((p) => p.id === sel.productId);
   const addTotal = sel.addons.reduce((s, id) => { const a = addonsOpts.find((x) => x.id === id); return s + (a?.prix || 0); }, 0);
   // Tarif nuit : à partir de 21h, le tarif horaire passe à 35€/h (plancher).
   // Se déclenche automatiquement selon l'heure de début choisie.
