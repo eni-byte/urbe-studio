@@ -325,10 +325,10 @@ function SiteFooter({ setPage }) {
 
 /* ─── MIX EN LIGNE WIDGET ────────────────────────────────────── */
 const MIX_ENGINEERS = [
-{ id: 'vir', nom: 'Virgile', spe: 'Mix · Master', initiales: 'VL', bg: '#8B1E1E' },
-{ id: 'jul', nom: 'Julien', spe: 'Rap · Trap', initiales: 'JM', bg: '#2a2a2a' },
-{ id: 'tom', nom: 'Tom', spe: 'Pop · R&B', initiales: 'TR', bg: '#3a1d1d' },
-{ id: 'sam', nom: 'Sam', spe: 'Mastering', initiales: 'SK', bg: '#1f1f1f' }];
+{ id: 'vir', nom: 'Virgile', spe: 'Rap · Mix', initiales: 'VG', bg: '#8B1E1E' },
+{ id: 'olid', nom: 'Olid', spe: 'Prise de son · DA', initiales: 'OL', bg: '#2a2a2a' },
+{ id: 'chourak', nom: 'Chourak', spe: 'Pop · R&B', initiales: 'CH', bg: '#3a1d1d' },
+{ id: 'bms', nom: 'BMS', spe: 'Compo · Prod', initiales: 'BM', bg: '#1f1f1f' }];
 
 
 function MixWidget({ variant = 'floating' }) {
@@ -697,10 +697,10 @@ function PromoBanner({ setPage }) {
 
 /* ─── INGÉNIEURS DU SON ──────────────────────────────────────── */
 const ENGINEERS = [
-{ nom: 'Punch', role: 'Ingénieur du son', initiales: 'VL', bg: '#8B1E1E', bio: 'Spécialiste rap & musiques urbaines. 10+ ans en studio, mix sur les meilleures productions FR.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudio' },
-{ nom: 'Olid', role: 'Ingénieur du son', initiales: 'I2', bg: '#1f1f1f', bio: 'Prise de son et direction artistique. Sessions live, banque de sons sur mesure, edit voix.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudio' },
-{ nom: 'Chourak', role: 'Ingénieur du son', initiales: 'I3', bg: '#2a1414', bio: 'Mix pop & R&B, mastering analogique. Finition prête streaming, vinyle et radio.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudio' },
-{ nom: 'Bms', role: 'Ingénieur du son', initiales: 'I4', bg: '#161616', bio: 'Composition et production. Création de prods sur-mesure, arrangement et orchestration.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudio' }];
+{ nom: 'Virgile', role: 'Ingénieur du son', initiales: 'VG', bg: '#8B1E1E', bio: 'Spécialiste rap & musiques urbaines. 10+ ans en studio, mix sur les meilleures productions FR.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudio' },
+{ nom: 'Olid', role: 'Ingénieur du son', initiales: 'OL', bg: '#1f1f1f', bio: 'Prise de son et direction artistique. Sessions live, banque de sons sur mesure, edit voix.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudio' },
+{ nom: 'Chourak', role: 'Ingénieur du son', initiales: 'CH', bg: '#2a1414', bio: 'Mix pop & R&B, mastering analogique. Finition prête streaming, vinyle et radio.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudio' },
+{ nom: 'BMS', role: 'Ingénieur du son', initiales: 'BM', bg: '#161616', bio: 'Composition et production. Création de prods sur-mesure, arrangement et orchestration.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudio' }];
 
 
 function SocialIcon({ href, hover, title, children }) {
@@ -2737,7 +2737,7 @@ function AuthScreen() {
           <summary style={{ cursor: "pointer", color: "var(--rouge3)", fontWeight: 600, listStyle: "none" }}>Accès staff (démo)</summary>
           <div style={{ marginTop: 10, padding: "12px 14px", borderRadius: 10, background: "var(--noir)", border: "1px solid var(--br)", lineHeight: 1.8, textAlign: "left" }}>
             <div><strong style={{ color: "var(--blanc)" }}>Direction :</strong> direction@urbestudio.fr · urbe2026</div>
-            <div><strong style={{ color: "var(--blanc)" }}>Ingénieur :</strong> punch@urbestudio.fr · punch</div>
+            <div><strong style={{ color: "var(--blanc)" }}>Ingénieur :</strong> virgile@urbestudio.fr · virgile</div>
             <div style={{ marginTop: 6, opacity: 0.7 }}>On se connecte au même endroit — le rôle est défini par les identifiants.</div>
           </div>
         </details>
