@@ -1334,6 +1334,13 @@ const BOOKING_CATALOG = [
 function BookingPage({ initialProductId }) {
   const [step, setStep] = useState(1);
   const [sel, setSel] = useState({ productId: initialProductId || null, date: null, time: null, hours: 2, addons: [] });
+  // Identité du client collectée avant paiement → envoyée dans HubSpot avec la commande.
+  const [contact, setContact] = useState({ firstName: '', lastName: '', email: '', phone: '', artist: '', project: '' });
+  const setC = (k) => (e) => setContact((c) => ({ ...c, [k]: e.target.value }));
+  const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(contact.email.trim());
+  const contactValid = !!(contact.firstName.trim() && contact.lastName.trim() && emailOk && contact.phone.trim().length >= 6);
+  const champStyle = { width: '100%', padding: '11px 13px', borderRadius: 9, background: 'var(--noir)', border: '1px solid var(--br)', color: 'var(--blanc)', fontSize: 13.5, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' };
+  const labelStyle = { fontSize: 11, fontWeight: 600, color: 'var(--dim)', marginBottom: 6, display: 'block', letterSpacing: '0.02em' };
   const [openCat, setOpenCat] = useState(() => { const f = BOOKING_CATALOG.find((p) => !p.featured); return f ? f.cat : null; });
   useEffect(() => { if (initialProductId) setSel((p) => ({ ...p, productId: initialProductId })); }, [initialProductId]);
   // Créneaux réellement disponibles : on récupère les heures occupées du studio (Google Calendar via n8n).
@@ -1441,22 +1448,42 @@ function BookingPage({ initialProductId }) {
   };
 
   const handlePayWithStripe = () => {
+    if (!contactValid) return;
     const summary = buildBookingSummary();
     const productKey = product?.stripeKey || product?.id;
-    // Session Stripe dynamique = montant exact (durée incluse). On ouvre la fenêtre
+    const hasDate = summary.date && summary.time;
+    const addonsRef = (sel.addons || []).join('.');
+    // Réf encodée (sert aussi au recalcul prix serveur). Calculée avant tout pour le lead.
+    const ref = hasDate
+      ? `B~${summary.date}~${String(summary.time).replace(':', '')}~${summary.hours || 2}~${productKey}~${addonsRef}`
+      : `M~${productKey}`;
+    // 1) On enregistre le prospect + la commande dans HubSpot (non bloquant).
+    postLead({
+      type: 'reservation',
+      firstName: contact.firstName.trim(),
+      lastName: contact.lastName.trim(),
+      email: contact.email.trim(),
+      phone: contact.phone.trim(),
+      artist: contact.artist.trim(),
+      project: contact.project.trim(),
+      productLabel: summary.productLabel,
+      productId: product?.id || '',
+      date: summary.date || '',
+      time: summary.time || '',
+      hours: product?.billing === 'hourly' ? (summary.hours || null) : null,
+      addons: summary.addons,
+      total: summary.total,
+      ref,
+    });
+    // 2) Session Stripe dynamique = montant exact (durée incluse). On ouvre la fenêtre
     // tout de suite (geste utilisateur, anti-popup-blocker) puis on y charge l'URL.
     if (URBE_CONFIG.paymentMode === 'live' && URBE_CONFIG.sessionWebhook) {
       const payWin = window.open('', '_blank');
-      const hasDate = summary.date && summary.time;
-      const addonsRef = (sel.addons || []).join('.');
       // Le prix est recalculé côté serveur (n8n) d'après la réf — le total client n'est qu'indicatif.
-      const ref = hasDate
-        ? `B~${summary.date}~${String(summary.time).replace(':', '')}~${summary.hours || 2}~${productKey}~${addonsRef}`
-        : `M~${productKey}`;
       fetch(URBE_CONFIG.sessionWebhook, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Urbe-Key': URBE_WEBHOOK_KEY },
-        body: JSON.stringify({ productLabel: summary.productLabel, ref }),
+        body: JSON.stringify({ productLabel: summary.productLabel, ref, email: contact.email.trim(), name: `${contact.firstName.trim()} ${contact.lastName.trim()}`.trim() }),
       }).then((r) => r.json()).then((d) => {
         if (d && d.url) { if (payWin) payWin.location.href = d.url; else window.location.href = d.url; }
         else { if (payWin) payWin.close(); redirectToStripe(productKey, summary); }
@@ -1720,8 +1747,25 @@ function BookingPage({ initialProductId }) {
           {/* STEP 4 — Paiement Stripe */}
           {step === 4 &&
           <div>
-              <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 6 }}>Paiement sécurisé</h2>
-              <p style={{ fontSize: 13, color: 'var(--dim)', marginBottom: 24, fontWeight: 300 }}>Le paiement est traité par Stripe sur une page sécurisée.</p>
+              <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 6 }}>Vos informations & paiement</h2>
+              <p style={{ fontSize: 13, color: 'var(--dim)', marginBottom: 24, fontWeight: 300 }}>On a besoin de ces infos pour préparer ta session et t'envoyer ta confirmation. Le paiement est ensuite traité par Stripe.</p>
+
+              {/* Collecte d'identité → HubSpot (CRM) */}
+              <div style={{ background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 14, padding: 22, marginBottom: 18 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', color: 'var(--dim)', textTransform: 'uppercase', marginBottom: 16 }}>Tes coordonnées</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+                  <div><label style={labelStyle}>Prénom *</label><input value={contact.firstName} onChange={setC('firstName')} placeholder="Prénom" autoComplete="given-name" style={champStyle} /></div>
+                  <div><label style={labelStyle}>Nom *</label><input value={contact.lastName} onChange={setC('lastName')} placeholder="Nom" autoComplete="family-name" style={champStyle} /></div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+                  <div><label style={labelStyle}>Email *</label><input type="email" value={contact.email} onChange={setC('email')} placeholder="toi@email.com" autoComplete="email" style={{ ...champStyle, borderColor: contact.email && !emailOk ? 'var(--rouge)' : 'var(--br)' }} /></div>
+                  <div><label style={labelStyle}>Téléphone *</label><input type="tel" value={contact.phone} onChange={setC('phone')} placeholder="06 12 34 56 78" autoComplete="tel" style={champStyle} /></div>
+                </div>
+                <div style={{ marginBottom: 12 }}><label style={labelStyle}>Nom d'artiste</label><input value={contact.artist} onChange={setC('artist')} placeholder="Ton blaze / nom de scène" style={champStyle} /></div>
+                <div><label style={labelStyle}>Projet musical</label><textarea value={contact.project} onChange={setC('project')} placeholder="Quelques mots sur ton projet (style, nb de titres, deadline…)" rows={3} style={{ ...champStyle, resize: 'vertical', lineHeight: 1.5 }} /></div>
+                {!contactValid && (contact.firstName || contact.lastName || contact.email || contact.phone) &&
+                  <div style={{ fontSize: 11.5, color: 'var(--rouge3)', marginTop: 10 }}>Prénom, nom, email valide et téléphone sont requis pour continuer.</div>}
+              </div>
 
               <div style={{ background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 14, padding: 24, marginBottom: 18 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18, paddingBottom: 18, borderBottom: '1px solid var(--br)' }}>
@@ -1738,7 +1782,7 @@ function BookingPage({ initialProductId }) {
               <div style={{ fontSize: 11, color: 'var(--dim)', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 6 }}>🔒 Connexion chiffrée · TVA 20% incluse · facture envoyée par email</div>
               <div style={{ display: 'flex', gap: 10 }}>
                 <button onClick={goBack} style={{ padding: '12px 22px', borderRadius: 100, background: 'none', color: 'var(--dim)', border: '1px solid var(--br)', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>← Retour</button>
-                <button onClick={handlePayWithStripe} style={{ flex: 1, padding: 14, borderRadius: 8, background: 'var(--rouge)', color: '#fff', border: 'none', fontSize: 15, fontWeight: 700, cursor: 'pointer', boxShadow: '0 8px 28px rgba(139,30,30,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                <button onClick={handlePayWithStripe} disabled={!contactValid} style={{ flex: 1, padding: 14, borderRadius: 8, background: 'var(--rouge)', color: '#fff', border: 'none', fontSize: 15, fontWeight: 700, cursor: contactValid ? 'pointer' : 'not-allowed', opacity: contactValid ? 1 : 0.45, boxShadow: contactValid ? '0 8px 28px rgba(139,30,30,0.4)' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                   Payer {total}€ avec Stripe
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H8M17 7v9" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </button>
@@ -1766,7 +1810,7 @@ function BookingPage({ initialProductId }) {
               </div>
 
               <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
-                <button onClick={() => { setStep(1); setSel({ productId: null, date: null, time: null, hours: 2, addons: [] }); }} style={{ padding: '11px 20px', borderRadius: 100, background: 'none', color: 'var(--dim)', border: '1px solid var(--br)', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>Nouvelle réservation</button>
+                <button onClick={() => { setStep(1); setSel({ productId: null, date: null, time: null, hours: 2, addons: [] }); setContact({ firstName: '', lastName: '', email: '', phone: '', artist: '', project: '' }); }} style={{ padding: '11px 20px', borderRadius: 100, background: 'none', color: 'var(--dim)', border: '1px solid var(--br)', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>Nouvelle réservation</button>
                 <button onClick={() => window.__urbeNav && window.__urbeNav('home')} style={{ padding: '11px 22px', borderRadius: 100, background: 'var(--rouge)', color: '#fff', border: 'none', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>Retour à l'accueil</button>
               </div>
             </div>
