@@ -1352,6 +1352,8 @@ function BookingPage({ initialProductId }) {
   const contactValid = !!(contact.firstName.trim() && contact.lastName.trim() && emailOk && contact.phone.trim().length >= 6);
   const champStyle = { width: '100%', padding: '11px 13px', borderRadius: 9, background: 'var(--noir)', border: '1px solid var(--br)', color: 'var(--blanc)', fontSize: 13.5, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' };
   const labelStyle = { fontSize: 11, fontWeight: 600, color: 'var(--dim)', marginBottom: 6, display: 'block', letterSpacing: '0.02em' };
+  // Message d'erreur paiement (ex. session dynamique indisponible pour un produit horaire).
+  const [payError, setPayError] = useState('');
   const [openCat, setOpenCat] = useState(() => { const f = BOOKING_CATALOG.find((p) => !p.featured); return f ? f.cat : null; });
   useEffect(() => { if (initialProductId) setSel((p) => ({ ...p, productId: initialProductId })); }, [initialProductId]);
   // Créneaux réellement disponibles : on récupère les heures occupées du studio (Google Calendar via n8n).
@@ -1486,29 +1488,44 @@ function BookingPage({ initialProductId }) {
       total: summary.total,
       ref,
     });
-    // 2) Session Stripe dynamique = montant exact (durée incluse). On ouvre la fenêtre
-    // tout de suite (geste utilisateur, anti-popup-blocker) puis on y charge l'URL.
+    // 2) Paiement. Le passage à la confirmation + l'enregistrement local n'ont lieu
+    // QUE si un paiement est réellement lancé (succès dynamique ou repli prix-fixe autorisé).
+    setPayError('');
+    const goConfirm = () => {
+      if (typeof urbeAuth !== 'undefined') {
+        urbeAuth.addBooking({ productLabel: summary.productLabel, date: summary.date, time: summary.time, hours: summary.hours, total: summary.total, billing: product?.billing, addons: summary.addons });
+      }
+      // L'événement agenda + l'email de confirmation sont créés APRÈS paiement réel,
+      // par le webhook Stripe (plus de réservation fantôme si le client abandonne).
+      setStep(5);
+    };
+    // SÉCURITÉ PRIX : le repli sur un lien Stripe FIXE est interdit pour les produits
+    // horaires (le montant dépend de la durée → risque de sous-facturation). On bloque
+    // proprement au lieu de facturer un mauvais montant.
+    const onSessionFail = () => {
+      if (product?.billing === 'hourly') {
+        setPayError("Le paiement sécurisé est momentanément indisponible pour les sessions à l'heure (le montant dépend de la durée). Réessaie dans un instant, ou écris-nous à contact@urbestudio.fr pour bloquer ton créneau — on ne te facture jamais un mauvais montant.");
+      } else {
+        // Produit à prix fixe (mix, mastering, forfait, pack) : le lien Stripe est correctement tarifé.
+        redirectToStripe(productKey, summary);
+        goConfirm();
+      }
+    };
+    // Session Stripe dynamique = montant exact recalculé côté serveur (n8n), durée incluse.
+    // On ouvre la fenêtre tout de suite (geste utilisateur, anti-popup-blocker) puis on y charge l'URL.
     if (URBE_CONFIG.paymentMode === 'live' && URBE_CONFIG.sessionWebhook) {
       const payWin = window.open('', '_blank');
-      // Le prix est recalculé côté serveur (n8n) d'après la réf — le total client n'est qu'indicatif.
       fetch(URBE_CONFIG.sessionWebhook, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Urbe-Key': URBE_WEBHOOK_KEY },
         body: JSON.stringify({ productLabel: summary.productLabel, ref, email: contact.email.trim(), name: `${contact.firstName.trim()} ${contact.lastName.trim()}`.trim() }),
       }).then((r) => r.json()).then((d) => {
-        if (d && d.url) { if (payWin) payWin.location.href = d.url; else window.location.href = d.url; }
-        else { if (payWin) payWin.close(); redirectToStripe(productKey, summary); }
-      }).catch(() => { if (payWin) payWin.close(); redirectToStripe(productKey, summary); });
+        if (d && d.url) { if (payWin) payWin.location.href = d.url; else window.location.href = d.url; goConfirm(); }
+        else { if (payWin) payWin.close(); onSessionFail(); }
+      }).catch(() => { if (payWin) payWin.close(); onSessionFail(); });
     } else {
-      redirectToStripe(productKey, summary);
+      onSessionFail();
     }
-    // Enregistre la réservation dans l'espace membre
-    if (typeof urbeAuth !== 'undefined') {
-      urbeAuth.addBooking({ productLabel: summary.productLabel, date: summary.date, time: summary.time, hours: summary.hours, total: summary.total, billing: product?.billing, addons: summary.addons });
-    }
-    // L'événement agenda + l'email de confirmation sont créés APRÈS paiement réel,
-    // par le webhook Stripe (plus de réservation fantôme si le client abandonne).
-    setStep(5);
   };
 
   const handleAddToGcal = () => {
@@ -1791,6 +1808,12 @@ function BookingPage({ initialProductId }) {
               </div>
 
               <div style={{ fontSize: 11, color: 'var(--dim)', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 6 }}>🔒 Connexion chiffrée · TVA 20% incluse · facture envoyée par email</div>
+              {payError &&
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '12px 14px', marginBottom: 16, background: 'rgba(139,30,30,0.1)', border: '1px solid var(--rouge)', borderRadius: 10 }}>
+                  <span style={{ flexShrink: 0, fontSize: 14, lineHeight: 1.4 }}>⚠️</span>
+                  <span style={{ fontSize: 12.5, color: 'var(--blanc)', lineHeight: 1.55 }}>{payError}</span>
+                </div>
+              }
               <div style={{ display: 'flex', gap: 10 }}>
                 <button onClick={goBack} style={{ padding: '12px 22px', borderRadius: 100, background: 'none', color: 'var(--dim)', border: '1px solid var(--br)', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>← Retour</button>
                 <button onClick={handlePayWithStripe} disabled={!contactValid} style={{ flex: 1, padding: 14, borderRadius: 8, background: 'var(--rouge)', color: '#fff', border: 'none', fontSize: 15, fontWeight: 700, cursor: contactValid ? 'pointer' : 'not-allowed', opacity: contactValid ? 1 : 0.45, boxShadow: contactValid ? '0 8px 28px rgba(139,30,30,0.4)' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
