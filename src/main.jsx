@@ -1040,8 +1040,8 @@ function HomePage({ setPage }) {
             <div style={{ fontSize: 'clamp(54px, 9.5vw, 138px)', color: 'var(--blanc)' }}>PARIS</div>
           </h1>
 
-          <p style={{ fontSize: 17, lineHeight: 1.55, fontWeight: 300, color: 'rgba(241,236,231,0.78)', maxWidth: 500, marginBottom: 36 }}>
-            Rec, mix, mastering — dans un studio pro <span style={{ color: 'var(--blanc)', fontWeight: 500 }}>ouvert 24h/24</span>, au cœur du 10ᵉ. Tu viens avec ton son, on s'occupe du reste.
+          <p style={{ fontSize: 17, lineHeight: 1.55, fontWeight: 300, color: 'rgba(241,236,231,0.78)', maxWidth: 520, marginBottom: 36 }}>
+            Enregistrement, <span style={{ color: 'var(--blanc)', fontWeight: 500 }}>mixage et mastering rap</span> dans un studio pro <span style={{ color: 'var(--blanc)', fontWeight: 500 }}>ouvert 24h/24</span>, au cœur du 10ᵉ. <span style={{ color: 'var(--blanc)', fontWeight: 500 }}>Mix &amp; mastering en ligne</span> pour tous tes titres — tu viens avec ton son, on s'occupe du reste.
           </p>
 
           {/* CTA buttons */}
@@ -1056,6 +1056,17 @@ function HomePage({ setPage }) {
             onMouseLeave={(e) => {e.currentTarget.style.background = 'var(--rouge)';e.currentTarget.style.transform = 'none';e.currentTarget.style.boxShadow = '0 10px 30px rgba(139,30,30,0.55)';}}>
               Réserver une session
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </button>
+            <button onClick={() => (window.openMixBookingModal ? window.openMixBookingModal({}) : setPage('booking', 'mix-standard'))} aria-label="Réserver votre mix — mixage et mastering rap en ligne" style={{
+              background: 'rgba(139,30,30,0.14)', color: 'var(--blanc)', border: '1px solid var(--rouge)',
+              padding: '15px 26px', borderRadius: 100, cursor: 'pointer',
+              fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 10,
+              backdropFilter: 'blur(8px)', transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {e.currentTarget.style.background = 'var(--rouge)';e.currentTarget.style.transform = 'translateY(-2px)';e.currentTarget.style.boxShadow = '0 14px 38px rgba(139,30,30,0.5)';}}
+            onMouseLeave={(e) => {e.currentTarget.style.background = 'rgba(139,30,30,0.14)';e.currentTarget.style.transform = 'none';e.currentTarget.style.boxShadow = 'none';}}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M3 14v-2a9 9 0 0 1 18 0v2M3 14a2 2 0 0 1 2-2h1v6H5a2 2 0 0 1-2-2v-2zM21 14a2 2 0 0 0-2-2h-1v6h1a2 2 0 0 0 2-2v-2z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              Réserver votre mix
             </button>
             <button onClick={() => setFormOpen((o) => !o)} style={{
               background: 'rgba(241,236,231,0.07)', color: 'var(--blanc)',
