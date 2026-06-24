@@ -183,6 +183,8 @@
     --r-xl:    32px;
   }
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  /* A11y : anneau de focus clavier visible sur tous les interactifs (n'affecte pas la navigation souris). */
+  :focus-visible { outline: 2px solid var(--rouge3); outline-offset: 2px; border-radius: 4px; }
   html { scroll-behavior: smooth; }
   body {
     background: var(--noir);

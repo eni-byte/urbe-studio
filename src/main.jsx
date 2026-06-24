@@ -1375,6 +1375,8 @@ function BookingPage({ initialProductId }) {
   const [submittedRecap, setSubmittedRecap] = useState(null);
   const onBlur = (k) => () => setTouched((t) => ({ ...t, [k]: true }));
   const showErr = (k) => (touched[k] || touched.__all) && champErr(k);
+  // Props d'accessibilité communes à un champ (liaison label/erreur + état invalide).
+  const champA11y = (k) => ({ id: 'bk-' + k, 'aria-invalid': !!showErr(k), 'aria-describedby': showErr(k) ? 'bk-' + k + '-err' : undefined });
   const [openCat, setOpenCat] = useState(() => { const f = BOOKING_CATALOG.find((p) => !p.featured); return f ? f.cat : null; });
   useEffect(() => { if (initialProductId) setSel((p) => ({ ...p, productId: initialProductId })); }, [initialProductId]);
   // Créneaux réellement disponibles : on récupère les heures occupées du studio (Google Calendar via n8n).
@@ -1816,15 +1818,15 @@ function BookingPage({ initialProductId }) {
               <div style={{ background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 14, padding: 22, marginBottom: 18 }}>
                 <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', color: 'var(--dim)', textTransform: 'uppercase', marginBottom: 16 }}>Tes coordonnées</div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-                  <div><label style={labelStyle}>Prénom *</label><input value={contact.firstName} onChange={setC('firstName')} onBlur={onBlur('firstName')} placeholder="Prénom" autoComplete="given-name" style={{ ...champStyle, borderColor: showErr('firstName') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('firstName') && <div style={errStyle}>{champErr('firstName')}</div>}</div>
-                  <div><label style={labelStyle}>Nom *</label><input value={contact.lastName} onChange={setC('lastName')} onBlur={onBlur('lastName')} placeholder="Nom" autoComplete="family-name" style={{ ...champStyle, borderColor: showErr('lastName') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('lastName') && <div style={errStyle}>{champErr('lastName')}</div>}</div>
+                  <div><label htmlFor="bk-firstName" style={labelStyle}>Prénom *</label><input {...champA11y('firstName')} value={contact.firstName} onChange={setC('firstName')} onBlur={onBlur('firstName')} placeholder="Prénom" autoComplete="given-name" style={{ ...champStyle, borderColor: showErr('firstName') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('firstName') && <div id="bk-firstName-err" role="alert" style={errStyle}>{champErr('firstName')}</div>}</div>
+                  <div><label htmlFor="bk-lastName" style={labelStyle}>Nom *</label><input {...champA11y('lastName')} value={contact.lastName} onChange={setC('lastName')} onBlur={onBlur('lastName')} placeholder="Nom" autoComplete="family-name" style={{ ...champStyle, borderColor: showErr('lastName') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('lastName') && <div id="bk-lastName-err" role="alert" style={errStyle}>{champErr('lastName')}</div>}</div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-                  <div><label style={labelStyle}>Email *</label><input type="email" value={contact.email} onChange={setC('email')} onBlur={onBlur('email')} placeholder="toi@email.com" autoComplete="email" style={{ ...champStyle, borderColor: showErr('email') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('email') && <div style={errStyle}>{champErr('email')}</div>}</div>
-                  <div><label style={labelStyle}>Téléphone *</label><input type="tel" value={contact.phone} onChange={setC('phone')} onBlur={onBlur('phone')} placeholder="06 12 34 56 78" autoComplete="tel" style={{ ...champStyle, borderColor: showErr('phone') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('phone') && <div style={errStyle}>{champErr('phone')}</div>}</div>
+                  <div><label htmlFor="bk-email" style={labelStyle}>Email *</label><input {...champA11y('email')} type="email" value={contact.email} onChange={setC('email')} onBlur={onBlur('email')} placeholder="toi@email.com" autoComplete="email" style={{ ...champStyle, borderColor: showErr('email') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('email') && <div id="bk-email-err" role="alert" style={errStyle}>{champErr('email')}</div>}</div>
+                  <div><label htmlFor="bk-phone" style={labelStyle}>Téléphone *</label><input {...champA11y('phone')} type="tel" value={contact.phone} onChange={setC('phone')} onBlur={onBlur('phone')} placeholder="06 12 34 56 78" autoComplete="tel" style={{ ...champStyle, borderColor: showErr('phone') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('phone') && <div id="bk-phone-err" role="alert" style={errStyle}>{champErr('phone')}</div>}</div>
                 </div>
-                <div style={{ marginBottom: 12 }}><label style={labelStyle}>Nom d'artiste</label><input value={contact.artist} onChange={setC('artist')} placeholder="Ton blaze / nom de scène" style={champStyle} /></div>
-                <div><label style={labelStyle}>Projet musical</label><textarea value={contact.project} onChange={setC('project')} placeholder="Quelques mots sur ton projet (style, nb de titres, deadline…)" rows={3} style={{ ...champStyle, resize: 'vertical', lineHeight: 1.5 }} /></div>
+                <div style={{ marginBottom: 12 }}><label htmlFor="bk-artist" style={labelStyle}>Nom d'artiste</label><input id="bk-artist" value={contact.artist} onChange={setC('artist')} placeholder="Ton blaze / nom de scène" style={champStyle} /></div>
+                <div><label htmlFor="bk-project" style={labelStyle}>Projet musical</label><textarea id="bk-project" value={contact.project} onChange={setC('project')} placeholder="Quelques mots sur ton projet (style, nb de titres, deadline…)" rows={3} style={{ ...champStyle, resize: 'vertical', lineHeight: 1.5 }} /></div>
               </div>
 
               <div style={{ background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 14, padding: 24, marginBottom: 18 }}>
