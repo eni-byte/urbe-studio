@@ -1349,11 +1349,32 @@ function BookingPage({ initialProductId }) {
   const [contact, setContact] = useState({ firstName: '', lastName: '', email: '', phone: '', artist: '', project: '' });
   const setC = (k) => (e) => setContact((c) => ({ ...c, [k]: e.target.value }));
   const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(contact.email.trim());
-  const contactValid = !!(contact.firstName.trim() && contact.lastName.trim() && emailOk && contact.phone.trim().length >= 6);
+  // Téléphone FR (fixe ou mobile, +33 ou 0, séparateurs tolérés).
+  const FR_PHONE_RX = /^(?:\+33\s?|0)[1-9](?:[\s.-]?\d{2}){4}$/;
+  const phoneOk = FR_PHONE_RX.test(contact.phone.trim());
+  const contactValid = !!(contact.firstName.trim() && contact.lastName.trim() && emailOk && phoneOk);
   const champStyle = { width: '100%', padding: '11px 13px', borderRadius: 9, background: 'var(--noir)', border: '1px solid var(--br)', color: 'var(--blanc)', fontSize: 13.5, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' };
   const labelStyle = { fontSize: 11, fontWeight: 600, color: 'var(--dim)', marginBottom: 6, display: 'block', letterSpacing: '0.02em' };
-  // Message d'erreur paiement (ex. session dynamique indisponible pour un produit horaire).
+  const errStyle = { fontSize: 11, color: 'var(--rouge3)', marginTop: 5, lineHeight: 1.4 };
+  // Validation par champ, avec micro-copie bienveillante.
+  const champErr = (k) => {
+    const v = (contact[k] || '').trim();
+    switch (k) {
+      case 'firstName': return v ? '' : 'Oups, il manque ton prénom !';
+      case 'lastName': return v ? '' : 'Oups, il manque ton nom !';
+      case 'email': return !v ? "Il nous faut ton email pour t'envoyer la confirmation." : (emailOk ? '' : "Cet email a l'air incomplet — vérifie-le 🙂");
+      case 'phone': return !v ? 'Ton numéro nous sert à te joindre pour la session.' : (phoneOk ? '' : 'Ce numéro ne ressemble pas à un téléphone français.');
+      default: return '';
+    }
+  };
+  // touched = champ déjà visité (validation au blur) ; payError = erreur réseau (≠ erreur de champ) ;
+  // submitting = traitement en cours (anti double-soumission + skeleton) ; submittedRecap = snapshot des valeurs soumises.
+  const [touched, setTouched] = useState({});
   const [payError, setPayError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [submittedRecap, setSubmittedRecap] = useState(null);
+  const onBlur = (k) => () => setTouched((t) => ({ ...t, [k]: true }));
+  const showErr = (k) => (touched[k] || touched.__all) && champErr(k);
   const [openCat, setOpenCat] = useState(() => { const f = BOOKING_CATALOG.find((p) => !p.featured); return f ? f.cat : null; });
   useEffect(() => { if (initialProductId) setSel((p) => ({ ...p, productId: initialProductId })); }, [initialProductId]);
   // Créneaux réellement disponibles : on récupère les heures occupées du studio (Google Calendar via n8n).
@@ -1461,7 +1482,8 @@ function BookingPage({ initialProductId }) {
   };
 
   const handlePayWithStripe = () => {
-    if (!contactValid) return;
+    if (submitting) return;                                            // anti double-soumission
+    if (!contactValid) { setTouched((t) => ({ ...t, __all: true })); return; } // révèle toutes les erreurs de champ
     const summary = buildBookingSummary();
     const productKey = product?.stripeKey || product?.id;
     const hasDate = summary.date && summary.time;
@@ -1488,27 +1510,39 @@ function BookingPage({ initialProductId }) {
       total: summary.total,
       ref,
     });
-    // 2) Paiement. Le passage à la confirmation + l'enregistrement local n'ont lieu
-    // QUE si un paiement est réellement lancé (succès dynamique ou repli prix-fixe autorisé).
+    // 2) Paiement. On bascule tout de suite sur l'écran de succès en mode "traitement"
+    // (skeleton), avec un SNAPSHOT des vraies valeurs soumises ; il révèle le récap une
+    // fois la session lancée. Plus de "—" : on n'affiche que ce qui existe vraiment.
     setPayError('');
+    setSubmittedRecap({
+      productLabel: summary.productLabel,
+      date: summary.date, time: summary.time,
+      hours: product?.billing === 'hourly' ? summary.hours : null,
+      rate: isHourly ? hourlyRate : null, isNight,
+      addons: summary.addons, total: summary.total,
+      customer: `${contact.firstName.trim()} ${contact.lastName.trim()}`.trim(),
+      email: contact.email.trim(),
+      billing: product?.billing,
+    });
+    setSubmitting(true);
+    setStep(5);
     const goConfirm = () => {
       if (typeof urbeAuth !== 'undefined') {
         urbeAuth.addBooking({ productLabel: summary.productLabel, date: summary.date, time: summary.time, hours: summary.hours, total: summary.total, billing: product?.billing, addons: summary.addons });
       }
-      // L'événement agenda + l'email de confirmation sont créés APRÈS paiement réel,
-      // par le webhook Stripe (plus de réservation fantôme si le client abandonne).
-      setStep(5);
+      // L'événement agenda + l'email de confirmation sont créés APRÈS paiement réel (webhook Stripe).
+      setSubmitting(false);
     };
     // SÉCURITÉ PRIX : le repli sur un lien Stripe FIXE est interdit pour les produits
     // horaires (le montant dépend de la durée → risque de sous-facturation). On bloque
     // proprement au lieu de facturer un mauvais montant.
     const onSessionFail = () => {
+      setSubmitting(false);
       if (product?.billing === 'hourly') {
         setPayError("Le paiement sécurisé est momentanément indisponible pour les sessions à l'heure (le montant dépend de la durée). Réessaie dans un instant, ou écris-nous à contact@urbestudio.fr pour bloquer ton créneau — on ne te facture jamais un mauvais montant.");
       } else {
         // Produit à prix fixe (mix, mastering, forfait, pack) : le lien Stripe est correctement tarifé.
         redirectToStripe(productKey, summary);
-        goConfirm();
       }
     };
     // Session Stripe dynamique = montant exact recalculé côté serveur (n8n), durée incluse.
@@ -1782,17 +1816,15 @@ function BookingPage({ initialProductId }) {
               <div style={{ background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 14, padding: 22, marginBottom: 18 }}>
                 <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', color: 'var(--dim)', textTransform: 'uppercase', marginBottom: 16 }}>Tes coordonnées</div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-                  <div><label style={labelStyle}>Prénom *</label><input value={contact.firstName} onChange={setC('firstName')} placeholder="Prénom" autoComplete="given-name" style={champStyle} /></div>
-                  <div><label style={labelStyle}>Nom *</label><input value={contact.lastName} onChange={setC('lastName')} placeholder="Nom" autoComplete="family-name" style={champStyle} /></div>
+                  <div><label style={labelStyle}>Prénom *</label><input value={contact.firstName} onChange={setC('firstName')} onBlur={onBlur('firstName')} placeholder="Prénom" autoComplete="given-name" style={{ ...champStyle, borderColor: showErr('firstName') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('firstName') && <div style={errStyle}>{champErr('firstName')}</div>}</div>
+                  <div><label style={labelStyle}>Nom *</label><input value={contact.lastName} onChange={setC('lastName')} onBlur={onBlur('lastName')} placeholder="Nom" autoComplete="family-name" style={{ ...champStyle, borderColor: showErr('lastName') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('lastName') && <div style={errStyle}>{champErr('lastName')}</div>}</div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-                  <div><label style={labelStyle}>Email *</label><input type="email" value={contact.email} onChange={setC('email')} placeholder="toi@email.com" autoComplete="email" style={{ ...champStyle, borderColor: contact.email && !emailOk ? 'var(--rouge)' : 'var(--br)' }} /></div>
-                  <div><label style={labelStyle}>Téléphone *</label><input type="tel" value={contact.phone} onChange={setC('phone')} placeholder="06 12 34 56 78" autoComplete="tel" style={champStyle} /></div>
+                  <div><label style={labelStyle}>Email *</label><input type="email" value={contact.email} onChange={setC('email')} onBlur={onBlur('email')} placeholder="toi@email.com" autoComplete="email" style={{ ...champStyle, borderColor: showErr('email') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('email') && <div style={errStyle}>{champErr('email')}</div>}</div>
+                  <div><label style={labelStyle}>Téléphone *</label><input type="tel" value={contact.phone} onChange={setC('phone')} onBlur={onBlur('phone')} placeholder="06 12 34 56 78" autoComplete="tel" style={{ ...champStyle, borderColor: showErr('phone') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('phone') && <div style={errStyle}>{champErr('phone')}</div>}</div>
                 </div>
                 <div style={{ marginBottom: 12 }}><label style={labelStyle}>Nom d'artiste</label><input value={contact.artist} onChange={setC('artist')} placeholder="Ton blaze / nom de scène" style={champStyle} /></div>
                 <div><label style={labelStyle}>Projet musical</label><textarea value={contact.project} onChange={setC('project')} placeholder="Quelques mots sur ton projet (style, nb de titres, deadline…)" rows={3} style={{ ...champStyle, resize: 'vertical', lineHeight: 1.5 }} /></div>
-                {!contactValid && (contact.firstName || contact.lastName || contact.email || contact.phone) &&
-                  <div style={{ fontSize: 11.5, color: 'var(--rouge3)', marginTop: 10 }}>Prénom, nom, email valide et téléphone sont requis pour continuer.</div>}
               </div>
 
               <div style={{ background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 14, padding: 24, marginBottom: 18 }}>
@@ -1808,47 +1840,74 @@ function BookingPage({ initialProductId }) {
               </div>
 
               <div style={{ fontSize: 11, color: 'var(--dim)', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 6 }}>🔒 Connexion chiffrée · TVA 20% incluse · facture envoyée par email</div>
-              {payError &&
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '12px 14px', marginBottom: 16, background: 'rgba(139,30,30,0.1)', border: '1px solid var(--rouge)', borderRadius: 10 }}>
-                  <span style={{ flexShrink: 0, fontSize: 14, lineHeight: 1.4 }}>⚠️</span>
-                  <span style={{ fontSize: 12.5, color: 'var(--blanc)', lineHeight: 1.55 }}>{payError}</span>
-                </div>
-              }
               <div style={{ display: 'flex', gap: 10 }}>
-                <button onClick={goBack} style={{ padding: '12px 22px', borderRadius: 100, background: 'none', color: 'var(--dim)', border: '1px solid var(--br)', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>← Retour</button>
-                <button onClick={handlePayWithStripe} disabled={!contactValid} style={{ flex: 1, padding: 14, borderRadius: 8, background: 'var(--rouge)', color: '#fff', border: 'none', fontSize: 15, fontWeight: 700, cursor: contactValid ? 'pointer' : 'not-allowed', opacity: contactValid ? 1 : 0.45, boxShadow: contactValid ? '0 8px 28px rgba(139,30,30,0.4)' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                  Payer {total}€ avec Stripe
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H8M17 7v9" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <button onClick={goBack} disabled={submitting} style={{ padding: '12px 22px', borderRadius: 100, background: 'none', color: 'var(--dim)', border: '1px solid var(--br)', fontSize: 13, fontWeight: 500, cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.5 : 1 }}>← Retour</button>
+                <button onClick={handlePayWithStripe} disabled={submitting} style={{ flex: 1, padding: 14, borderRadius: 8, background: 'var(--rouge)', color: '#fff', border: 'none', fontSize: 15, fontWeight: 700, cursor: submitting ? 'wait' : 'pointer', opacity: submitting ? 0.7 : 1, boxShadow: '0 8px 28px rgba(139,30,30,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                  {submitting ? 'Traitement…' : `Payer ${total}€ avec Stripe`}
+                  {!submitting && <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H8M17 7v9" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                 </button>
               </div>
             </div>
           }
 
-          {/* STEP 5 — Confirmation + Google Calendar */}
-          {step === 5 &&
-          <div style={{ textAlign: 'center', padding: '48px 0' }}>
+          {/* STEP 5 — Traitement (skeleton) / Erreur réseau / Confirmation */}
+          {step === 5 && submitting &&
+          <div style={{ textAlign: 'center', padding: '48px 0' }} aria-busy="true" aria-live="polite">
+              {/* Skeleton loader pendant la création de la session de paiement */}
+              <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--s2)', margin: '0 auto 24px', animation: 'pulse 1.4s infinite' }} />
+              <div style={{ height: 22, width: 220, borderRadius: 8, background: 'var(--s2)', margin: '0 auto 14px', animation: 'pulse 1.4s infinite' }} />
+              <div style={{ maxWidth: 420, margin: '0 auto 28px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {[0, 1, 2].map((i) => <div key={i} style={{ height: 13, borderRadius: 7, background: 'var(--s2)', width: ['90%', '70%', '80%'][i], margin: '0 auto', animation: 'pulse 1.4s infinite' }} />)}
+              </div>
+              <p style={{ fontSize: 13, color: 'var(--dim)', fontWeight: 300 }}>Préparation de ton paiement sécurisé…</p>
+            </div>
+          }
+
+          {step === 5 && !submitting && payError &&
+          <div style={{ textAlign: 'center', padding: '48px 0' }} aria-live="assertive">
+              <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(139,30,30,0.12)', border: '1.5px solid var(--rouge)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', fontSize: 28 }}>⚠️</div>
+              <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 12 }}>Paiement momentanément indisponible</h2>
+              <p style={{ fontSize: 14, color: 'var(--dim)', lineHeight: 1.7, marginBottom: 30, fontWeight: 300, maxWidth: 460, marginLeft: 'auto', marginRight: 'auto' }}>{payError}</p>
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button onClick={handlePayWithStripe} style={{ padding: '12px 24px', borderRadius: 100, background: 'var(--rouge)', color: '#fff', border: 'none', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>Réessayer</button>
+                <button onClick={() => { setPayError(''); setStep(4); }} style={{ padding: '12px 22px', borderRadius: 100, background: 'none', color: 'var(--dim)', border: '1px solid var(--br)', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>Modifier ma demande</button>
+              </div>
+            </div>
+          }
+
+          {step === 5 && !submitting && !payError &&
+          (() => { const r = submittedRecap || {}; return (
+          <div style={{ textAlign: 'center', padding: '48px 0' }} aria-live="polite">
               <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(58,209,122,0.12)', border: '1.5px solid #3ad17a', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', fontSize: 28, color: '#3ad17a' }}>✓</div>
               <h2 style={{ fontSize: 26, fontWeight: 700, marginBottom: 12 }}>Demande envoyée !</h2>
-              <p style={{ fontSize: 14, color: 'var(--dim)', lineHeight: 1.7, marginBottom: 8, fontWeight: 300 }}>Finalise ton paiement dans l'onglet Stripe ouvert à côté. Dès le paiement validé, tu reçois ta confirmation par email et ton créneau est réservé.</p>
-              {sel.date && <p style={{ fontSize: 14, color: 'var(--blanc)', lineHeight: 1.7, marginBottom: 30, fontWeight: 500 }}>{product?.label} · {sel.date} à {sel.time}{product?.billing === 'hourly' ? ` · ${sel.hours}h` : ''}</p>}
-              {!sel.date && <p style={{ fontSize: 14, color: 'var(--blanc)', marginBottom: 30, fontWeight: 500 }}>{product?.label} · {total}€</p>}
+              <p style={{ fontSize: 14, color: 'var(--dim)', lineHeight: 1.7, marginBottom: 22, fontWeight: 300, maxWidth: 460, marginLeft: 'auto', marginRight: 'auto' }}>Finalise ton paiement dans l'onglet Stripe ouvert à côté. Dès le paiement validé, tu reçois ta confirmation par email{r.date ? ' et ton créneau est réservé' : ''}.</p>
+
+              {/* Récap des VRAIES valeurs soumises (snapshot) — aucune ligne vide, jamais de "—" */}
+              <div style={{ maxWidth: 420, margin: '0 auto 28px', background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 14, padding: '18px 20px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {r.customer && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}><span style={{ color: 'var(--dim)' }}>Client</span><span style={{ fontWeight: 600 }}>{r.customer}</span></div>}
+                {r.productLabel && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}><span style={{ color: 'var(--dim)' }}>Prestation</span><span style={{ fontWeight: 600 }}>{r.productLabel}</span></div>}
+                {r.date && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}><span style={{ color: 'var(--dim)' }}>Créneau</span><span style={{ fontWeight: 600 }}>{r.date} à {r.time}</span></div>}
+                {r.hours && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}><span style={{ color: 'var(--dim)' }}>Durée</span><span style={{ fontWeight: 600 }}>{r.hours} h{r.isNight ? ' · tarif nuit' : ''}</span></div>}
+                {r.addons && r.addons.length > 0 && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}><span style={{ color: 'var(--dim)' }}>Options</span><span style={{ fontWeight: 600, textAlign: 'right' }}>{r.addons.join(', ')}</span></div>}
+                {r.total > 0 && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, paddingTop: 10, borderTop: '1px solid var(--br)' }}><span style={{ color: 'var(--dim)' }}>Total</span><span style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 22, color: 'var(--rouge3)' }}>{r.total}€</span></div>}
+              </div>
 
               <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 18 }}>
                 <button onClick={handleAddToGcal} style={{ padding: '12px 22px', borderRadius: 100, background: 'var(--s1)', color: 'var(--blanc)', border: '1px solid var(--br2)', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.5"/><path d="M3 9h18M8 3v4M16 3v4M12 13v4M10 15h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
                   Ajouter à Google Agenda
                 </button>
-                {sel.date &&
+                {r.date &&
                   <button onClick={handleDownloadICS} style={{ padding: '12px 22px', borderRadius: 100, background: 'none', color: 'var(--dim)', border: '1px solid var(--br)', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>Télécharger .ics</button>
                 }
               </div>
 
               <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
-                <button onClick={() => { setStep(1); setSel({ productId: null, date: null, time: null, hours: 2, addons: [] }); setContact({ firstName: '', lastName: '', email: '', phone: '', artist: '', project: '' }); }} style={{ padding: '11px 20px', borderRadius: 100, background: 'none', color: 'var(--dim)', border: '1px solid var(--br)', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>Nouvelle réservation</button>
+                <button onClick={() => { setStep(1); setSel({ productId: null, date: null, time: null, hours: 2, addons: [] }); setContact({ firstName: '', lastName: '', email: '', phone: '', artist: '', project: '' }); setTouched({}); setSubmittedRecap(null); }} style={{ padding: '11px 20px', borderRadius: 100, background: 'none', color: 'var(--dim)', border: '1px solid var(--br)', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>Nouvelle réservation</button>
                 <button onClick={() => window.__urbeNav && window.__urbeNav('home')} style={{ padding: '11px 22px', borderRadius: 100, background: 'var(--rouge)', color: '#fff', border: 'none', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>Retour à l'accueil</button>
               </div>
             </div>
-          }
+          ); })()}
         </div>
 
         {/* Sidebar récap */}

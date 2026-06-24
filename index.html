@@ -597,7 +597,7 @@
 
       <div class="urbe-bm-card-grid" data-engineers></div>
 
-      <div class="urbe-bm-field-err" data-err="engineer">Sélectionne un ingénieur pour continuer.</div>
+      <div class="urbe-bm-field-err" data-err="engineer">Choisis l'ingénieur qui mixera ton titre.</div>
     </section>
 
     <!-- STEP 2 -->
@@ -610,12 +610,12 @@
         <div>
           <label class="urbe-bm-label" for="urbe-bm-artiste">Nom artiste / projet *</label>
           <input class="urbe-bm-input" id="urbe-bm-artiste" type="text" placeholder="ex. KEI" />
-          <div class="urbe-bm-field-err" data-err="artiste">Champ requis.</div>
+          <div class="urbe-bm-field-err" data-err="artiste">Oups, il manque ton nom d'artiste !</div>
         </div>
         <div>
           <label class="urbe-bm-label" for="urbe-bm-titre">Titre du morceau *</label>
           <input class="urbe-bm-input" id="urbe-bm-titre" type="text" placeholder="ex. OG Bounce" />
-          <div class="urbe-bm-field-err" data-err="titre">Champ requis.</div>
+          <div class="urbe-bm-field-err" data-err="titre">Oups, il manque le titre de ton morceau !</div>
         </div>
       </div>
 
@@ -630,7 +630,7 @@
           <option value="electro">Électro</option>
           <option value="autre">Autre</option>
         </select>
-        <div class="urbe-bm-field-err" data-err="genre">Choisis un genre.</div>
+        <div class="urbe-bm-field-err" data-err="genre">Choisis le genre de ton projet.</div>
       </div>
 
       <div class="urbe-bm-group">
@@ -718,24 +718,25 @@
         <div>
           <label class="urbe-bm-label" for="urbe-bm-prenom">Prénom *</label>
           <input class="urbe-bm-input" id="urbe-bm-prenom" type="text" placeholder="Jean" />
-          <div class="urbe-bm-field-err" data-err="prenom">Champ requis.</div>
+          <div class="urbe-bm-field-err" data-err="prenom">Oups, il manque ton prénom !</div>
         </div>
         <div>
           <label class="urbe-bm-label" for="urbe-bm-nom">Nom *</label>
           <input class="urbe-bm-input" id="urbe-bm-nom" type="text" placeholder="Dupont" />
-          <div class="urbe-bm-field-err" data-err="nom">Champ requis.</div>
+          <div class="urbe-bm-field-err" data-err="nom">Oups, il manque ton nom !</div>
         </div>
       </div>
 
       <div class="urbe-bm-group">
         <label class="urbe-bm-label" for="urbe-bm-email">Email *</label>
         <input class="urbe-bm-input" id="urbe-bm-email" type="email" placeholder="jean@email.com" />
-        <div class="urbe-bm-field-err" data-err="email">Email invalide.</div>
+        <div class="urbe-bm-field-err" data-err="email">Cet email a l'air incomplet — vérifie-le 🙂</div>
       </div>
 
       <div class="urbe-bm-group">
         <label class="urbe-bm-label" for="urbe-bm-tel">Téléphone (optionnel)</label>
         <input class="urbe-bm-input" id="urbe-bm-tel" type="tel" placeholder="+33 6 12 34 56 78" />
+        <div class="urbe-bm-field-err" data-err="tel">Ce numéro ne ressemble pas à un téléphone français.</div>
       </div>
 
       <label class="urbe-bm-cbx urbe-bm-group" style="margin-top:8px;">
@@ -743,7 +744,7 @@
         <span class="urbe-bm-cbx-box"></span>
         <span>J'accepte que l'équipe Urbe Studio me recontacte sous 24h pour finaliser la commande.</span>
       </label>
-      <div class="urbe-bm-field-err" data-err="consent">Tu dois accepter pour envoyer la demande.</div>
+      <div class="urbe-bm-field-err" data-err="consent">Coche la case pour qu'on puisse te recontacter.</div>
     </section>
 
     <!-- SUCCESS -->
@@ -785,6 +786,9 @@
 
   var root = document.getElementById('urbe-bm-root');
   if (!root) return;
+
+  // Téléphone FR (fixe/mobile, +33 ou 0) — champ optionnel mais validé si rempli.
+  var FR_PHONE = /^(?:\+33\s?|0)[1-9](?:[\s.-]?\d{2}){4}$/;
 
   var state = {
     step: 1,
@@ -930,6 +934,8 @@
       if (!nom.value.trim()) { markErr(nom, 'nom', true); ok = false; } else markErr(nom, 'nom', false);
       var emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRx.test(email.value.trim())) { markErr(email, 'email', true); ok = false; } else markErr(email, 'email', false);
+      var tel = root.querySelector('#urbe-bm-tel');
+      if (tel.value.trim() && !FR_PHONE.test(tel.value.trim())) { markErr(tel, 'tel', true); ok = false; } else markErr(tel, 'tel', false);
       if (!consent.checked) { showErr('consent'); ok = false; } else hideErr('consent');
     }
     return ok;
@@ -943,21 +949,46 @@
   function back() { if (state.step > 1) showStep(state.step - 1); }
 
   function submit() {
-    state.submitted = true;
-    // Fill recap
+    if (state.submitting) return;                 // anti double-soumission
+    state.submitting = true;
+    var nextBtn = root.querySelector('[data-next]');
+    var prevLabel = nextBtn ? nextBtn.textContent : '';
+    if (nextBtn) { nextBtn.disabled = true; nextBtn.textContent = 'Envoi…'; }   // état ENVOI
     var eng = ENGS.find(function(e) { return e.id === state.engineerId; });
-    root.querySelector('[data-s-eng]').textContent = eng ? eng.nom : '—';
-    root.querySelector('[data-s-titre]').textContent = root.querySelector('#urbe-bm-titre').value || '—';
-    root.querySelector('[data-s-delay]').textContent = state.delay === 'urgent' ? '48h (urgence)' : '7 jours';
+    var titre = root.querySelector('#urbe-bm-titre').value.trim();
     var total = 120 + (state.delay === 'urgent' ? 50 : 0);
-    root.querySelector('[data-s-total]').textContent = total + '€';
-    showStep('success');
+    // Capture CRM best-effort (non bloquante) — n8n consomme le lead à sa réactivation.
+    var payload = {
+      type: 'mix-order',
+      firstName: root.querySelector('#urbe-bm-prenom').value.trim(),
+      lastName: root.querySelector('#urbe-bm-nom').value.trim(),
+      email: root.querySelector('#urbe-bm-email').value.trim(),
+      phone: root.querySelector('#urbe-bm-tel').value.trim(),
+      artist: root.querySelector('#urbe-bm-artiste').value.trim(),
+      productLabel: 'Mix' + (state.delay === 'urgent' ? ' urgent 48h' : '') + (titre ? ' · ' + titre : ''),
+      productId: state.delay === 'urgent' ? 'mix-urgent' : 'mix-standard',
+      total: total,
+      project: 'Titre: ' + (titre || '?') + ' | Genre: ' + (root.querySelector('#urbe-bm-genre').value || '?') + ' | Multipistes: ' + (state.multipistes ? 'oui' : 'non')
+    };
+    function done() {
+      state.submitting = false; state.submitted = true;
+      if (nextBtn) { nextBtn.disabled = false; nextBtn.textContent = prevLabel; }
+      // Récap des VRAIES valeurs (champs requis validés → jamais de "—").
+      root.querySelector('[data-s-eng]').textContent = eng ? eng.nom : '';
+      root.querySelector('[data-s-titre]').textContent = titre || '';
+      root.querySelector('[data-s-delay]').textContent = state.delay === 'urgent' ? '48h (urgence)' : '7 jours';
+      root.querySelector('[data-s-total]').textContent = total + '€';
+      showStep('success');
+    }
+    // Succès affiché dans tous les cas (best-effort) ; le vrai paiement se fait à l'étape suivante.
+    if (typeof window.postLead === 'function') { window.postLead(payload).then(done).catch(done); }
+    else { done(); }
   }
 
   function open(opts) {
     opts = opts || {};
     // reset
-    state = { step: 1, engineerId: null, delay: 'standard', multipistes: false, submitted: false };
+    state = { step: 1, engineerId: null, delay: 'standard', multipistes: false, submitted: false, submitting: false };
     setDelay('standard'); setMp(false);
     // clear inputs
     root.querySelectorAll('.urbe-bm-input, .urbe-bm-select, .urbe-bm-textarea').forEach(function(i) { i.value = ''; i.classList.remove('urbe-bm-err'); });
@@ -989,13 +1020,18 @@
   root.querySelector('.urbe-bm-close').addEventListener('click', function() { close(); });
   root.querySelector('[data-close-success]').addEventListener('click', function() { close(true); });
   var payBtn = root.querySelector('[data-pay-stripe]');
+  var paying = false;
   if (payBtn) payBtn.addEventListener('click', function() {
+    if (paying) return; paying = true;                       // anti double-clic (évite 2 onglets Stripe)
+    var prev = payBtn.textContent;
+    payBtn.disabled = true; payBtn.textContent = 'Redirection…';
     var key = state.delay === 'urgent' ? 'mix-urgent' : 'mix-standard';
     var total = 120 + (state.delay === 'urgent' ? 50 : 0);
     var titre = (root.querySelector('#urbe-bm-titre') || {}).value || '';
     if (typeof window.redirectToStripe === 'function') {
       window.redirectToStripe(key, { productLabel: 'Mix' + (state.delay === 'urgent' ? ' urgent 48h' : '') + (titre ? ' · ' + titre : ''), total: total });
     }
+    setTimeout(function() { paying = false; payBtn.disabled = false; payBtn.textContent = prev; }, 2500);
   });
   root.addEventListener('click', function(ev) {
     if (ev.target === root) close();
@@ -1004,13 +1040,25 @@
     if (ev.key === 'Escape' && !root.hidden) close();
   });
 
-  // Live validation on email
+  // Validation au blur (micro-copie immédiate) sur les champs requis.
   var emailEl = root.querySelector('#urbe-bm-email');
   emailEl.addEventListener('blur', function() {
     if (!emailEl.value) return;
     var emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     markErr(emailEl, 'email', !emailRx.test(emailEl.value.trim()));
   });
+  function wireBlur(id, key, validator) {
+    var el = root.querySelector('#' + id);
+    if (!el) return;
+    var ev = el.tagName === 'SELECT' ? 'change' : 'blur';
+    el.addEventListener(ev, function() { markErr(el, key, !validator(el.value)); });
+  }
+  wireBlur('urbe-bm-artiste', 'artiste', function(v) { return !!v.trim(); });
+  wireBlur('urbe-bm-titre', 'titre', function(v) { return !!v.trim(); });
+  wireBlur('urbe-bm-genre', 'genre', function(v) { return !!v; });
+  wireBlur('urbe-bm-prenom', 'prenom', function(v) { return !!v.trim(); });
+  wireBlur('urbe-bm-nom', 'nom', function(v) { return !!v.trim(); });
+  wireBlur('urbe-bm-tel', 'tel', function(v) { return !v.trim() || FR_PHONE.test(v.trim()); });
 
   // Expose
   window.openMixBookingModal = open;
