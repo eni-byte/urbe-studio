@@ -697,7 +697,7 @@ function PromoBanner({ setPage }) {
 
 /* ─── INGÉNIEURS DU SON ──────────────────────────────────────── */
 const ENGINEERS = [
-{ nom: 'Virgile', role: 'Ingénieur du son', initiales: 'VG', bg: '#8B1E1E', bio: 'Spécialiste rap & musiques urbaines. 10+ ans en studio, mix sur les meilleures productions FR.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudio' },
+{ nom: 'Virgile', aka: 'Punch', role: 'Ingénieur du son', initiales: 'VG', bg: '#8B1E1E', bio: 'Spécialiste rap & musiques urbaines. 10+ ans en studio, mix sur les meilleures productions FR.', credits: ['Kaaris', 'Heuss L’Enfoiré', 'Timal', 'Doria', 'Negrito', 'Skunaboi', 'Chakal', 'Gotti Marras'], bioLong: ['Virgile, aka Punch, est ingénieur du son basé à Paris depuis maintenant 5 ans. Passionné de musique depuis l’enfance, il commence la guitare à l’âge de 6 ans avant de se tourner vers la production d’instrumentales à 13 ans. Cette double approche musicale lui permet de développer très tôt une oreille précise et une compréhension approfondie de la création sonore.', 'Depuis plusieurs années, Punch se consacre pleinement à l’ingénierie sonore, avec une spécialisation sur Pro Tools, devenu son environnement de travail principal en studio. Au fil du temps, il a eu l’opportunité de collaborer avec des artistes reconnus tels que Kaaris, Heuss L’Enfoiré, Timal, Doria, Negrito, Skunaboi, Chakal, ou encore Gotti Marras.', 'Au-delà de la technique, Punch accorde une grande importance à l’accompagnement artistique en studio. Il aime résoudre les problèmes que les artistes rencontrent pendant leurs sessions, que ce soit dans la prise de son, l’interprétation ou la direction artistique, afin de leur permettre d’exprimer pleinement leur vision et d’obtenir le meilleur résultat possible.'], youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudio' },
 { nom: 'Olid', role: 'Ingénieur du son', initiales: 'OL', bg: '#1f1f1f', bio: 'Prise de son et direction artistique. Sessions live, banque de sons sur mesure, edit voix.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudio' },
 { nom: 'Chourak', role: 'Ingénieur du son', initiales: 'CH', bg: '#2a1414', bio: 'Mix pop & R&B, mastering analogique. Finition prête streaming, vinyle et radio.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudio' },
 { nom: 'BMS', role: 'Ingénieur du son', initiales: 'BM', bg: '#161616', bio: 'Composition et production. Création de prods sur-mesure, arrangement et orchestration.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudio' }];
@@ -718,6 +718,7 @@ function SocialIcon({ href, hover, title, children }) {
 }
 
 function EngineersSection() {
+  const [openEng, setOpenEng] = useState(null);
   return (
     <section style={{ padding: '88px 28px', background: 'var(--noir)' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
@@ -727,11 +728,23 @@ function EngineersSection() {
         </div>
 
         <div className="urbe-eng-grid">
-          {ENGINEERS.map((e) =>
-          <div key={e.nom} className="urbe-eng-card" style={{
+          {ENGINEERS.map((e) => {
+            const clickable = !!(e.bioLong && e.bioLong.length);
+            const openProfile = () => { if (clickable) setOpenEng(e); };
+            return (
+          <div key={e.nom} className="urbe-eng-card"
+            onClick={openProfile}
+            role={clickable ? 'button' : undefined}
+            tabIndex={clickable ? 0 : undefined}
+            aria-label={clickable ? `Voir le profil de ${e.nom}` : undefined}
+            onKeyDown={clickable ? (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openProfile(); } } : undefined}
+            onMouseEnter={clickable ? (ev) => { ev.currentTarget.style.borderColor = 'var(--rouge)'; ev.currentTarget.style.transform = 'translateY(-3px)'; } : undefined}
+            onMouseLeave={clickable ? (ev) => { ev.currentTarget.style.borderColor = 'rgba(241,236,231,0.08)'; ev.currentTarget.style.transform = 'none'; } : undefined}
+            style={{
             background: '#111', border: '1px solid rgba(241,236,231,0.08)',
             borderRadius: 12, padding: '24px 22px 22px',
-            display: 'flex', flexDirection: 'column', gap: 14
+            display: 'flex', flexDirection: 'column', gap: 14,
+            cursor: clickable ? 'pointer' : 'default', transition: 'border-color 0.2s, transform 0.2s'
           }}>
               {/* Avatar */}
               <div className="urbe-eng-avatar" style={{
@@ -748,8 +761,10 @@ function EngineersSection() {
 
               <div style={{ flex: 1 }} />
 
-              {/* Travaux notables */}
-              <div style={{ paddingTop: 14, borderTop: '1px solid rgba(241,236,231,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              {clickable && <div style={{ fontSize: 12, color: 'var(--rouge3)', fontWeight: 600, letterSpacing: '0.04em' }}>Voir le profil →</div>}
+
+              {/* Réseaux (le clic ne doit pas ouvrir la modale) */}
+              <div onClick={(ev) => ev.stopPropagation()} style={{ paddingTop: 14, borderTop: '1px solid rgba(241,236,231,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                   <SocialIcon href={e.youtube} hover="#FF0000" title="YouTube">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z" /></svg>
@@ -762,12 +777,50 @@ function EngineersSection() {
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5" /><path d="M16 11.4A4 4 0 1 1 12.6 8 4 4 0 0 1 16 11.4z" /><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" /></svg>
                 </SocialIcon>
               </div>
-            </div>
-          )}
+            </div>);
+          })}
         </div>
       </div>
+      {openEng && <EngineerModal e={openEng} onClose={() => setOpenEng(null)} />}
     </section>);
 
+}
+
+/* Modale profil ingénieur (bio + crédits) — design system réutilisé. */
+function EngineerModal({ e, onClose }) {
+  useEffect(() => {
+    const fn = (ev) => { if (ev.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', fn);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.removeEventListener('keydown', fn); document.body.style.overflow = prev; };
+  }, [onClose]);
+  return (
+    <div onClick={onClose} role="dialog" aria-modal="true" aria-label={`Profil de ${e.nom}`} style={{ position: 'fixed', inset: 0, zIndex: 2000, background: 'rgba(0,0,0,0.78)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '40px 20px', overflowY: 'auto' }}>
+      <div onClick={(ev) => ev.stopPropagation()} style={{ width: '100%', maxWidth: 600, background: 'var(--s1)', border: '1px solid var(--br2)', borderRadius: 18, padding: '28px 28px 32px', position: 'relative' }}>
+        <button onClick={onClose} aria-label="Fermer le profil" style={{ position: 'absolute', top: 16, right: 16, width: 34, height: 34, borderRadius: '50%', background: 'var(--s2)', border: '1px solid var(--br)', color: 'var(--blanc)', cursor: 'pointer', fontSize: 15, lineHeight: 1 }}>✕</button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 22, paddingRight: 40 }}>
+          <div style={{ width: 72, height: 72, borderRadius: '50%', background: e.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 26, letterSpacing: '0.04em', flexShrink: 0 }}>{e.initiales}</div>
+          <div>
+            <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 28, letterSpacing: '0.02em', color: 'var(--blanc)', lineHeight: 1 }}>{e.nom}{e.aka ? <span style={{ color: 'var(--dim)', fontWeight: 500, fontSize: 16 }}> · aka {e.aka}</span> : null}</div>
+            <div style={{ fontSize: 11, color: 'var(--rouge3)', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 600, marginTop: 7 }}>{e.role}</div>
+          </div>
+        </div>
+        {e.credits && e.credits.length > 0 &&
+          <div style={{ marginBottom: 22 }}>
+            <div style={{ fontSize: 10, color: 'var(--dim)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 9 }}>Collaborations</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {e.credits.map((c) => <span key={c} style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--blanc)', background: 'rgba(139,30,30,0.14)', border: '1px solid var(--rouge)', borderRadius: 100, padding: '5px 12px' }}>{c}</span>)}
+            </div>
+          </div>}
+        {(e.bioLong || []).map((p, i) => <p key={i} style={{ fontSize: 14, color: 'var(--dim)', lineHeight: 1.75, marginBottom: 14, fontWeight: 300 }}>{p}</p>)}
+        <div style={{ display: 'flex', gap: 10, marginTop: 18, paddingTop: 18, borderTop: '1px solid var(--br)' }}>
+          <SocialIcon href={e.youtube} hover="#FF0000" title="YouTube"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z" /></svg></SocialIcon>
+          <SocialIcon href={e.spotify} hover="#1DB954" title="Spotify"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24zm5.5 17.3a.75.75 0 0 1-1 .25c-2.8-1.7-6.3-2.1-10.4-1.1a.75.75 0 1 1-.3-1.5c4.5-1 8.4-.6 11.5 1.3.4.2.5.7.2 1.05zm1.5-3.3a1 1 0 0 1-1.3.3c-3.2-2-8.1-2.5-11.9-1.4a1 1 0 0 1-.6-1.9c4.3-1.3 9.7-.7 13.4 1.6a1 1 0 0 1 .4 1.4zm.1-3.5C15.4 8.3 8.9 8 5.2 9.2a1.2 1.2 0 1 1-.7-2.3c4.2-1.3 11.4-1 15.7 1.5a1.2 1.2 0 0 1-1.1 2.1z" /></svg></SocialIcon>
+          <SocialIcon href={e.instagram} hover="linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)" title="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5" /><path d="M16 11.4A4 4 0 1 1 12.6 8 4 4 0 0 1 16 11.4z" /><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" /></svg></SocialIcon>
+        </div>
+      </div>
+    </div>);
 }
 
 /* ─── TARIFS SECTION ─────────────────────────────────────────── */
