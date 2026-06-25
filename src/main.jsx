@@ -446,7 +446,7 @@ function MixCtaSection({ tone = 'dark' }) {
   );
 }
 
-/* ─── PROMO BANNER — 1 mix acheté = 1 mix offert ──────────────── */
+/* ─── PROMO BANNER — 1 mix acheté · master à -50% (renouvelée chaque mois) ── */
 function PromoBanner({ setPage }) {
   const [revealed, setRevealed] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -458,9 +458,12 @@ function PromoBanner({ setPage }) {
   const WAVE = [5, 11, 19, 13, 23, 15, 25, 11, 20, 9, 16, 7];
 
   useEffect(() => {
-    const deadline = new Date('2026-06-20T23:59:59');
     const tick = () => {
-      const diff = deadline - new Date();
+      const now = new Date();
+      // Fin du mois courant (1er du mois suivant à minuit) : l'offre est toujours active
+      // et se renouvelle automatiquement chaque mois.
+      const deadline = new Date(now.getFullYear(), now.getMonth() + 1, 1, 0, 0, 0);
+      const diff = deadline - now;
       if (diff <= 0) return;
       setCountdown({
         j: Math.floor(diff / 86400000),
@@ -514,11 +517,11 @@ function PromoBanner({ setPage }) {
           {/* Headline */}
           <div style={{ marginBottom: 20 }}>
             <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 900, fontSize: 'clamp(48px,6vw,84px)', lineHeight: 0.88, letterSpacing: '0.01em', textTransform: 'uppercase', color: 'var(--blanc)' }}>1 mix acheté</div>
-            <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 900, fontSize: 'clamp(48px,6vw,84px)', lineHeight: 0.88, letterSpacing: '0.01em', textTransform: 'uppercase', color: 'var(--rouge3)', fontStyle: 'italic' }}>1 master offert</div>
+            <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 900, fontSize: 'clamp(48px,6vw,84px)', lineHeight: 0.88, letterSpacing: '0.01em', textTransform: 'uppercase', color: 'var(--rouge3)', fontStyle: 'italic' }}>master à -50%</div>
           </div>
 
           {/* Desc */}
-          <p style={{ fontSize: 14, color: 'var(--dim)', lineHeight: 1.7, maxWidth: 400, marginBottom: 28, fontWeight: 300 }}>Commande un mixage pro et reçois un mastering complet offert. Livraison 7 jours · urgence 48h disponible.</p>
+          <p style={{ fontSize: 14, color: 'var(--dim)', lineHeight: 1.7, maxWidth: 400, marginBottom: 28, fontWeight: 300 }}>Commande un mixage pro et profite de ton mastering complet à -50%. Livraison 7 jours · urgence 48h disponible.</p>
 
           {/* Countdown */}
           <div style={{ marginBottom: 24 }}>
@@ -572,7 +575,7 @@ function PromoBanner({ setPage }) {
                     : <><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="3.5" width="7" height="7" rx="1.5" stroke="white" strokeWidth="1.3"/><path d="M3.5 3.5V2A1.5 1.5 0 015 .5h5A1.5 1.5 0 0111.5 2v5A1.5 1.5 0 0110 8.5H8.5" stroke="white" strokeWidth="1.3" strokeLinecap="round"/></svg> Copier</>}
                 </button>
               </div>
-              <p style={{ fontSize: 12, color: 'var(--dim)', margin: 0, lineHeight: 1.65 }}>Code à mentionner lors de ta commande. Valable jusqu'au 20 juin 2026 · 1 titre offert.</p>
+              <p style={{ fontSize: 12, color: 'var(--dim)', margin: 0, lineHeight: 1.65 }}>Code à mentionner lors de ta commande. Offre renouvelée chaque mois · mastering à -50%.</p>
               <button onClick={() => window.openMixBookingModal ? window.openMixBookingModal({}) : setPage('booking')} style={{
                 padding: '11px 22px', borderRadius: 100, background: 'transparent', color: 'var(--blanc)', border: '1px solid var(--br2)',
                 fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8, transition: 'border-color 0.2s'
@@ -635,7 +638,7 @@ function PromoBanner({ setPage }) {
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontFamily: 'Space Mono', fontSize: 10, color: 'var(--dim)', letterSpacing: '0.1em', marginBottom: 5 }}>MIXAGE</div>
                 <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 900, fontSize: 40, color: 'var(--blanc)', lineHeight: 1 }}>120€</div>
-                <div style={{ fontFamily: 'Space Mono', fontSize: 9, color: 'rgba(241,236,231,0.3)', letterSpacing: '0.06em', marginTop: 2 }}>+ MASTER OFFERT</div>
+                <div style={{ fontFamily: 'Space Mono', fontSize: 9, color: 'rgba(241,236,231,0.3)', letterSpacing: '0.06em', marginTop: 2 }}>+ MASTER -50%</div>
               </div>
               <div style={{ fontSize: 10, color: 'var(--dim)', letterSpacing: '0.08em' }}>1 titre · 7 jours</div>
               <div style={{ position: 'absolute', bottom: 16, padding: '4px 12px', borderRadius: 100, background: 'rgba(193,44,44,0.16)', border: '1px solid rgba(193,44,44,0.32)', fontSize: 9, fontWeight: 700, letterSpacing: '0.14em', color: 'var(--rouge3)', textTransform: 'uppercase' }}>ACHETÉ</div>
@@ -669,10 +672,10 @@ function PromoBanner({ setPage }) {
                   </svg>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontFamily: 'Space Mono', fontSize: 10, color: 'var(--dim)', letterSpacing: '0.1em', marginBottom: 5 }}>MASTERING</div>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 900, fontSize: 40, color: 'var(--rouge3)', fontStyle: 'italic', lineHeight: 1 }}>0€</div>
+                    <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 900, fontSize: 40, color: 'var(--rouge3)', fontStyle: 'italic', lineHeight: 1 }}>25€<span style={{ fontSize: 16, color: 'var(--dim)', fontStyle: 'normal', fontWeight: 500, textDecoration: 'line-through', marginLeft: 6 }}>50€</span></div>
                   </div>
                   <div style={{ fontSize: 10, color: 'var(--dim)', letterSpacing: '0.08em' }}>1 titre · 7 jours</div>
-                  <div style={{ position: 'absolute', bottom: 16, padding: '4px 12px', borderRadius: 100, background: 'rgba(193,44,44,0.22)', border: '1px solid rgba(193,44,44,0.48)', fontSize: 9, fontWeight: 700, letterSpacing: '0.14em', color: 'var(--rouge3)', textTransform: 'uppercase' }}>OFFERT</div>
+                  <div style={{ position: 'absolute', bottom: 16, padding: '4px 12px', borderRadius: 100, background: 'rgba(193,44,44,0.22)', border: '1px solid rgba(193,44,44,0.48)', fontSize: 9, fontWeight: 700, letterSpacing: '0.14em', color: 'var(--rouge3)', textTransform: 'uppercase' }}>-50%</div>
                 </>
               ) : (
                 <>
@@ -683,7 +686,7 @@ function PromoBanner({ setPage }) {
                     <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
                     <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
                   </svg>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 900, fontSize: 20, color: 'rgba(241,236,231,0.2)', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'center', lineHeight: 1.25 }}>Ton master<br/>offert</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 900, fontSize: 20, color: 'rgba(241,236,231,0.2)', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'center', lineHeight: 1.25 }}>Ton master<br/>à -50%</div>
                   <div style={{ fontSize: 9, color: 'rgba(241,236,231,0.13)', letterSpacing: '0.1em' }}>← Réclamer</div>
                 </>
               )}
@@ -833,7 +836,7 @@ function TarifsSection({ setPage }) {
       items: [
         { id: 'mix-standard',  label: 'Mixage Standard',    desc: 'Mix pro · livraison 7 jours · acompte 50%',              prix: '120€', unit: '/titre', badge: null },
         { id: 'mix-urgent',    label: 'Mixage Urgent 48h',  desc: 'Livraison sous 48h · idéal pour les sorties en urgence', prix: '170€', unit: '/titre', badge: '48h' },
-        { id: 'mastering',     label: 'Mastering',          desc: 'Finition prête streaming, radio ou vinyle',              prix: '50€',  unit: '/titre', badge: 'Offert*' },
+        { id: 'mastering',     label: 'Mastering',          desc: 'Finition prête streaming, radio ou vinyle',              prix: '50€',  unit: '/titre', badge: '-50%*' },
       ]
     },
     {
@@ -928,7 +931,7 @@ function TarifsSection({ setPage }) {
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3, flexWrap: 'wrap' }}>
                             <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--blanc)' }}>{item.label}</span>
                             {item.badge && (
-                              <span style={{ padding: '2px 8px', borderRadius: 100, fontSize: 9, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', flexShrink: 0, background: item.badge === 'Offert*' ? 'rgba(193,44,44,0.18)' : 'rgba(241,236,231,0.07)', border: `1px solid ${item.badge === 'Offert*' ? 'rgba(193,44,44,0.38)' : 'rgba(241,236,231,0.1)'}`, color: item.badge === 'Offert*' ? 'var(--rouge3)' : 'var(--dim)' }}>{item.badge}</span>
+                              <span style={{ padding: '2px 8px', borderRadius: 100, fontSize: 9, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', flexShrink: 0, background: item.badge === '-50%*' ? 'rgba(193,44,44,0.18)' : 'rgba(241,236,231,0.07)', border: `1px solid ${item.badge === '-50%*' ? 'rgba(193,44,44,0.38)' : 'rgba(241,236,231,0.1)'}`, color: item.badge === '-50%*' ? 'var(--rouge3)' : 'var(--dim)' }}>{item.badge}</span>
                             )}
                           </div>
                           <div style={{ fontSize: 12, color: 'var(--dim)', fontWeight: 300 }}>{item.desc}</div>
@@ -2282,7 +2285,7 @@ function StudioPage({ setPage }) {
   const SERVICES = [
     { id: 'enreg', titre: 'Enregistrement', prix: 'Dès 20€/h', desc: 'Prise de son en cabine acoustique avec ou sans ingénieur. Voix, instruments, podcasts, voix off.', tags: ['Voix', 'Instruments', 'Groupe', 'Podcast'], options: [{ label: 'Avec Ingénieur', prix: '30€/h', pid: 'session-avec' }, { label: 'Sans Ingénieur', prix: '20€/h', pid: 'session-sans' }, { label: 'Session de Nuit', prix: '35€/h', pid: 'session-nuit' }] },
     { id: 'mix', titre: 'Mixage', prix: '120€/titre', desc: 'Mix professionnel par titre. Acompte 50% obligatoire. Livraison stem + master stéréo.', tags: ['Stéréo', 'Stems', 'Révisions'], options: [{ label: 'Standard · 7 jours', prix: '120€', pid: 'mix-standard' }, { label: 'Urgent · 48h', prix: '170€', pid: 'mix-urgent' }] },
-    { id: 'master', titre: 'Mastering', prix: '50€/titre', badge: 'Offert avec mix*', desc: 'Finition prête pour diffusion : streaming, radio ou vinyle. Loudness optimisé.', tags: ['Spotify', 'Apple Music', 'Radio', 'Vinyle'], options: [{ label: 'Mastering standard', prix: '50€', pid: 'mastering' }] },
+    { id: 'master', titre: 'Mastering', prix: '50€/titre', badge: '-50% avec mix*', desc: 'Finition prête pour diffusion : streaming, radio ou vinyle. Loudness optimisé.', tags: ['Spotify', 'Apple Music', 'Radio', 'Vinyle'], options: [{ label: 'Mastering standard', prix: '50€', pid: 'mastering' }] },
     { id: 'compo', titre: 'Composition', prix: 'Sur devis', desc: 'Composition sur mesure. Sound design, beat, arrangement, orchestration. Du concept au produit fini.', tags: ['Beat', 'Arrangement', 'Orchestration'], options: null, ctaLabel: 'Nous contacter', ctaAction: 'contact' },
   ];
 
@@ -3829,7 +3832,7 @@ function DashboardPage({ setPage }) {
                 ) : <NewsletterForm />}
                 <div style={{ marginTop: "auto", paddingTop: 20 }}>
                   <div style={{ fontSize: 11, color: "var(--dim)", lineHeight: 1.6, marginBottom: 8 }}>Promo en cours</div>
-                  <button onClick={() => setPage("booking")} style={{ width: "100%", padding: "12px", borderRadius: 12, background: "rgba(139,30,30,0.1)", border: "1px solid rgba(139,30,30,0.32)", color: "var(--rouge3)", fontSize: 12.5, fontWeight: 700, cursor: "pointer", textAlign: "left" }}>1 mix acheté = 1 master offert →</button>
+                  <button onClick={() => setPage("booking")} style={{ width: "100%", padding: "12px", borderRadius: 12, background: "rgba(139,30,30,0.1)", border: "1px solid rgba(139,30,30,0.32)", color: "var(--rouge3)", fontSize: 12.5, fontWeight: 700, cursor: "pointer", textAlign: "left" }}>1 mix acheté · master à -50% →</button>
                 </div>
               </div>
             </div>
