@@ -2273,8 +2273,7 @@ function StudioPage({ setPage }) {
   const mediaSlides = [
   { type: 'photo', img: 'studio/cabine.jpg',  label: 'Salon & Régie', pos: 'center center' },
   { type: 'photo', img: 'studio/cabine2.jpg', label: 'La Cabine · Enregistrement', pos: 'center 15%' },
-  { type: 'photo', bg: 'radial-gradient(ellipse 70% 60% at 60% 35%, #1a1008 0%, #080806 60%, #050505 100%)', label: 'Régie · Console & Monitoring' },
-  { type: 'video', src: 'studio/session-live.mp4', label: 'Session live · Enregistrement' }];
+  { type: 'photo', bg: 'radial-gradient(ellipse 70% 60% at 60% 35%, #1a1008 0%, #080806 60%, #050505 100%)', label: 'Régie · Console & Monitoring' }];
 
   const videos = [
   { id: '4CpV_ymIeso', titre: 'Kei — OG Bounce', desc: '', featured: true },
