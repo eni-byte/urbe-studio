@@ -2298,7 +2298,10 @@ function StudioPage({ setPage }) {
   const mediaSlides = [
   { type: 'photo', img: 'studio/cabine.jpg',  label: 'Salon & Régie', pos: 'center center' },
   { type: 'photo', img: 'studio/cabine2.jpg', label: 'La Cabine · Enregistrement', pos: 'center 15%' },
-  { type: 'photo', bg: 'radial-gradient(ellipse 70% 60% at 60% 35%, #1a1008 0%, #080806 60%, #050505 100%)', label: 'Régie · Console & Monitoring' }];
+  { type: 'photo', img: 'fdlm/DSC07462.jpg', label: 'Fête de la Musique 2026 · Urbe en live', pos: 'center 45%' },
+  { type: 'photo', img: 'fdlm/DSC04308.jpg', label: 'Fête de la Musique 2026 · L’ambiance', pos: 'center 35%' },
+  { type: 'photo', img: 'fdlm/DSC06249.jpg', label: 'Fête de la Musique 2026 · Les artistes', pos: 'center 30%' },
+  { type: 'photo', img: 'fdlm/DSC06916.jpg', label: 'Fête de la Musique 2026 · La nuit', pos: 'center 45%' }];
 
   const videos = [
   { id: '4CpV_ymIeso', titre: 'Kei — OG Bounce', desc: '', featured: true },
@@ -2323,7 +2326,7 @@ function StudioPage({ setPage }) {
             {m.src
             ? <video src={activeMedia === i ? R(m.src) : undefined} autoPlay muted loop playsInline preload="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
             : m.img
-            ? <img src={R(m.img)} alt={m.label} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: m.pos || 'center center' }} />
+            ? <img src={R(m.img)} alt={m.label} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: m.pos || 'center center' }} />
             : <div style={{ position: 'absolute', inset: 0, background: m.bg }} />
             }
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '45%', background: 'linear-gradient(180deg, rgba(5,5,5,0.85) 0%, rgba(5,5,5,0.5) 50%, transparent 100%)' }} />
