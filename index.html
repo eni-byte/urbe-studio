@@ -741,6 +741,12 @@
         <div class="urbe-bm-field-err" data-err="tel">Ce numéro ne ressemble pas à un téléphone français.</div>
       </div>
 
+      <!-- Honeypot anti-bot : invisible pour les humains, souvent rempli par les bots. -->
+      <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
+        <label for="urbe-bm-website">Ne pas remplir</label>
+        <input id="urbe-bm-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+
       <label class="urbe-bm-cbx urbe-bm-group" style="margin-top:8px;">
         <input type="checkbox" id="urbe-bm-consent" />
         <span class="urbe-bm-cbx-box"></span>
@@ -806,14 +812,15 @@
     var card = document.createElement('div');
     card.className = 'urbe-bm-card';
     card.setAttribute('data-eng', e.id);
-    card.innerHTML =
-      '<div class="urbe-bm-eng-row">' +
-        '<div class="urbe-bm-avatar" style="background:' + e.bg + '">' + e.initiales + '</div>' +
-        '<div>' +
-          '<div class="urbe-bm-eng-name">' + e.nom + '</div>' +
-          '<div class="urbe-bm-eng-spe">' + e.spe + '</div>' +
-        '</div>' +
-      '</div>';
+    // Construction via le DOM (textContent) plutôt qu'innerHTML : pas de sink XSS.
+    var row = document.createElement('div'); row.className = 'urbe-bm-eng-row';
+    var av = document.createElement('div'); av.className = 'urbe-bm-avatar'; av.style.background = e.bg; av.textContent = e.initiales;
+    var col = document.createElement('div');
+    var nm = document.createElement('div'); nm.className = 'urbe-bm-eng-name'; nm.textContent = e.nom;
+    var sp = document.createElement('div'); sp.className = 'urbe-bm-eng-spe'; sp.textContent = e.spe;
+    col.appendChild(nm); col.appendChild(sp);
+    row.appendChild(av); row.appendChild(col);
+    card.appendChild(row);
     card.addEventListener('click', function() {
       state.engineerId = e.id;
       engGrid.querySelectorAll('[data-eng]').forEach(function(c) { c.removeAttribute('data-selected'); });
@@ -952,6 +959,8 @@
 
   function submit() {
     if (state.submitting) return;                 // anti double-soumission
+    var hp = root.querySelector('#urbe-bm-website');
+    if (hp && hp.value) { showStep('success'); return; }   // honeypot rempli = bot : on n'envoie rien
     state.submitting = true;
     var nextBtn = root.querySelector('[data-next]');
     var prevLabel = nextBtn ? nextBtn.textContent : '';

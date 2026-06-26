@@ -18,12 +18,16 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     # Désactive des API sensibles par défaut
     Permissions-Policy = "geolocation=(), microphone=(), camera=(), payment=()"
+    # Isole le contexte de navigation (anti cross-window leaks / Spectre).
+    # NB : on n'ajoute PAS COEP/CORP same-origin pour ne pas casser les images OG
+    # (partage social) ni les iframes tierces (YouTube, Stripe, Spotify, Agenda).
+    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
     # Force HTTPS pendant 1 an (à activer une fois le domaine en HTTPS stable)
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
     # Politique de sécurité du contenu (CSP). Build Vite : plus de CDN ni 'unsafe-eval'.
     # 'unsafe-inline' (scripts) reste pour la modale de réservation en JS inline.
     # connect-src autorise les appels aux webhooks n8n (lead, chat, créneaux) + Google Analytics.
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self'; connect-src 'self' https://mpoi.app.n8n.cloud https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://open.spotify.com https://calendar.google.com https://js.stripe.com; base-uri 'self'; form-action 'self' mailto:; frame-ancestors 'none'; upgrade-insecure-requests"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self'; connect-src 'self' https://mpoi.app.n8n.cloud https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://challenges.cloudflare.com; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://open.spotify.com https://calendar.google.com https://js.stripe.com https://challenges.cloudflare.com; base-uri 'self'; form-action 'self' mailto:; frame-ancestors 'none'; upgrade-insecure-requests"
 
 # ── Cache long pour les médias (images, vidéo, polices) ─────────────
 [[headers]]

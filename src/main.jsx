@@ -81,6 +81,10 @@ const URBE_CONFIG = {
   /* Webhook n8n « Créer session Stripe » : génère une session de paiement au bon
      montant (durée incluse) et renvoie l'URL Checkout. */
   sessionWebhook: 'https://mpoi.app.n8n.cloud/webhook/urbe-create-session',
+  /* CAPTCHA anti-bot Cloudflare Turnstile. Vide = désactivé (le honeypot reste actif).
+     Pour activer : colle ta clé de site Turnstile ici, puis fais vérifier le token
+     `cf-turnstile-response` côté n8n (clé secrète) avant de traiter lead/chat. */
+  turnstileSiteKey: '',
 };
 
 /* ─── UTILS ──────────────────────────────────────────────────── */
@@ -165,16 +169,23 @@ function redirectToStripe(productKey, summary) {
 function mailtoBooking({ subject, body }) {
   window.location.href = `mailto:contact@urbestudio.fr?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
+/* fetch avec timeout (AbortController) : un webhook n8n qui pend ne fige plus l'UI
+   (spinner infini). Au-delà du délai, la requête est annulée et part dans le .catch. */
+function fetchWithTimeout(url, opts, ms) {
+  const ctrl = new AbortController();
+  const id = setTimeout(() => ctrl.abort(), ms || 12000);
+  return fetch(url, Object.assign({}, opts, { signal: ctrl.signal })).finally(() => clearTimeout(id));
+}
 /* Envoie un lead au webhook n8n → HubSpot (CRM). Non bloquant : n'empêche jamais
    l'utilisateur d'avoir sa confirmation, même si le réseau échoue. */
 function postLead(data) {
   const url = URBE_CONFIG.leadWebhook;
   if (!url) return Promise.resolve(false);
-  return fetch(url, {
+  return fetchWithTimeout(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-Urbe-Key': URBE_WEBHOOK_KEY },
     body: JSON.stringify({ source: 'Site web Urbe', ...data }),
-  }).then((r) => r.ok).catch(() => false);
+  }, 10000).then((r) => r.ok).catch(() => false);
 }
 window.postLead = postLead;
 window.URBE_CONFIG = URBE_CONFIG;
@@ -1050,12 +1061,15 @@ function ActuSection({ setPage }) {
 function HomePage({ setPage }) {
   const [formOpen, setFormOpen] = useState(false);
   const [formStep, setFormStep] = useState(0); // 0=idle, 1=sent
-  const [formData, setFormData] = useState({ nom: '', email: '', projet: '', message: '' });
+  const [formData, setFormData] = useState({ nom: '', email: '', projet: '', message: '', hp: '' });
   const handleSubmit = () => {
     if (!formData.nom || !formData.email) return;
-    postLead({ nom: formData.nom, email: formData.email, type: formData.projet, message: formData.message, source: 'Formulaire accueil' });
+    // Honeypot : si le champ piège est rempli, c'est un bot → succès factice, rien envoyé.
+    if (!formData.hp) {
+      postLead({ nom: formData.nom, email: formData.email, type: formData.projet, message: formData.message, source: 'Formulaire accueil' });
+    }
     setFormStep(1);
-    setTimeout(() => {setFormOpen(false);setFormStep(0);setFormData({ nom: '', email: '', projet: '', message: '' });}, 2800);
+    setTimeout(() => {setFormOpen(false);setFormStep(0);setFormData({ nom: '', email: '', projet: '', message: '', hp: '' });}, 2800);
   };
 
   return (
@@ -1184,6 +1198,11 @@ function HomePage({ setPage }) {
                 style={{ width: '100%', background: 'var(--s2)', border: '1px solid var(--br)', color: 'var(--blanc)', fontSize: 13, padding: '10px 14px', borderRadius: '8px', outline: 'none', resize: 'none' }}
                 onFocus={(e) => e.target.style.borderColor = 'var(--rouge)'}
                 onBlur={(e) => e.target.style.borderColor = 'var(--br)'} />
+                </div>
+                {/* Honeypot anti-bot : invisible, hors tabulation. Rempli = bot. */}
+                <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden' }}>
+                  <label htmlFor="urbe-hp-accueil">Ne pas remplir</label>
+                  <input id="urbe-hp-accueil" name="website" type="text" tabIndex={-1} autoComplete="off" value={formData.hp} onChange={(e) => setFormData((p) => ({ ...p, hp: e.target.value }))} />
                 </div>
                 <button onClick={handleSubmit} style={{
                 width: '100%', padding: '12px', borderRadius: '8px', border: 'none',
@@ -1402,7 +1421,7 @@ function BookingPage({ initialProductId }) {
   const [step, setStep] = useState(1);
   const [sel, setSel] = useState({ productId: initialProductId || null, date: null, time: null, hours: 2, addons: [] });
   // Identité du client collectée avant paiement → envoyée dans HubSpot avec la commande.
-  const [contact, setContact] = useState({ firstName: '', lastName: '', email: '', phone: '', artist: '', project: '' });
+  const [contact, setContact] = useState({ firstName: '', lastName: '', email: '', phone: '', artist: '', project: '', hp: '' });
   const setC = (k) => (e) => setContact((c) => ({ ...c, [k]: e.target.value }));
   const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(contact.email.trim());
   // Téléphone FR (fixe ou mobile, +33 ou 0, séparateurs tolérés).
@@ -1442,7 +1461,7 @@ function BookingPage({ initialProductId }) {
     const u = URBE_CONFIG.slotsWebhook;
     if (!u) { setSlotsLoaded(true); return; }
     let alive = true;
-    fetch(u, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Urbe-Key': URBE_WEBHOOK_KEY }, body: '{}' }).
+    fetchWithTimeout(u, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Urbe-Key': URBE_WEBHOOK_KEY }, body: '{}' }, 8000).
     then((r) => r.json()).then((d) => { if (alive) { setSlotsBusy((d && d.busy) || {}); setSlotsLoaded(true); } }).
     catch(() => { if (alive) setSlotsLoaded(true); });
     return () => { alive = false; };
@@ -1551,7 +1570,8 @@ function BookingPage({ initialProductId }) {
       ? `B~${summary.date}~${String(summary.time).replace(':', '')}~${summary.hours || 2}~${productKey}~${addonsRef}`
       : `M~${productKey}`;
     // 1) On enregistre le prospect + la commande dans HubSpot (non bloquant).
-    postLead({
+    //    Honeypot rempli = bot → on saute la capture CRM (le paiement reste possible).
+    if (!contact.hp) postLead({
       type: 'reservation',
       firstName: contact.firstName.trim(),
       lastName: contact.lastName.trim(),
@@ -1607,11 +1627,11 @@ function BookingPage({ initialProductId }) {
     // On ouvre la fenêtre tout de suite (geste utilisateur, anti-popup-blocker) puis on y charge l'URL.
     if (URBE_CONFIG.paymentMode === 'live' && URBE_CONFIG.sessionWebhook) {
       const payWin = window.open('', '_blank');
-      fetch(URBE_CONFIG.sessionWebhook, {
+      fetchWithTimeout(URBE_CONFIG.sessionWebhook, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Urbe-Key': URBE_WEBHOOK_KEY },
         body: JSON.stringify({ productLabel: summary.productLabel, ref, email: contact.email.trim(), name: `${contact.firstName.trim()} ${contact.lastName.trim()}`.trim() }),
-      }).then((r) => r.json()).then((d) => {
+      }, 15000).then((r) => r.json()).then((d) => {
         if (d && d.url) { if (payWin) payWin.location.href = d.url; else window.location.href = d.url; goConfirm(); }
         else { if (payWin) payWin.close(); onSessionFail(); }
       }).catch(() => { if (payWin) payWin.close(); onSessionFail(); });
@@ -1883,6 +1903,11 @@ function BookingPage({ initialProductId }) {
                 </div>
                 <div style={{ marginBottom: 12 }}><label htmlFor="bk-artist" style={labelStyle}>Nom d'artiste</label><input id="bk-artist" value={contact.artist} onChange={setC('artist')} placeholder="Ton blaze / nom de scène" style={champStyle} /></div>
                 <div><label htmlFor="bk-project" style={labelStyle}>Projet musical</label><textarea id="bk-project" value={contact.project} onChange={setC('project')} placeholder="Quelques mots sur ton projet (style, nb de titres, deadline…)" rows={3} style={{ ...champStyle, resize: 'vertical', lineHeight: 1.5 }} /></div>
+                {/* Honeypot anti-bot : invisible, hors tabulation. */}
+                <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden' }}>
+                  <label htmlFor="bk-website">Ne pas remplir</label>
+                  <input id="bk-website" name="website" type="text" tabIndex={-1} autoComplete="off" value={contact.hp} onChange={setC('hp')} />
+                </div>
               </div>
 
               <div style={{ background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 14, padding: 24, marginBottom: 18 }}>
@@ -1961,7 +1986,7 @@ function BookingPage({ initialProductId }) {
               </div>
 
               <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
-                <button onClick={() => { setStep(1); setSel({ productId: null, date: null, time: null, hours: 2, addons: [] }); setContact({ firstName: '', lastName: '', email: '', phone: '', artist: '', project: '' }); setTouched({}); setSubmittedRecap(null); }} style={{ padding: '11px 20px', borderRadius: 100, background: 'none', color: 'var(--dim)', border: '1px solid var(--br)', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>Nouvelle réservation</button>
+                <button onClick={() => { setStep(1); setSel({ productId: null, date: null, time: null, hours: 2, addons: [] }); setContact({ firstName: '', lastName: '', email: '', phone: '', artist: '', project: '', hp: '' }); setTouched({}); setSubmittedRecap(null); }} style={{ padding: '11px 20px', borderRadius: 100, background: 'none', color: 'var(--dim)', border: '1px solid var(--br)', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>Nouvelle réservation</button>
                 <button onClick={() => window.__urbeNav && window.__urbeNav('home')} style={{ padding: '11px 22px', borderRadius: 100, background: 'var(--rouge)', color: '#fff', border: 'none', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>Retour à l'accueil</button>
               </div>
             </div>
@@ -4261,7 +4286,7 @@ function ChatAgent() {
     setMsgs((m) => [...m, { role: 'user', text }]);
     setInput('');
     setBusy(true);
-    fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Urbe-Key': URBE_WEBHOOK_KEY }, body: JSON.stringify({ message: text, sessionId: sidRef.current }) }).
+    fetchWithTimeout(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Urbe-Key': URBE_WEBHOOK_KEY }, body: JSON.stringify({ message: text, sessionId: sidRef.current }) }, 15000).
     then((r) => r.json()).then((d) => { setMsgs((m) => [...m, { role: 'bot', text: (d && d.reply) || "Petite coupure… réessaie, ou écris-nous à contact@urbestudio.fr." }]); }).
     catch(() => { setMsgs((m) => [...m, { role: 'bot', text: "Connexion impossible. Tu peux réserver directement ou nous écrire à contact@urbestudio.fr." }]); }).
     then(() => setBusy(false));
