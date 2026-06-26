@@ -313,6 +313,19 @@
     <p>Contact : <a href="mailto:contact@urbestudio.fr">contact@urbestudio.fr</a></p>
   </div>
 </noscript>
+<script>
+  /* DEV LOCAL UNIQUEMENT : la racine charge /src/main.jsx (JSX brut, non exécutable
+     sans build Vite). Sur localhost, si rien ne s'affiche, on bascule sur l'aperçu Babel.
+     Inerte en production (garde sur le hostname) et sur preview.html (anti-boucle). */
+  if (/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) && !location.pathname.endsWith('preview.html')) {
+    window.addEventListener('DOMContentLoaded', function () {
+      setTimeout(function () {
+        var r = document.getElementById('root');
+        if (r && r.children.length === 0) location.replace('/preview.html');
+      }, 500);
+    });
+  }
+</script>
 <script type="module" src="/src/main.jsx"></script>
 
 <!-- ─── BOOKING TUNNEL MODAL (vanilla HTML/CSS/JS) ───────────── -->
