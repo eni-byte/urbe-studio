@@ -17,6 +17,8 @@ GUIDE_TITLES = {
     "loudness-war-volume-mastering": "Loudness War : pourquoi vos morceaux sonnent moins fort",
     "bas-du-spectre-kick-basse": "Bas du spectre : basses baveuses & kick étouffé",
     "test-voiture-mixage": "Le test de la voiture : un mix qui sonne partout",
+    "5-erreurs-home-studio": "5 erreurs de home studio qui plombent ton mix",
+    "bible-enregistrement-home-studio": "La Bible de l'enregistrement home studio",
 }
 
 STYLE = """<style>
@@ -287,6 +289,42 @@ ARTICLES = [
 <h2>4. Pourquoi la voiture révèle tout</h2>
 <p>L'habitacle est un environnement que vous connaissez par cœur : vous y écoutez vos artistes préférés tous les jours. Si votre titre sonne mal juste après un morceau de Drake ou Billie Eilish écouté au même endroit, le diagnostic est sans appel.</p>
 <p>Votre rôle d'artiste est de composer et capturer l'émotion. Le rôle d'un studio, c'est une pièce calibrée, du matériel de pointe et des oreilles objectives — pour un mix qui sonne sur des AirPods, en club comme dans l'autoradio.</p>""",
+  },
+  {
+    "slug": "5-erreurs-home-studio",
+    "title": "5 erreurs de home studio qui plombent ton mix — Urbe Studio",
+    "h1": "5 erreurs de home studio qui plombent ton mix (avant même le mixage)",
+    "desc": "Ton morceau sonne « amateur » ? 80% d'un bon mix se joue avant le mix. Les 5 erreurs les plus courantes en home studio urbain — et comment les éviter.",
+    "keywords": "erreurs home studio, enregistrer du rap chez soi, préparer son morceau pour le mixage, home studio rap trap, mixage son urbain",
+    "eyebrow": "Guide · Home studio",
+    "lead": "Tu envoies tes pistes à un ingé et ça sonne toujours « chambre » ? Avant d'accuser le mixeur : 80% d'un bon mix urbain se joue avant même le mix.",
+    "service": MIX_PILIER, "service2": STUDIO,
+    "related_guides": ["bible-enregistrement-home-studio", "phase-annulation-frequences"],
+    "cta": ("Une session propre = un mix qui sonne pro", "Corrige ces 5 points et confie-nous une session que la plupart des artistes ne livrent jamais.", "Commander mon mix →"),
+    "body": """<p>Tu envoies tes pistes à un ingé, il te renvoie un mix… et ça sonne toujours « chambre ». Pas assez d'air, pas assez de coffre, la voix qui ne s'installe pas. Avant d'accuser le mixeur, regarde en amont : <strong>80% d'un bon mix urbain se joue avant même le mix</strong>, dans la prise et dans la façon dont tu livres ta session.</p>
+<p>Voici les cinq erreurs qu'on voit revenir le plus souvent chez Urbe Studio, et comment les éviter dès chez toi. Pour le détail complet, on a réuni tout ça dans <a href="/guides/bible-enregistrement-home-studio/">la Bible de l'enregistrement home studio</a> — un guide gratuit de 24 pages.</p>
+<div class="callout"><strong>À retenir :</strong> un mix ne répare pas une mauvaise prise. Il révèle une bonne préparation.</div>
+<h2>1. Le beat en MP3</h2>
+<p>Un beat ripé de YouTube ou reçu en MP3 par WhatsApp est <strong>déjà compressé et dégradé</strong>. Poser une belle voix dessus, c'est monter des jantes de luxe sur une épave.</p>
+<p><strong>Le réflexe :</strong> exige toujours l'instru en <strong>WAV 24 bits</strong>, au même BPM, calée pour démarrer à la mesure 1. Et garde les stems séparés (drums, 808, mélodies, FX) si ton beatmaker peut te les fournir.</p>
+<h2>2. Une pièce qui résonne</h2>
+<p>La pièce se grave dans ta voix : écho, réflexions, ce côté « salle de bain » qu'aucun ingé ne retire proprement. Fais le <strong>test du claquement de mains</strong> : si ça traîne avec une résonance métallique, ton micro capte la même chose.</p>
+<p><strong>Le réflexe :</strong> enregistre face à une surface molle (canapé, rideaux épais, placard plein de fringues), éloigne le micro des murs nus, coupe frigo, clim et PC bruyant. Une voix proche et sèche bat toujours une voix lointaine et baveuse.</p>
+<h2>3. Imprimer l'autotune et les FX à la prise</h2>
+<p>Un ingé peut toujours <em>ajouter</em> un effet, il ne pourra jamais <em>retirer</em> proprement un autotune raté ou une saturation imprimée par erreur.</p>
+<div class="callout"><strong>La règle d'or :</strong> livre <strong>toujours une version 100% brute</strong> de chaque piste, sans aucun plugin, en plus de ta version produite.</div>
+<h2>4. Des pistes mal nommées, mal exportées</h2>
+<p>« Audio_07_final_FINAL.wav », des pistes qui ne retombent pas en place, une voix exportée en stéréo… et l'ingé passe une heure à reconstituer ta session. Un export bâclé, c'est l'aller-retour assuré.</p>
+<p><strong>Le réflexe :</strong> nomme tes pistes (<strong>Lead, Double L, Adlib…</strong>), exporte chaque source séparément en WAV — mono pour la voix, stéréo pour l'instru — toutes calées sur le même point de départ.</p>
+<h2>5. Ne pas écrire de notes</h2>
+<p>Tu connais ton morceau par cœur ; l'ingé le découvre à l'ouverture. L'énergie visée, une référence, la 808 manquante… deviner, c'est se tromper.</p>
+<p><strong>Le réflexe :</strong> joins une note courte avec tes intentions et tes références. Deux lignes te font gagner un aller-retour entier.</p>
+<div class="cta" style="text-align:left">
+  <div class="eyebrow" style="color:var(--rouge3,#c12c2c)">Le guide gratuit</div>
+  <h2 style="text-transform:uppercase">La Bible de l'enregistrement home studio</h2>
+  <p>Les 5 erreurs ne sont qu'un aperçu. Le guide complet couvre toute la chaîne — du choix du micro à l'export final — avec une checklist ultime. 24 pages, gratuit, pensé pour le rap, la trap, la drill, l'afro et le R&B.</p>
+  <a class="btn" href="/guides/bible-enregistrement-home-studio/">↓ Obtenir la Bible (gratuit)</a>
+</div>""",
   },
 ]
 
