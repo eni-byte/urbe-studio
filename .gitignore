@@ -16,3 +16,4 @@ preview-main.js
 # Claude local settings
 .claude/settings.local.json
 /fdlm
+/guides

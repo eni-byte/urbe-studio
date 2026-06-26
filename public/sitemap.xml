@@ -57,6 +57,44 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- Guides (pages SEO non liées dans la navigation) -->
+  <url>
+    <loc>https://www.urbestudio.fr/guides/mythe-on-arrangera-au-mixage/</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.urbestudio.fr/guides/phase-annulation-frequences/</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.urbestudio.fr/guides/erreurs-compression-mixage/</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.urbestudio.fr/guides/loudness-war-volume-mastering/</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.urbestudio.fr/guides/bas-du-spectre-kick-basse/</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.urbestudio.fr/guides/test-voiture-mixage/</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
   <!-- Blog -->
   <url>
     <loc>https://www.urbestudio.fr/blog/index.html</loc>

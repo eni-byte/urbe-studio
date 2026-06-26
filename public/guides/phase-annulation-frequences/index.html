@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase et annulation de fréquences — Urbe Studio</title>
+<meta name="description" content="Vos prises manquent de corps ? Repérez et corrigez les problèmes de phase lors d'un enregistrement multi-micros (batterie, guitare, voix)." />
+<meta name="keywords" content="annulation de phase, problème de phase enregistrement, multi-micros, inversion polarité, prise de son" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://www.urbestudio.fr/guides/phase-annulation-frequences/" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Phase et annulation de fréquences : l'ennemi invisible de vos enregistrements" />
+<meta property="og:description" content="Vos prises manquent de corps ? Repérez et corrigez les problèmes de phase lors d'un enregistrement multi-micros (batterie, guitare, voix)." />
+<meta property="og:url" content="https://www.urbestudio.fr/guides/phase-annulation-frequences/" />
+<meta property="og:locale" content="fr_FR" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800&family=Barlow+Condensed:wght@700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Phase et annulation de fréquences : l'ennemi invisible de vos enregistrements",
+  "description": "Vos prises manquent de corps ? Repérez et corrigez les problèmes de phase lors d'un enregistrement multi-micros (batterie, guitare, voix).",
+  "datePublished": "2026-06-26",
+  "dateModified": "2026-06-26",
+  "inLanguage": "fr-FR",
+  "author": {
+    "@type": "Organization",
+    "name": "Urbe Studio"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Urbe Studio",
+    "email": "contact@urbestudio.fr"
+  },
+  "mainEntityOfPage": "https://www.urbestudio.fr/guides/phase-annulation-frequences/"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Accueil",
+      "item": "https://www.urbestudio.fr/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://www.urbestudio.fr/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Phase et annulation de fréquences",
+      "item": "https://www.urbestudio.fr/guides/phase-annulation-frequences/"
+    }
+  ]
+}
+</script>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#080808;color:#f1ece7;font-family:'Plus Jakarta Sans',system-ui,sans-serif;line-height:1.7}
+  a{color:#c12c2c}
+  :focus-visible{outline:2px solid #c12c2c;outline-offset:2px;border-radius:3px}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px}
+  header.site{border-bottom:1px solid rgba(241,236,231,0.1);padding:18px 0;position:sticky;top:0;background:rgba(8,8,8,0.92);backdrop-filter:blur(10px);z-index:5}
+  header.site .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;letter-spacing:0.04em;color:#f1ece7;text-decoration:none}
+  .logo b{color:#c12c2c}
+  .btn{background:#8B1E1E;color:#fff;padding:10px 20px;border-radius:100px;text-decoration:none;font-weight:700;font-size:13px;white-space:nowrap;display:inline-block}
+  .btn:hover{background:#a52424}
+  .crumb{font-family:'Space Mono',monospace;font-size:11px;color:rgba(241,236,231,0.5);padding:22px 0 0}
+  .crumb a{color:rgba(241,236,231,0.5)}
+  article{padding:18px 0 56px}
+  .eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#c12c2c;margin:18px 0 14px}
+  h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(34px,6vw,56px);line-height:0.98;letter-spacing:0.01em;margin:0 0 18px;text-transform:uppercase}
+  .lead{font-size:18px;color:rgba(241,236,231,0.82);font-weight:300;margin-bottom:22px}
+  .meta{font-family:'Space Mono',monospace;font-size:12px;color:rgba(241,236,231,0.5);margin-bottom:30px}
+  h2{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:27px;letter-spacing:0.01em;margin:40px 0 12px;text-transform:uppercase}
+  p{margin:0 0 16px;color:rgba(241,236,231,0.82)}
+  ul{color:rgba(241,236,231,0.82);padding-left:20px}
+  li{margin:7px 0}
+  strong{color:#f1ece7}
+  .callout{background:#101010;border:1px solid rgba(241,236,231,0.1);border-left:3px solid #c12c2c;border-radius:10px;padding:14px 18px;margin:18px 0}
+  .callout strong{color:#c12c2c}
+  .cta{margin:46px 0 0;padding:28px;border:1px solid rgba(139,30,30,0.45);border-radius:18px;background:#101010;text-align:center}
+  .cta h2{margin:0 0 8px}
+  .cta p{color:rgba(241,236,231,0.7);margin-bottom:18px}
+  .related{margin:48px 0 0;border-top:1px solid rgba(241,236,231,0.1);padding-top:28px}
+  .related h2{font-size:21px;margin-top:0}
+  .related a{display:block;margin:8px 0;color:#f1ece7;text-decoration:none;font-weight:500}
+  .related a:hover{color:#c12c2c}
+  footer.site{border-top:1px solid rgba(241,236,231,0.1);padding:28px 0 48px;font-size:13px;color:rgba(241,236,231,0.5)}
+  footer.site a{color:#c12c2c}
+</style>
+</head>
+<body>
+<header class="site"><div class="wrap"><a class="logo" href="/">URBE<b>.</b>STUDIO</a><a class="btn" href="/#reserver">Réserver →</a></div></header>
+<div class="wrap">
+<nav class="crumb" aria-label="Fil d'Ariane"><a href="/">Accueil</a> · Guides · Phase et annulation de fréquences</nav>
+<main>
+<article>
+<div class="eyebrow">Guide · Enregistrement</div>
+<h1>Phase et annulation de fréquences : l'ennemi invisible de vos enregistrements</h1>
+<p class="lead">Vos guitares acoustiques ou vos prises de batterie manquent de corps ? La phase est sans doute en cause — l'ennemi le plus invisible des ingénieurs du son.</p>
+<div class="meta">Guide Urbe Studio · 26 juin 2026</div>
+<p>Vous venez d'enregistrer une magnifique guitare acoustique ou un ampli avec deux micros pour avoir un son « plus large ». Mais une fois sur votre logiciel, le son est fin, métallique, creux, et perd toutes ses basses. Vous essayez de rajouter des graves avec un égaliseur (EQ), mais rien n'y fait : le son reste faible.</p>
+<p>Félicitations, vous venez de rencontrer l'ennemi le plus redouté (et le plus invisible) des ingénieurs du son : <strong>l'annulation de phase</strong>. C'est un problème purement physique qui détruit littéralement l'énergie de vos pistes avant même que vous n'ayez commencé à mixer.</p>
+<h2>1. Qu'est-ce que la phase ?</h2>
+<p>Le son se déplace dans l'air sous forme de vagues (des ondes). Chaque vague possède un « sommet » (pression positive) et un « creux » (pression négative). Si vous enregistrez une source avec deux micros placés à des distances différentes, l'onde atteint le Micro A une fraction de milliseconde avant le Micro B. Résultat : le « sommet » de A tombe en même temps que le « creux » de B. Positif + négatif = zéro. Le son s'annule de lui-même.</p>
+<h2>2. Le piège classique : la caisse claire ou la guitare</h2>
+<p>Ce problème survient quasi systématiquement avec plusieurs micros sur une même source :</p>
+<ul>
+<li><strong>La caisse claire :</strong> un micro au-dessus (Top) et un en dessous (Bottom) reçoivent des pressions opposées.</li>
+<li><strong>La guitare acoustique :</strong> un micro vers le manche, un vers la rosace, à des distances inégales.</li>
+<li><strong>La voix et la prod :</strong> les basses de l'instru peuvent annuler les graves de la voix au mauvais moment.</li>
+</ul>
+<h2>3. L'épreuve de vérité : le bouton MONO</h2>
+<p>Écoutez vos deux pistes écartées à gauche et à droite, puis passez le Master en mono. <strong>Le diagnostic fatal :</strong> si en mono la guitare perd son volume, que les basses disparaissent ou que le son devient nasillard (comme un vieux téléphone), vous avez un gros problème de phase.</p>
+<h2>4. Le mythe du « je répare ça avec un EQ »</h2>
+<p>Une annulation de phase n'est pas un problème de fréquences, c'est un problème de <em>temps</em>. Vous ne pouvez pas ajouter des basses qui ont été physiquement annulées : vous boostez du vide.</p>
+<div class="callout"><strong>La seule vraie solution :</strong> inverser la polarité d'une des deux pistes (le bouton Ø), ou zoomer sur la forme d'onde et décaler manuellement une piste de quelques millisecondes pour aligner les crêtes.</div>
+<div class="cta">
+<h2>Ne laissez pas la physique détruire vos prises</h2>
+<p>Envoyez vos multipistes : notre première étape est d'aligner parfaitement la phase de vos batteries, guitares et voix.</p>
+<a class="btn" href="/#reserver">Confier mes pistes →</a>
+<p style="margin-top:14px;font-size:13px;"><a href="/studio-enregistrement-rap-paris-10/">En savoir plus : Studio d'enregistrement rap à Paris 10ᵉ</a></p>
+</div>
+<nav class="related" aria-label="Liens utiles">
+<h2>Pour aller plus loin</h2>
+<a href="/studio-enregistrement-rap-paris-10/">→ Studio d'enregistrement rap à Paris 10ᵉ</a>
+<a href="/mixage-mastering-en-ligne/">→ Mixage &amp; mastering en ligne</a>
+<a href="/guides/mythe-on-arrangera-au-mixage/">→ Le mythe du « on arrangera ça au mixage »</a>
+<a href="/guides/bas-du-spectre-kick-basse/">→ Bas du spectre : basses baveuses & kick étouffé</a>
+</nav>
+</article>
+</main>
+</div>
+<footer class="site"><div class="wrap">Urbe Studio · 37 rue d'Hauteville, 75010 Paris · Mixage &amp; mastering en ligne · <a href="mailto:contact@urbestudio.fr">contact@urbestudio.fr</a><br /><a href="/">← Aller sur le site</a> · <a href="/#reserver">Réserver une session ou un mix</a></div></footer>
+</body>
+</html>
