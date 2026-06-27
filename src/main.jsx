@@ -166,6 +166,18 @@ function redirectToStripe(productKey, summary) {
   window.open(finalUrl, '_blank', 'noopener,noreferrer');
   return true;
 }
+/* Crée une session Stripe dynamique (montant recalculé côté serveur via n8n) et
+   renvoie l'URL de paiement. Utilisé par la modale mix de index.html — la clé du
+   webhook reste encapsulée ici plutôt que dans le HTML public. */
+function createStripeSession({ ref, productLabel, email, name }) {
+  if (!(URBE_CONFIG.paymentMode === 'live' && URBE_CONFIG.sessionWebhook)) return Promise.resolve(null);
+  return fetchWithTimeout(URBE_CONFIG.sessionWebhook, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Urbe-Key': URBE_WEBHOOK_KEY },
+    body: JSON.stringify({ productLabel, ref, email, name }),
+  }, 15000).then((r) => r.json()).then((d) => (d && d.url) ? d.url : null);
+}
+window.createStripeSession = createStripeSession;
 function mailtoBooking({ subject, body }) {
   window.location.href = `mailto:contact@urbestudio.fr?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }

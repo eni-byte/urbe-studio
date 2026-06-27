@@ -516,6 +516,13 @@
   .urbe-bm-pill[data-tone="red"] { background: #8B1E1E; color: #fff; }
   .urbe-bm-pill[data-tone="green"] { background: rgba(58,209,122,0.12); color: #3ad17a; border: 1px solid rgba(58,209,122,0.3); }
 
+  /* Option Mastering -50% (cochable) */
+  .urbe-bm-master-opt { cursor: pointer; border-radius: 8px; transition: background 0.15s; }
+  .urbe-bm-master-opt:hover { background: rgba(241,236,231,0.03); }
+  .urbe-bm-master-box { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid rgba(241,236,231,0.25); display: inline-block; position: relative; flex-shrink: 0; transition: background 0.15s, border-color 0.15s; }
+  .urbe-bm-master-opt[data-on] .urbe-bm-master-box { background: #3ad17a; border-color: #3ad17a; }
+  .urbe-bm-master-opt[data-on] .urbe-bm-master-box::after { content: ''; position: absolute; left: 5px; top: 1px; width: 5px; height: 10px; border: solid #07140c; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+
   .urbe-bm-recap {
     background: #1a1a1a; border: 1px solid rgba(241,236,231,0.08);
     border-radius: 12px; padding: 18px 20px; margin-top: 18px;
@@ -715,9 +722,12 @@
       <div class="urbe-bm-recap" data-recap>
         <div class="urbe-bm-recap-line"><span>Mix</span><span>120€</span></div>
         <div class="urbe-bm-recap-line" data-recap-urgent hidden><span>Urgence 48h</span><span>+50€</span></div>
-        <div class="urbe-bm-recap-line" style="padding-top:4px;">
-          <span class="urbe-bm-pill" data-tone="green">Master offert — promo avant le 20/06/2026</span>
-          <span style="text-decoration:line-through;color:rgba(241,236,231,0.35);">50€</span>
+        <div class="urbe-bm-recap-line urbe-bm-master-opt" data-master-toggle role="checkbox" aria-checked="false" tabindex="0" style="padding:8px 6px;align-items:center;">
+          <span style="display:inline-flex;align-items:center;gap:10px;">
+            <span class="urbe-bm-master-box" aria-hidden="true"></span>
+            <span>+ Mastering <span style="color:#3ad17a;font-weight:700;">‑50%</span></span>
+          </span>
+          <span><strong style="color:#3ad17a;">25€</strong> <span style="text-decoration:line-through;color:rgba(241,236,231,0.35);margin-left:4px;">50€</span></span>
         </div>
         <div class="urbe-bm-recap-line urbe-bm-total"><span>TOTAL</span><span data-recap-total>120€</span></div>
       </div>
@@ -816,6 +826,7 @@
     engineerId: null,
     delay: 'standard',
     multipistes: false,
+    master: false,
     submitted: false
   };
 
@@ -887,9 +898,22 @@
   function updateRecap() {
     var base = 120;
     var urgent = state.delay === 'urgent' ? 50 : 0;
-    var total = base + urgent;
+    var master = state.master ? 25 : 0;
+    var total = base + urgent + master;
     root.querySelector('[data-recap-urgent]').hidden = !urgent;
+    var mopt = root.querySelector('[data-master-toggle]');
+    if (mopt) {
+      if (state.master) { mopt.setAttribute('data-on', ''); mopt.setAttribute('aria-checked', 'true'); }
+      else { mopt.removeAttribute('data-on'); mopt.setAttribute('aria-checked', 'false'); }
+    }
     root.querySelector('[data-recap-total]').textContent = total + '€';
+  }
+  // Option Mastering -50% (cochable)
+  var masterOpt = root.querySelector('[data-master-toggle]');
+  function setMaster(on) { state.master = on; updateRecap(); }
+  if (masterOpt) {
+    masterOpt.addEventListener('click', function() { setMaster(!state.master); });
+    masterOpt.addEventListener('keydown', function(ev) { if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); setMaster(!state.master); } });
   }
 
   // Stepper + step show/hide
@@ -980,7 +1004,8 @@
     if (nextBtn) { nextBtn.disabled = true; nextBtn.textContent = 'Envoi…'; }   // état ENVOI
     var eng = ENGS.find(function(e) { return e.id === state.engineerId; });
     var titre = root.querySelector('#urbe-bm-titre').value.trim();
-    var total = 120 + (state.delay === 'urgent' ? 50 : 0);
+    var total = 120 + (state.delay === 'urgent' ? 50 : 0) + (state.master ? 25 : 0);
+    var label = 'Mix' + (state.delay === 'urgent' ? ' urgent 48h' : '') + (state.master ? ' + Mastering -50%' : '') + (titre ? ' · ' + titre : '');
     // Capture CRM best-effort (non bloquante) — n8n consomme le lead à sa réactivation.
     var payload = {
       type: 'mix-order',
@@ -989,10 +1014,10 @@
       email: root.querySelector('#urbe-bm-email').value.trim(),
       phone: root.querySelector('#urbe-bm-tel').value.trim(),
       artist: root.querySelector('#urbe-bm-artiste').value.trim(),
-      productLabel: 'Mix' + (state.delay === 'urgent' ? ' urgent 48h' : '') + (titre ? ' · ' + titre : ''),
+      productLabel: label,
       productId: state.delay === 'urgent' ? 'mix-urgent' : 'mix-standard',
       total: total,
-      project: 'Titre: ' + (titre || '?') + ' | Genre: ' + (root.querySelector('#urbe-bm-genre').value || '?') + ' | Multipistes: ' + (state.multipistes ? 'oui' : 'non')
+      project: 'Titre: ' + (titre || '?') + ' | Genre: ' + (root.querySelector('#urbe-bm-genre').value || '?') + ' | Multipistes: ' + (state.multipistes ? 'oui' : 'non') + ' | Mastering: ' + (state.master ? 'oui (-50%)' : 'non')
     };
     function done() {
       state.submitting = false; state.submitted = true;
@@ -1012,8 +1037,8 @@
   function open(opts) {
     opts = opts || {};
     // reset
-    state = { step: 1, engineerId: null, delay: 'standard', multipistes: false, submitted: false, submitting: false };
-    setDelay('standard'); setMp(false);
+    state = { step: 1, engineerId: null, delay: 'standard', multipistes: false, master: false, submitted: false, submitting: false };
+    setDelay('standard'); setMp(false); setMaster(false);
     // clear inputs
     root.querySelectorAll('.urbe-bm-input, .urbe-bm-select, .urbe-bm-textarea').forEach(function(i) { i.value = ''; i.classList.remove('urbe-bm-err'); });
     root.querySelectorAll('.urbe-bm-field-err').forEach(function(e) { e.classList.remove('urbe-bm-show'); });
@@ -1049,13 +1074,29 @@
     if (paying) return; paying = true;                       // anti double-clic (évite 2 onglets Stripe)
     var prev = payBtn.textContent;
     payBtn.disabled = true; payBtn.textContent = 'Redirection…';
+    function resetPay() { paying = false; payBtn.disabled = false; payBtn.textContent = prev; }
     var key = state.delay === 'urgent' ? 'mix-urgent' : 'mix-standard';
-    var total = 120 + (state.delay === 'urgent' ? 50 : 0);
     var titre = (root.querySelector('#urbe-bm-titre') || {}).value || '';
-    if (typeof window.redirectToStripe === 'function') {
-      window.redirectToStripe(key, { productLabel: 'Mix' + (state.delay === 'urgent' ? ' urgent 48h' : '') + (titre ? ' · ' + titre : ''), total: total });
+    // Référence encodée → recalcul prix serveur (n8n) + confirmation après paiement.
+    // Mastering en option : -50% (25€) ajouté côté serveur quand un mix est présent.
+    var ref = 'M~' + key + (state.master ? '~master' : '');
+    var label = 'Mix' + (state.delay === 'urgent' ? ' urgent 48h' : '') + (state.master ? ' + Mastering -50%' : '') + (titre ? ' · ' + titre : '');
+    var email = (root.querySelector('#urbe-bm-email') || {}).value || '';
+    var name = ((root.querySelector('#urbe-bm-prenom') || {}).value || '') + ' ' + ((root.querySelector('#urbe-bm-nom') || {}).value || '');
+    // Fenêtre ouverte sur le geste utilisateur (anti-popup-blocker), puis on y charge l'URL Stripe.
+    var payWin = window.open('', '_blank');
+    if (typeof window.createStripeSession === 'function') {
+      window.createStripeSession({ ref: ref, productLabel: label, email: email.trim(), name: name.trim() })
+        .then(function(url) {
+          if (url) { if (payWin) payWin.location.href = url; else window.location.href = url; }
+          else { if (payWin) payWin.close(); alert('Le paiement est momentanément indisponible. Réessaie dans un instant, ou écris-nous à contact@urbestudio.fr.'); }
+          resetPay();
+        })
+        .catch(function() { if (payWin) payWin.close(); alert('Le paiement est momentanément indisponible. Réessaie dans un instant, ou écris-nous à contact@urbestudio.fr.'); resetPay(); });
+    } else {
+      if (payWin) payWin.close();
+      resetPay();
     }
-    setTimeout(function() { paying = false; payBtn.disabled = false; payBtn.textContent = prev; }, 2500);
   });
   root.addEventListener('click', function(ev) {
     if (ev.target === root) close();
