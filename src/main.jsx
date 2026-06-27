@@ -575,18 +575,11 @@ function PromoBanner({ setPage }) {
             </button>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ padding: '11px 20px', borderRadius: 10, background: 'var(--s3)', border: '1px solid var(--br2)', fontFamily: 'Space Mono', fontSize: 15, fontWeight: 700, color: 'var(--blanc)', letterSpacing: '0.12em' }}>{PROMO}</div>
-                <button onClick={handleCopy} style={{
-                  padding: '11px 18px', borderRadius: 10, background: copied ? '#1c3b1c' : 'var(--rouge)', color: '#fff', border: 'none',
-                  fontSize: 13, fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, transition: 'background 0.35s'
-                }}>
-                  {copied
-                    ? <><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1.5 6.5l3 3 6-6" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg> Copié !</>
-                    : <><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="3.5" width="7" height="7" rx="1.5" stroke="white" strokeWidth="1.3"/><path d="M3.5 3.5V2A1.5 1.5 0 015 .5h5A1.5 1.5 0 0111.5 2v5A1.5 1.5 0 0110 8.5H8.5" stroke="white" strokeWidth="1.3" strokeLinecap="round"/></svg> Copier</>}
-                </button>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 9, padding: '11px 20px', borderRadius: 10, background: 'var(--s3)', border: '1px solid var(--br2)', alignSelf: 'flex-start' }}>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.5l3 3 7-7.5" stroke="var(--rouge3)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <span style={{ fontFamily: 'Space Mono', fontSize: 13.5, fontWeight: 700, color: 'var(--blanc)', letterSpacing: '0.04em' }}>-50% appliqué automatiquement</span>
               </div>
-              <p style={{ fontSize: 12, color: 'var(--dim)', margin: 0, lineHeight: 1.65 }}>Code à mentionner lors de ta commande. Offre renouvelée chaque mois · mastering à -50%.</p>
+              <p style={{ fontSize: 12, color: 'var(--dim)', margin: 0, lineHeight: 1.65 }}>Aucun code à saisir : la réduction s'applique d'elle-même quand tu ajoutes un mastering à ta commande de mix. Offre renouvelée chaque mois.</p>
               <button onClick={() => window.openMixBookingModal ? window.openMixBookingModal({}) : setPage('booking')} style={{
                 padding: '11px 22px', borderRadius: 100, background: 'transparent', color: 'var(--blanc)', border: '1px solid var(--br2)',
                 fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8, transition: 'border-color 0.2s'
