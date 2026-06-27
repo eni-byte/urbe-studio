@@ -1,6 +1,0 @@
-Déposez ici le PDF du guide téléchargeable :
-  Urbe-Studio_Bible-Enregistrement-Home-Studio.pdf
-
-C'est le fichier servi par /guides/bible-enregistrement-home-studio/ après
-la saisie de l'email (lead magnet). Tant qu'il n'est pas présent, le bouton
-de téléchargement renverra une erreur 404.
