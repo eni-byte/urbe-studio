@@ -321,7 +321,7 @@
     window.addEventListener('DOMContentLoaded', function () {
       setTimeout(function () {
         var r = document.getElementById('root');
-        if (r && r.children.length === 0) location.replace('/preview.html');
+        if (r && r.children.length === 0) location.replace('/preview.html' + location.search + location.hash);
       }, 500);
     });
   }
