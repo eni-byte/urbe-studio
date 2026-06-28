@@ -996,11 +996,9 @@ function ActuSection({ setPage }) {
   };
   const ITEMS = [
     { type: 'Article', cat: 'Le journal', img: 'covers/nono.jpg', date: '12 JUIN 2026', titre: 'Mixage & mastering audio en ligne : le guide', excerpt: 'Envoyez vos pistes, choisissez votre ingénieur, recevez votre mix prêt pour le streaming sous 7 jours.', href: 'blog/mixage-mastering-en-ligne.html' },
-    { type: 'Événement', cat: 'Événement', img: 'covers/fdlm-2026.jpg', date: '21 JUIN 2026', titre: 'Fête de la Musique 2026 à Paris', excerpt: 'Open air gratuit avec Urbe, Saphir & Break The Stage : quand la passion dépasse les obstacles.', href: 'blog/fete-de-la-musique-2026-paris.html' },
+    { type: 'Événement', cat: 'Événement', img: 'covers/fdlm-2026.jpg', date: '21 JUIN 2026', titre: 'Fête de la Musique 2026 à Paris', excerpt: 'Open air gratuit avec Urbe & Saphir : quand la passion dépasse les obstacles.', href: 'blog/fete-de-la-musique-2026-paris.html' },
     { type: 'Photo', cat: 'Studio', img: 'studio/cabine2.jpg', date: '2 JUIN 2026', titre: "Notre studio d'enregistrement à Paris 10ᵉ", excerpt: 'Cabine traitée, régie pro, ouvert 24h/24 au cœur du 10ᵉ arrondissement.', href: 'blog/studio-enregistrement-paris.html' },
-    { type: 'Vidéo', cat: 'En vidéo', img: 'studio/cabine.jpg', date: '28 MAI 2026', titre: 'Visite du studio en vidéo', excerpt: "Micro ouvert, lumières tamisées — un aperçu d'une session d'enregistrement.", href: 'blog/studio-enregistrement-paris.html' },
-    { type: 'Article', cat: 'Conseils', img: 'covers/gotti.jpg', date: '20 MAI 2026', titre: 'Mix & mastering : 5 erreurs à éviter', excerpt: 'Les réflexes qui font passer un mix amateur au niveau pro.', href: 'blog/mixage-mastering-en-ligne.html' },
-    { type: 'Photo', cat: 'Backstage', img: 'covers/berna.jpg', date: '14 MAI 2026', titre: 'Dans les coulisses du studio', excerpt: 'Une journée type au studio Urbe, côté pile.', href: 'blog/mixage-rap-paris.html' }];
+    { type: 'Article', cat: 'Conseils', img: 'covers/gotti.jpg', date: '20 MAI 2026', titre: 'Mix & mastering : 5 erreurs à éviter', excerpt: 'Les réflexes qui font passer un mix amateur au niveau pro.', href: 'blog/mixage-mastering-en-ligne.html' }];
 
   const typeTone = { 'Vidéo': '#c12c2c', 'Photo': '#3a7bd1', 'Article': '#d1a23a', 'Événement': '#3ad17a' };
   return (
@@ -1116,7 +1114,7 @@ function HomePage({ setPage }) {
           </h1>
 
           <p style={{ fontSize: 17, lineHeight: 1.55, fontWeight: 300, color: 'rgba(241,236,231,0.78)', maxWidth: 520, marginBottom: 36 }}>
-            Enregistrement, <span style={{ color: 'var(--blanc)', fontWeight: 500 }}>mixage et mastering rap</span> dans un studio pro <span style={{ color: 'var(--blanc)', fontWeight: 500 }}>ouvert 24h/24</span>, au cœur du 10ᵉ. <span style={{ color: 'var(--blanc)', fontWeight: 500 }}>Mix &amp; mastering en ligne</span> pour tous tes titres — tu viens avec ton son, on s'occupe du reste.
+            Enregistrement, <span style={{ color: 'var(--blanc)', fontWeight: 500 }}>mixage et mastering</span> dans un studio pro <span style={{ color: 'var(--blanc)', fontWeight: 500 }}>ouvert 24h/24</span>, au cœur du 10ᵉ. <span style={{ color: 'var(--blanc)', fontWeight: 500 }}>Mix &amp; mastering en ligne</span>, tous styles, pour tous tes titres — tu viens avec ton son, on s'occupe du reste.
           </p>
 
           {/* CTA buttons */}
@@ -1132,7 +1130,7 @@ function HomePage({ setPage }) {
               Réserver une session
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
-            <button onClick={() => (window.openMixBookingModal ? window.openMixBookingModal({}) : setPage('booking', 'mix-standard'))} aria-label="Réserver votre mix — mixage et mastering rap en ligne" style={{
+            <button onClick={() => (window.openMixBookingModal ? window.openMixBookingModal({}) : setPage('booking', 'mix-standard'))} aria-label="Réserver votre mix — mixage et mastering en ligne, tous styles" style={{
               background: 'rgba(139,30,30,0.14)', color: 'var(--blanc)', border: '1px solid var(--rouge)',
               padding: '15px 26px', borderRadius: 100, cursor: 'pointer',
               fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 10,
@@ -1277,7 +1275,7 @@ function HomePage({ setPage }) {
       <div style={{ borderTop: '1px solid var(--br)', borderBottom: '1px solid var(--br)', background: 'var(--s1)', padding: '20px 28px' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
           {[
-          { n: '80m²', l: 'Cabine traitée' },
+          { n: '30m²', l: 'Studio traité' },
           { n: '200+', l: 'Artistes enregistrés' },
           { n: '4', l: 'Ingénieurs certifiés' },
           { n: '7j/7', l: 'Ouvert — même les nuits' },
@@ -2299,6 +2297,8 @@ function StudioPage({ setPage }) {
   const [activeMedia, setActiveMedia] = useState(0);
   const [playing, setPlaying] = useState({});
   const [openService, setOpenService] = useState('enreg');
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [galIdx, setGalIdx] = useState(0);
 
   const mediaSlides = [
   { type: 'photo', img: 'studio/cabine.jpg',  label: 'Salon & Régie', pos: 'center center' },
@@ -2307,6 +2307,13 @@ function StudioPage({ setPage }) {
   { type: 'photo', img: 'fdlm/DSC04308.jpg', label: 'Fête de la Musique 2026 · L’ambiance', pos: 'center 35%' },
   { type: 'photo', img: 'fdlm/DSC06249.jpg', label: 'Fête de la Musique 2026 · Les artistes', pos: 'center 30%' },
   { type: 'photo', img: 'fdlm/DSC06916.jpg', label: 'Fête de la Musique 2026 · La nuit', pos: 'center 45%' }];
+
+  // Galerie "book" (bloc déployable) — mélange photos + vidéos. PLACEHOLDERS à remplacer :
+  // dépose tes médias dans public/studio/galerie/ puis remplace les chemins ci-dessous.
+  const galerie = [
+  { type: 'photo', src: 'studio/cabine.jpg',   label: 'Régie & monitoring' },
+  { type: 'photo', src: 'fdlm/DSC07462.jpg',   label: 'Live · Fête de la Musique 2026' },
+  { type: 'video', src: 'studio/session-live.mp4', label: 'Session live au studio' }];
 
   const videos = [
   { id: '4CpV_ymIeso', titre: 'Kei — OG Bounce', desc: '', featured: true },
@@ -2377,7 +2384,7 @@ function StudioPage({ setPage }) {
             <div style={{ position: 'relative' }}>
               <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.16em', color: 'var(--rouge3)', textTransform: 'uppercase', marginBottom: 8 }}>Notre studio</div>
               <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 40, letterSpacing: '0.02em', lineHeight: 0.95, marginBottom: 14 }}>URBE</div>
-              <p style={{ fontSize: 13.5, color: 'var(--dim)', lineHeight: 1.7, fontWeight: 300, marginBottom: 0 }}>Cabine traitée acoustiquement, régie modulable, salon intégré. Pensé pour le rap, la pop et le podcast. Confort et confidentialité totale.</p>
+              <p style={{ fontSize: 13.5, color: 'var(--dim)', lineHeight: 1.7, fontWeight: 300, marginBottom: 0 }}>Cabine traitée acoustiquement, régie modulable, salon intégré. Pensé pour toutes les musiques — rap, pop, afro, r&b, podcast. Confort et confidentialité totale.</p>
             </div>
             <div style={{ position: 'relative', paddingTop: 22, borderTop: '1px solid var(--br)', marginTop: 22 }}>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 16 }}>
@@ -2403,6 +2410,48 @@ function StudioPage({ setPage }) {
             <span key={g} style={{ padding: '3px 11px', borderRadius: 100, background: 'rgba(241,236,231,0.04)', border: '1px solid var(--br)', fontSize: 12, color: 'var(--blanc)', whiteSpace: 'nowrap' }}>{g}</span>
           ))}
         </div>
+
+        {/* ── GALERIE (book photos & vidéos) — bloc déployable ──────────── */}
+        <div style={{ marginTop: 14 }}>
+          <button onClick={() => setGalleryOpen((o) => !o)} aria-expanded={galleryOpen} style={{
+            width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
+            background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 12, padding: '15px 20px',
+            cursor: 'pointer', color: 'var(--blanc)', transition: 'border-color 0.2s'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--br2)'}
+          onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--br)'}>
+            <span style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
+              <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.16em', color: 'var(--rouge3)', textTransform: 'uppercase' }}>Galerie</span>
+              <span style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 22, letterSpacing: '0.02em' }}>Le book — photos & vidéos</span>
+            </span>
+            <svg width="13" height="13" viewBox="0 0 12 12" fill="none" style={{ transform: galleryOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s', flexShrink: 0 }}><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+          </button>
+
+          {galleryOpen && (
+            <div style={{ marginTop: 14, borderRadius: 18, overflow: 'hidden', border: '1px solid var(--br)' }}>
+              <div style={{ position: 'relative', aspectRatio: '16 / 9', minHeight: 260, background: '#070707' }}>
+                {galerie.map((g, i) => (
+                  <div key={i} style={{ position: 'absolute', inset: 0, opacity: galIdx === i ? 1 : 0, transition: 'opacity 0.7s ease', pointerEvents: galIdx === i ? 'auto' : 'none' }}>
+                    {g.type === 'video'
+                      ? <video src={galIdx === i ? R(g.src) : undefined} controls muted loop playsInline preload="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', background: '#000' }} />
+                      : <img src={R(g.src)} alt={g.label} loading="lazy" decoding="async" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />}
+                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(0deg, rgba(5,5,5,0.9) 0%, transparent 100%)', pointerEvents: 'none' }} />
+                    <div style={{ position: 'absolute', bottom: 16, left: 18, fontSize: 10, color: 'rgba(241,236,231,0.7)', letterSpacing: '0.12em', textTransform: 'uppercase', pointerEvents: 'none' }}>{g.label}</div>
+                  </div>
+                ))}
+                <button onClick={() => setGalIdx((p) => (p - 1 + galerie.length) % galerie.length)} aria-label="Média précédent" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'rgba(8,8,8,0.6)', border: '1px solid var(--br2)', color: 'var(--blanc)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', zIndex: 3 }}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                </button>
+                <button onClick={() => setGalIdx((p) => (p + 1) % galerie.length)} aria-label="Média suivant" style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'rgba(8,8,8,0.6)', border: '1px solid var(--br2)', color: 'var(--blanc)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', zIndex: 3 }}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                </button>
+              </div>
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'center', padding: '14px 0', background: 'var(--s1)', borderTop: '1px solid var(--br)' }}>
+                {galerie.map((_, i) => <button key={i} onClick={() => setGalIdx(i)} aria-label={`Média ${i + 1}`} style={{ width: i === galIdx ? 28 : 8, height: 3, borderRadius: 2, border: 'none', cursor: 'pointer', background: i === galIdx ? 'var(--rouge)' : 'rgba(241,236,231,0.25)', transition: 'all 0.3s' }} />)}
+              </div>
+            </div>
+          )}
+        </div>
       </section>
 
       {/* ── SERVICES & TARIFS (formules + accordéon) ──────────────────── */}
@@ -2418,9 +2467,9 @@ function StudioPage({ setPage }) {
           <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.14em', color: 'var(--dim)', textTransform: 'uppercase', margin: '0 0 16px' }}>Sessions studio · Un studio, trois formules</div>
         <div className="urbe-r-stack" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr', gap: 14 }}>
             {[
-            { id: 'A', nom: 'Avec Ingénieur', desc: 'Tu joues, il cadre. Prise de son, placement micro, direction artistique — tout est géré. Idéal pour aller vite sans se rater.', tarif: '30€/h', surface: 'Studio A · 80m²', gear: ['Apollo Twin X', 'FC Atlantis 387', 'Neumann TLM 103', 'Focal Shape 60'], featured: true },
-            { id: 'B', nom: 'Sans Ingénieur', desc: 'Autonomie totale en cabine. Installation prête à l\'emploi. Ordinateur portable requis. Studio Urbe en libre accès.', tarif: '20€/h', surface: 'Studio A · 80m²', gear: ['Installation préconfigurée', 'Cabine traitée', 'Apollo Twin X', 'Ordinateur portable requis'], featured: false },
-            { id: 'N', nom: 'Session de Nuit', desc: 'Après 21h, le studio est plus calme — et souvent plus inspirant. Tarif nuit, avec ingénieur, accès toute la nuit.', tarif: '35€/h', surface: 'Studio A · 80m²', gear: ['Avec ingénieur', 'Après 21h', 'Accès 24h/24', 'Installation complète'], featured: false }].
+            { id: 'A', nom: 'Avec Ingénieur', desc: 'Tu joues, il cadre. Prise de son, placement micro, direction artistique — tout est géré. Idéal pour aller vite sans se rater.', tarif: '30€/h', surface: 'Studio A · 30m²', gear: ['Apollo Twin X', 'FC Atlantis 387', 'Neumann TLM 103', 'Focal Shape 60'], featured: true },
+            { id: 'B', nom: 'Sans Ingénieur', desc: 'Autonomie totale en cabine. Installation prête à l\'emploi. Ordinateur portable requis. Studio Urbe en libre accès.', tarif: '20€/h', surface: 'Studio A · 30m²', gear: ['Installation préconfigurée', 'Cabine traitée', 'Apollo Twin X', 'Ordinateur portable requis'], featured: false },
+            { id: 'N', nom: 'Session de Nuit', desc: 'Après 21h, le studio est plus calme — et souvent plus inspirant. Tarif nuit, avec ingénieur, accès toute la nuit.', tarif: '35€/h', surface: 'Studio A · 30m²', gear: ['Avec ingénieur', 'Après 21h', 'Accès 24h/24', 'Installation complète'], featured: false }].
             map((s) =>
             <div key={s.id} style={{
               background: s.featured ? 'var(--s1)' : 'var(--s1)',
