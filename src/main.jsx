@@ -1075,13 +1075,39 @@ function HomePage({ setPage }) {
     setTimeout(() => {setFormOpen(false);setFormStep(0);setFormData({ nom: '', email: '', projet: '', message: '', hp: '' });}, 2800);
   };
 
+  // ── HERO accueil : fond en CARROUSEL auto (photo studio, cabine, FDLM kebab, aftermovie) ──
+  // Reutilise les medias de l'album FDLM (src/assets/galerie/01-FDLM-2026/). La video
+  // aftermovie n'apparait que si le fichier "…aftermovie.*" existe (sinon ignoree).
+  const heroFdlm = import.meta.glob('./assets/galerie/01-FDLM-2026/*.{jpg,jpeg,png,webp,mp4,webm,mov,JPG,JPEG,PNG,WEBP,MP4,WEBM,MOV}', { eager: true, query: '?url', import: 'default' });
+  const findHero = (frag) => { const k = Object.keys(heroFdlm).find((p) => p.toLowerCase().includes(frag)); return k ? heroFdlm[k] : null; };
+  const heroKebab = findHero('photographe-kebab');
+  const heroAftermovie = findHero('aftermovie');
+  const heroSlides = [
+    { type: 'photo', src: R('studio/cabine.jpg'), pos: 'center center' },
+    { type: 'photo', src: R('studio/cabine2.jpg'), pos: 'center 15%' },
+    ...(heroKebab ? [{ type: 'photo', src: heroKebab, pos: 'center center' }] : []),
+    ...(heroAftermovie ? [{ type: 'video', src: heroAftermovie }] : []),
+  ];
+  const [heroIdx, setHeroIdx] = useState(0);
+  useEffect(() => {
+    if (heroSlides.length < 2) return undefined;
+    const id = setInterval(() => setHeroIdx((i) => (i + 1) % heroSlides.length), 5500);
+    return () => clearInterval(id);
+  }, [heroSlides.length]);
+
   return (
     <div>
       {/* ── HERO · V4 "Now Recording" ─────────────────────────── */}
       <section style={{ minHeight: 'max(720px, 100vh)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
 
-        {/* Photo cabine background */}
-        <img src={R('studio/cabine.jpg')} alt="Studio Urbe" fetchpriority="high" loading="eager" decoding="async" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'saturate(0.92) contrast(1.04)' }} />
+        {/* Fond : carrousel auto (photo studio · cabine · FDLM kebab · aftermovie) */}
+        {heroSlides.map((s, i) => (
+          <div key={i} style={{ position: 'absolute', inset: 0, opacity: heroIdx === i ? 1 : 0, transition: 'opacity 1s ease', pointerEvents: 'none' }}>
+            {s.type === 'video'
+              ? <video src={heroIdx === i ? s.src : undefined} autoPlay muted loop playsInline preload="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'saturate(0.92) contrast(1.04)' }} />
+              : <img src={s.src} alt={i === 0 ? 'Studio Urbe' : ''} fetchpriority={i === 0 ? 'high' : undefined} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: s.pos || 'center center', filter: 'saturate(0.92) contrast(1.04)' }} />}
+          </div>
+        ))}
 
         {/* Scrim horizontal pour lisibilité côté gauche */}
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(95deg, rgba(5,5,5,0.94) 0%, rgba(5,5,5,0.80) 38%, rgba(5,5,5,0.32) 62%, rgba(5,5,5,0.55) 100%)', pointerEvents: 'none' }} />
@@ -2298,6 +2324,7 @@ function StudioPage({ setPage }) {
   const [playing, setPlaying] = useState({});
   const [openService, setOpenService] = useState('enreg');
   const [galleryOpen, setGalleryOpen] = useState(false);
+  const [openAlbum, setOpenAlbum] = useState(null);
   const [galIdx, setGalIdx] = useState(0);
   const [galFailed, setGalFailed] = useState({});
 
@@ -2307,34 +2334,41 @@ function StudioPage({ setPage }) {
   { type: 'photo', img: 'fdlm/DSC07462.jpg', label: 'Fête de la Musique 2026 · Urbe en live', pos: 'center 45%' },
   { type: 'photo', img: 'fdlm/DSC06916.jpg', label: 'Fête de la Musique 2026 · La nuit', pos: 'center 45%' }];
 
-  // ── GALERIE "book" — AUTO ─────────────────────────────────────────────
-  // Tout fichier present dans  src/assets/galerie/  est affiche dans le carrousel.
-  // POUR GERER LA GALERIE SANS TOUCHER AU CODE (via GitHub « Add file ▸ Upload files »
-  // dans le dossier src/assets/galerie/) :
-  //   • Ajouter une photo/video  → depose le fichier dans le dossier.
-  //   • Retirer une photo/video  → supprime le fichier du dossier.
-  //   • Ordre d'affichage        → prefixe numerique du nom : 01-…, 02-…, 03-…
-  //   • Titre affiche            → deduit du nom (ex. "02-les-filles.jpg" → "Les Filles").
+  // ── GALERIE par ALBUMS — AUTO ────────────────────────────────────────
+  // Chaque SOUS-DOSSIER de  src/assets/galerie/  = un album (ex. "01-FDLM-2026",
+  // "02-Le-Studio"). Tout fichier qu'il contient apparait dans cet album.
+  // GERER SANS CODE (via GitHub « Add file ▸ Upload files ») :
+  //   • Nouvel album → cree un sous-dossier (ex. "03-Tournage") et depose-y des fichiers.
+  //   • Ajouter/retirer un media → depose/supprime le fichier dans le sous-dossier.
+  //   • Ordre (albums ET medias) → prefixe numerique du nom : 01-, 02-, 03-…
+  //   • Titre affiche → deduit du nom : dossier "01-FDLM-2026" → "FDLM 2026",
+  //     fichier "02-les-filles.jpg" → "Les Filles" (les sigles en MAJUSCULES sont gardes).
   //   • Formats : .jpg .jpeg .png .webp (photos) · .mp4 .webm .mov (videos).
+  const niceName = (s) => s
+    .replace(/\.[^.]+$/, '')          // enleve l'extension (fichiers)
+    .replace(/^\d+[-_\s]*/, '')        // enleve le prefixe d'ordre (01-, 02-…)
+    .split(/[-_\s]+/).filter(Boolean)
+    .map((w) => (w === w.toUpperCase() ? w : w.charAt(0).toUpperCase() + w.slice(1)))
+    .join(' ');
   const galModules = import.meta.glob(
-    './assets/galerie/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP,mp4,webm,mov,MP4,WEBM,MOV}',
+    './assets/galerie/*/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP,mp4,webm,mov,MP4,WEBM,MOV}',
     { eager: true, query: '?url', import: 'default' }
   );
-  const galerie = Object.keys(galModules).sort().map((path) => {
-    const file = path.split('/').pop();
+  const albumsMap = {};
+  Object.keys(galModules).sort().forEach((path) => {
+    const parts = path.split('/');
+    const dir = parts[parts.length - 2];
+    const file = parts[parts.length - 1];
     const isVideo = /\.(mp4|webm|mov)$/i.test(file);
-    const label = file
-      .replace(/\.[^.]+$/, '')      // enleve l'extension
-      .replace(/^\d+[-_\s]*/, '')    // enleve le prefixe d'ordre (01-, 02-…)
-      .replace(/[-_]+/g, ' ')        // tirets/underscores -> espaces
-      .trim()
-      .replace(/\b\w/g, (c) => c.toUpperCase()); // Capitalise
-    return { type: isVideo ? 'video' : 'photo', src: galModules[path], label };
+    (albumsMap[dir] = albumsMap[dir] || []).push({ type: isVideo ? 'video' : 'photo', src: galModules[path], label: niceName(file) });
   });
+  const albums = Object.keys(albumsMap).sort().map((dir) => ({ key: dir, title: niceName(dir), media: albumsMap[dir] }));
+  // Album ouvert → carrousel de ses medias (sinon = grille des albums).
   // Robustesse : un media qui ne charge pas est masque (slide + point) via onError.
-  const galVisible = galerie.filter((g) => !galFailed[g.src]);
-  const gN = galVisible.length || 1;
-  const gi = (((galIdx % gN) + gN) % gN);
+  const currentAlbum = albums.find((a) => a.key === openAlbum) || null;
+  const albumMedia = currentAlbum ? currentAlbum.media.filter((g) => !galFailed[g.src]) : [];
+  const aN = albumMedia.length || 1;
+  const ai = (((galIdx % aN) + aN) % aN);
 
   const videos = [
   { id: '4CpV_ymIeso', titre: 'Kei — OG Bounce', desc: '', featured: true },
@@ -2449,27 +2483,64 @@ function StudioPage({ setPage }) {
           </button>
 
           {galleryOpen && (
-            <div style={{ marginTop: 14, borderRadius: 18, overflow: 'hidden', border: '1px solid var(--br)' }}>
-              <div style={{ position: 'relative', aspectRatio: '16 / 9', minHeight: 260, background: '#070707' }}>
-                {galVisible.map((g, i) => (
-                  <div key={g.src} style={{ position: 'absolute', inset: 0, opacity: gi === i ? 1 : 0, transition: 'opacity 0.7s ease', pointerEvents: gi === i ? 'auto' : 'none' }}>
-                    {g.type === 'video'
-                      ? <video src={gi === i ? g.src : undefined} controls muted loop playsInline preload="none" onError={() => setGalFailed((f) => ({ ...f, [g.src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', background: '#000' }} />
-                      : <img src={g.src} alt={g.label} loading="lazy" decoding="async" onError={() => setGalFailed((f) => ({ ...f, [g.src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />}
-                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(0deg, rgba(5,5,5,0.9) 0%, transparent 100%)', pointerEvents: 'none' }} />
-                    <div style={{ position: 'absolute', bottom: 16, left: 18, fontSize: 10, color: 'rgba(241,236,231,0.7)', letterSpacing: '0.12em', textTransform: 'uppercase', pointerEvents: 'none' }}>{g.label}</div>
+            <div style={{ marginTop: 14 }}>
+              {!currentAlbum ? (
+                /* ── Grille des ALBUMS ── */
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
+                  {albums.map((al) => {
+                    const cover = al.media.find((m) => m.type === 'photo') || al.media[0];
+                    const n = al.media.length;
+                    return (
+                      <button key={al.key} onClick={() => { setOpenAlbum(al.key); setGalIdx(0); }} style={{ position: 'relative', aspectRatio: '4 / 3', borderRadius: 14, overflow: 'hidden', border: '1px solid var(--br)', cursor: 'pointer', padding: 0, background: '#070707', display: 'block' }}
+                        onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--br2)'}
+                        onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--br)'}>
+                        {cover && cover.type === 'photo' && <img src={cover.src} alt={al.title} loading="lazy" decoding="async" onError={() => setGalFailed((f) => ({ ...f, [cover.src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />}
+                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(0deg, rgba(5,5,5,0.92) 0%, rgba(5,5,5,0.15) 55%, transparent 100%)' }} />
+                        <div style={{ position: 'absolute', left: 14, right: 14, bottom: 12, textAlign: 'left' }}>
+                          <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 21, letterSpacing: '0.02em', color: 'var(--blanc)', lineHeight: 1 }}>{al.title}</div>
+                          <div style={{ fontFamily: 'Space Mono', fontSize: 10, letterSpacing: '0.12em', color: 'rgba(241,236,231,0.6)', marginTop: 5 }}>{n} média{n > 1 ? 's' : ''}</div>
+                        </div>
+                        <div style={{ position: 'absolute', top: 12, right: 12, width: 30, height: 30, borderRadius: '50%', background: 'rgba(8,8,8,0.6)', border: '1px solid var(--br2)', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
+                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 2l5 4-5 4" stroke="var(--blanc)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                /* ── Carrousel de l'album ouvert ── */
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12, flexWrap: 'wrap' }}>
+                    <button onClick={() => { setOpenAlbum(null); setGalIdx(0); }} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'none', border: '1px solid var(--br2)', color: 'var(--blanc)', borderRadius: 100, padding: '8px 16px', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>
+                      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                      Albums
+                    </button>
+                    <span style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 20, letterSpacing: '0.02em' }}>{currentAlbum.title}</span>
                   </div>
-                ))}
-                <button onClick={() => setGalIdx((p) => (p - 1 + galVisible.length) % galVisible.length)} aria-label="Média précédent" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'rgba(8,8,8,0.6)', border: '1px solid var(--br2)', color: 'var(--blanc)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', zIndex: 3 }}>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-                </button>
-                <button onClick={() => setGalIdx((p) => (p + 1) % galVisible.length)} aria-label="Média suivant" style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'rgba(8,8,8,0.6)', border: '1px solid var(--br2)', color: 'var(--blanc)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', zIndex: 3 }}>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-                </button>
-              </div>
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'center', padding: '14px 0', background: 'var(--s1)', borderTop: '1px solid var(--br)', flexWrap: 'wrap' }}>
-                {galVisible.map((g, i) => <button key={g.src} onClick={() => setGalIdx(i)} aria-label={`Média ${i + 1}`} style={{ width: i === gi ? 28 : 8, height: 3, borderRadius: 2, border: 'none', cursor: 'pointer', background: i === gi ? 'var(--rouge)' : 'rgba(241,236,231,0.25)', transition: 'all 0.3s' }} />)}
-              </div>
+                  <div style={{ borderRadius: 18, overflow: 'hidden', border: '1px solid var(--br)' }}>
+                    <div style={{ position: 'relative', aspectRatio: '16 / 9', minHeight: 260, background: '#070707' }}>
+                      {albumMedia.map((g, i) => (
+                        <div key={g.src} style={{ position: 'absolute', inset: 0, opacity: ai === i ? 1 : 0, transition: 'opacity 0.7s ease', pointerEvents: ai === i ? 'auto' : 'none' }}>
+                          {g.type === 'video'
+                            ? <video src={ai === i ? g.src : undefined} controls muted loop playsInline preload="none" onError={() => setGalFailed((f) => ({ ...f, [g.src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', background: '#000' }} />
+                            : <img src={g.src} alt={g.label} loading="lazy" decoding="async" onError={() => setGalFailed((f) => ({ ...f, [g.src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />}
+                          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(0deg, rgba(5,5,5,0.9) 0%, transparent 100%)', pointerEvents: 'none' }} />
+                          <div style={{ position: 'absolute', bottom: 16, left: 18, fontSize: 10, color: 'rgba(241,236,231,0.7)', letterSpacing: '0.12em', textTransform: 'uppercase', pointerEvents: 'none' }}>{g.label}</div>
+                        </div>
+                      ))}
+                      <button onClick={() => setGalIdx((p) => (p - 1 + albumMedia.length) % albumMedia.length)} aria-label="Média précédent" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'rgba(8,8,8,0.6)', border: '1px solid var(--br2)', color: 'var(--blanc)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', zIndex: 3 }}>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                      </button>
+                      <button onClick={() => setGalIdx((p) => (p + 1) % albumMedia.length)} aria-label="Média suivant" style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'rgba(8,8,8,0.6)', border: '1px solid var(--br2)', color: 'var(--blanc)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', zIndex: 3 }}>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                      </button>
+                    </div>
+                    <div style={{ display: 'flex', gap: 8, justifyContent: 'center', padding: '14px 0', background: 'var(--s1)', borderTop: '1px solid var(--br)', flexWrap: 'wrap' }}>
+                      {albumMedia.map((g, i) => <button key={g.src} onClick={() => setGalIdx(i)} aria-label={`Média ${i + 1}`} style={{ width: i === ai ? 28 : 8, height: 3, borderRadius: 2, border: 'none', cursor: 'pointer', background: i === ai ? 'var(--rouge)' : 'rgba(241,236,231,0.25)', transition: 'all 0.3s' }} />)}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
