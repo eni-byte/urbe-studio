@@ -2305,28 +2305,33 @@ function StudioPage({ setPage }) {
   { type: 'photo', img: 'studio/cabine.jpg',  label: 'Salon & Régie', pos: 'center center' },
   { type: 'photo', img: 'studio/cabine2.jpg', label: 'La Cabine · Enregistrement', pos: 'center 15%' },
   { type: 'photo', img: 'fdlm/DSC07462.jpg', label: 'Fête de la Musique 2026 · Urbe en live', pos: 'center 45%' },
-  { type: 'photo', img: 'fdlm/DSC04308.jpg', label: 'Fête de la Musique 2026 · L’ambiance', pos: 'center 35%' },
-  { type: 'photo', img: 'fdlm/DSC06249.jpg', label: 'Fête de la Musique 2026 · Les artistes', pos: 'center 30%' },
   { type: 'photo', img: 'fdlm/DSC06916.jpg', label: 'Fête de la Musique 2026 · La nuit', pos: 'center 45%' }];
 
-  // Galerie "book" (bloc déployable) — mélange photos + vidéos.
-  // Sélection FDLM 2026 (medias deja presents dans public/fdlm/) + video studio.
-  // Pour remplacer/ajouter : depose tes fichiers dans public/studio/galerie/ et
-  // ajoute des entrees { type:'photo'|'video', src:'studio/galerie/<fichier>', label:'…' }.
-  const galerie = [
-  { type: 'photo', src: 'fdlm/DSC07462.jpg', label: 'Urbe en live · Fête de la Musique 2026' },
-  { type: 'photo', src: 'fdlm/DSC06916.jpg', label: 'La foule · fumigène' },
-  { type: 'photo', src: 'fdlm/DSC04308.jpg', label: 'Sur scène · Kebap Haus' },
-  { type: 'photo', src: 'fdlm/DSC06249.jpg', label: 'Entre artistes' },
-  { type: 'photo', src: 'fdlm/DSC04693.jpg', label: 'Le concert' },
-  // Photos fournies — deposer les fichiers dans public/studio/galerie/ (ces noms exacts).
-  { type: 'photo', src: 'studio/galerie/book-photographe-kebab.jpg', label: 'Dans la foule · l’objectif' },
-  { type: 'photo', src: 'studio/galerie/book-les-filles.jpg', label: 'La team' },
-  { type: 'photo', src: 'studio/galerie/book-cierge-magique.jpg', label: 'Sur scène · la nuit' },
-  { type: 'photo', src: 'studio/galerie/book-foule.jpg', label: 'L’ambiance' },
-  { type: 'photo', src: 'studio/cabine.jpg', label: 'Régie & monitoring' },
-  { type: 'video', src: 'studio/session-live.mp4', label: 'Session live au studio' }];
-  // Galerie robuste : un media introuvable (404) est masque (slide + point) via onError.
+  // ── GALERIE "book" — AUTO ─────────────────────────────────────────────
+  // Tout fichier present dans  src/assets/galerie/  est affiche dans le carrousel.
+  // POUR GERER LA GALERIE SANS TOUCHER AU CODE (via GitHub « Add file ▸ Upload files »
+  // dans le dossier src/assets/galerie/) :
+  //   • Ajouter une photo/video  → depose le fichier dans le dossier.
+  //   • Retirer une photo/video  → supprime le fichier du dossier.
+  //   • Ordre d'affichage        → prefixe numerique du nom : 01-…, 02-…, 03-…
+  //   • Titre affiche            → deduit du nom (ex. "02-les-filles.jpg" → "Les Filles").
+  //   • Formats : .jpg .jpeg .png .webp (photos) · .mp4 .webm .mov (videos).
+  const galModules = import.meta.glob(
+    './assets/galerie/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP,mp4,webm,mov,MP4,WEBM,MOV}',
+    { eager: true, query: '?url', import: 'default' }
+  );
+  const galerie = Object.keys(galModules).sort().map((path) => {
+    const file = path.split('/').pop();
+    const isVideo = /\.(mp4|webm|mov)$/i.test(file);
+    const label = file
+      .replace(/\.[^.]+$/, '')      // enleve l'extension
+      .replace(/^\d+[-_\s]*/, '')    // enleve le prefixe d'ordre (01-, 02-…)
+      .replace(/[-_]+/g, ' ')        // tirets/underscores -> espaces
+      .trim()
+      .replace(/\b\w/g, (c) => c.toUpperCase()); // Capitalise
+    return { type: isVideo ? 'video' : 'photo', src: galModules[path], label };
+  });
+  // Robustesse : un media qui ne charge pas est masque (slide + point) via onError.
   const galVisible = galerie.filter((g) => !galFailed[g.src]);
   const gN = galVisible.length || 1;
   const gi = (((galIdx % gN) + gN) % gN);
@@ -2449,8 +2454,8 @@ function StudioPage({ setPage }) {
                 {galVisible.map((g, i) => (
                   <div key={g.src} style={{ position: 'absolute', inset: 0, opacity: gi === i ? 1 : 0, transition: 'opacity 0.7s ease', pointerEvents: gi === i ? 'auto' : 'none' }}>
                     {g.type === 'video'
-                      ? <video src={gi === i ? R(g.src) : undefined} controls muted loop playsInline preload="none" onError={() => setGalFailed((f) => ({ ...f, [g.src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', background: '#000' }} />
-                      : <img src={R(g.src)} alt={g.label} loading="lazy" decoding="async" onError={() => setGalFailed((f) => ({ ...f, [g.src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />}
+                      ? <video src={gi === i ? g.src : undefined} controls muted loop playsInline preload="none" onError={() => setGalFailed((f) => ({ ...f, [g.src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', background: '#000' }} />
+                      : <img src={g.src} alt={g.label} loading="lazy" decoding="async" onError={() => setGalFailed((f) => ({ ...f, [g.src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />}
                     <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(0deg, rgba(5,5,5,0.9) 0%, transparent 100%)', pointerEvents: 'none' }} />
                     <div style={{ position: 'absolute', bottom: 16, left: 18, fontSize: 10, color: 'rgba(241,236,231,0.7)', letterSpacing: '0.12em', textTransform: 'uppercase', pointerEvents: 'none' }}>{g.label}</div>
                   </div>
