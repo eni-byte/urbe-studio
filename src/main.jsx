@@ -2299,6 +2299,7 @@ function StudioPage({ setPage }) {
   const [openService, setOpenService] = useState('enreg');
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [galIdx, setGalIdx] = useState(0);
+  const [galFailed, setGalFailed] = useState({});
 
   const mediaSlides = [
   { type: 'photo', img: 'studio/cabine.jpg',  label: 'Salon & Régie', pos: 'center center' },
@@ -2318,8 +2319,17 @@ function StudioPage({ setPage }) {
   { type: 'photo', src: 'fdlm/DSC04308.jpg', label: 'Sur scène · Kebap Haus' },
   { type: 'photo', src: 'fdlm/DSC06249.jpg', label: 'Entre artistes' },
   { type: 'photo', src: 'fdlm/DSC04693.jpg', label: 'Le concert' },
+  // Photos fournies — deposer les fichiers dans public/studio/galerie/ (ces noms exacts).
+  { type: 'photo', src: 'studio/galerie/book-photographe-kebab.jpg', label: 'Dans la foule · l’objectif' },
+  { type: 'photo', src: 'studio/galerie/book-les-filles.jpg', label: 'La team' },
+  { type: 'photo', src: 'studio/galerie/book-cierge-magique.jpg', label: 'Sur scène · la nuit' },
+  { type: 'photo', src: 'studio/galerie/book-foule.jpg', label: 'L’ambiance' },
   { type: 'photo', src: 'studio/cabine.jpg', label: 'Régie & monitoring' },
   { type: 'video', src: 'studio/session-live.mp4', label: 'Session live au studio' }];
+  // Galerie robuste : un media introuvable (404) est masque (slide + point) via onError.
+  const galVisible = galerie.filter((g) => !galFailed[g.src]);
+  const gN = galVisible.length || 1;
+  const gi = (((galIdx % gN) + gN) % gN);
 
   const videos = [
   { id: '4CpV_ymIeso', titre: 'Kei — OG Bounce', desc: '', featured: true },
@@ -2436,24 +2446,24 @@ function StudioPage({ setPage }) {
           {galleryOpen && (
             <div style={{ marginTop: 14, borderRadius: 18, overflow: 'hidden', border: '1px solid var(--br)' }}>
               <div style={{ position: 'relative', aspectRatio: '16 / 9', minHeight: 260, background: '#070707' }}>
-                {galerie.map((g, i) => (
-                  <div key={i} style={{ position: 'absolute', inset: 0, opacity: galIdx === i ? 1 : 0, transition: 'opacity 0.7s ease', pointerEvents: galIdx === i ? 'auto' : 'none' }}>
+                {galVisible.map((g, i) => (
+                  <div key={g.src} style={{ position: 'absolute', inset: 0, opacity: gi === i ? 1 : 0, transition: 'opacity 0.7s ease', pointerEvents: gi === i ? 'auto' : 'none' }}>
                     {g.type === 'video'
-                      ? <video src={galIdx === i ? R(g.src) : undefined} controls muted loop playsInline preload="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', background: '#000' }} />
-                      : <img src={R(g.src)} alt={g.label} loading="lazy" decoding="async" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />}
+                      ? <video src={gi === i ? R(g.src) : undefined} controls muted loop playsInline preload="none" onError={() => setGalFailed((f) => ({ ...f, [g.src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', background: '#000' }} />
+                      : <img src={R(g.src)} alt={g.label} loading="lazy" decoding="async" onError={() => setGalFailed((f) => ({ ...f, [g.src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />}
                     <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(0deg, rgba(5,5,5,0.9) 0%, transparent 100%)', pointerEvents: 'none' }} />
                     <div style={{ position: 'absolute', bottom: 16, left: 18, fontSize: 10, color: 'rgba(241,236,231,0.7)', letterSpacing: '0.12em', textTransform: 'uppercase', pointerEvents: 'none' }}>{g.label}</div>
                   </div>
                 ))}
-                <button onClick={() => setGalIdx((p) => (p - 1 + galerie.length) % galerie.length)} aria-label="Média précédent" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'rgba(8,8,8,0.6)', border: '1px solid var(--br2)', color: 'var(--blanc)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', zIndex: 3 }}>
+                <button onClick={() => setGalIdx((p) => (p - 1 + galVisible.length) % galVisible.length)} aria-label="Média précédent" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'rgba(8,8,8,0.6)', border: '1px solid var(--br2)', color: 'var(--blanc)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', zIndex: 3 }}>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
                 </button>
-                <button onClick={() => setGalIdx((p) => (p + 1) % galerie.length)} aria-label="Média suivant" style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'rgba(8,8,8,0.6)', border: '1px solid var(--br2)', color: 'var(--blanc)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', zIndex: 3 }}>
+                <button onClick={() => setGalIdx((p) => (p + 1) % galVisible.length)} aria-label="Média suivant" style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'rgba(8,8,8,0.6)', border: '1px solid var(--br2)', color: 'var(--blanc)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', zIndex: 3 }}>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
                 </button>
               </div>
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'center', padding: '14px 0', background: 'var(--s1)', borderTop: '1px solid var(--br)' }}>
-                {galerie.map((_, i) => <button key={i} onClick={() => setGalIdx(i)} aria-label={`Média ${i + 1}`} style={{ width: i === galIdx ? 28 : 8, height: 3, borderRadius: 2, border: 'none', cursor: 'pointer', background: i === galIdx ? 'var(--rouge)' : 'rgba(241,236,231,0.25)', transition: 'all 0.3s' }} />)}
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'center', padding: '14px 0', background: 'var(--s1)', borderTop: '1px solid var(--br)', flexWrap: 'wrap' }}>
+                {galVisible.map((g, i) => <button key={g.src} onClick={() => setGalIdx(i)} aria-label={`Média ${i + 1}`} style={{ width: i === gi ? 28 : 8, height: 3, borderRadius: 2, border: 'none', cursor: 'pointer', background: i === gi ? 'var(--rouge)' : 'rgba(241,236,231,0.25)', transition: 'all 0.3s' }} />)}
               </div>
             </div>
           )}
