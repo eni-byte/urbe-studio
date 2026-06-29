@@ -2308,11 +2308,17 @@ function StudioPage({ setPage }) {
   { type: 'photo', img: 'fdlm/DSC06249.jpg', label: 'Fête de la Musique 2026 · Les artistes', pos: 'center 30%' },
   { type: 'photo', img: 'fdlm/DSC06916.jpg', label: 'Fête de la Musique 2026 · La nuit', pos: 'center 45%' }];
 
-  // Galerie "book" (bloc déployable) — mélange photos + vidéos. PLACEHOLDERS à remplacer :
-  // dépose tes médias dans public/studio/galerie/ puis remplace les chemins ci-dessous.
+  // Galerie "book" (bloc déployable) — mélange photos + vidéos.
+  // Sélection FDLM 2026 (medias deja presents dans public/fdlm/) + video studio.
+  // Pour remplacer/ajouter : depose tes fichiers dans public/studio/galerie/ et
+  // ajoute des entrees { type:'photo'|'video', src:'studio/galerie/<fichier>', label:'…' }.
   const galerie = [
-  { type: 'photo', src: 'studio/cabine.jpg',   label: 'Régie & monitoring' },
-  { type: 'photo', src: 'fdlm/DSC07462.jpg',   label: 'Live · Fête de la Musique 2026' },
+  { type: 'photo', src: 'fdlm/DSC07462.jpg', label: 'Urbe en live · Fête de la Musique 2026' },
+  { type: 'photo', src: 'fdlm/DSC06916.jpg', label: 'La foule · fumigène' },
+  { type: 'photo', src: 'fdlm/DSC04308.jpg', label: 'Sur scène · Kebap Haus' },
+  { type: 'photo', src: 'fdlm/DSC06249.jpg', label: 'Entre artistes' },
+  { type: 'photo', src: 'fdlm/DSC04693.jpg', label: 'Le concert' },
+  { type: 'photo', src: 'studio/cabine.jpg', label: 'Régie & monitoring' },
   { type: 'video', src: 'studio/session-live.mp4', label: 'Session live au studio' }];
 
   const videos = [
