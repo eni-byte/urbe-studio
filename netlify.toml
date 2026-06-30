@@ -56,3 +56,14 @@
   from = "/blog"
   to = "/blog/"
   status = 301
+
+# ── Fallback SPA (routeur React) ────────────────────────────────────
+# DOIT rester la DERNIERE regle. Netlify sert d'abord un fichier statique
+# s'il existe (pages SEO /blog /guides /mixage-rap-en-ligne…, et plus tard
+# les pages prerendues /studio/index.html…) ; sinon il sert l'app, qui gere
+# la route cote client via react-router. force=false (defaut) => les fichiers
+# reels ont la priorite, donc les pages statiques existantes ne sont pas cassees.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

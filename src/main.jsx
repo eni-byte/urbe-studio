@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 
 
 
@@ -4513,16 +4514,65 @@ function Analytics() {
   return null;
 }
 
-function App() {
-  const [page, setPage] = useState('home');
+/* ─── ROUTING : correspondance clé de page ↔ URL ──────────────────── */
+const PAGE_PATH = {
+  home: '/', studio: '/studio', credits: '/artistes', artistes: '/artistes',
+  'mixage-mastering': '/mixage-mastering', tarifs: '/tarifs', booking: '/reservation',
+  school: '/ecole', contact: '/contact', actualites: '/actualites',
+  mentions: '/mentions-legales', confidentialite: '/confidentialite', cgv: '/cgv',
+};
+const PATH_PAGE = {
+  '/': 'home', '/studio': 'studio', '/artistes': 'credits', '/mixage-mastering': 'mixage-mastering',
+  '/tarifs': 'tarifs', '/reservation': 'booking', '/ecole': 'school', '/contact': 'contact',
+  '/actualites': 'actualites', '/mentions-legales': 'mentions', '/confidentialite': 'confidentialite', '/cgv': 'cgv',
+};
+
+/* Pages placeholder — contenu detaille integre en Phase 3 ; design du site reutilise. */
+function PlaceholderPage({ eyebrow, h1, intro, setPage }) {
+  return (
+    <div style={{ minHeight: '68vh', maxWidth: 900, margin: '0 auto', padding: '128px 28px 80px' }}>
+      <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.16em', color: 'var(--rouge3)', textTransform: 'uppercase', marginBottom: 14 }}>{eyebrow}</div>
+      <h1 style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 'clamp(34px,5vw,60px)', letterSpacing: '0.01em', lineHeight: 0.98, marginBottom: 20 }}>{h1}</h1>
+      <p style={{ fontSize: 16, lineHeight: 1.7, fontWeight: 300, color: 'var(--dim)', maxWidth: 620, marginBottom: 32 }}>{intro}</p>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <button onClick={() => setPage('booking')} style={{ background: 'var(--rouge)', color: '#fff', border: 'none', padding: '14px 26px', borderRadius: 100, cursor: 'pointer', fontSize: 14, fontWeight: 700 }}>Réserver →</button>
+        <button onClick={() => setPage('contact')} style={{ background: 'none', color: 'var(--blanc)', border: '1px solid var(--br2)', padding: '14px 24px', borderRadius: 100, cursor: 'pointer', fontSize: 14, fontWeight: 600 }}>Nous contacter</button>
+      </div>
+      <p style={{ marginTop: 40, fontSize: 12, color: 'var(--dim)', fontStyle: 'italic' }}>Contenu détaillé en cours d'intégration.</p>
+    </div>);
+}
+function MixMasterPage({ setPage }) { return <PlaceholderPage setPage={setPage} eyebrow="Services" h1="Mixage & Mastering Professionnel — Paris 10" intro="Nos ingénieurs du son certifiés mixent et masterisent tes titres, en ligne ou sur place. Tous styles." />; }
+function TarifsPage({ setPage }) { return <PlaceholderPage setPage={setPage} eyebrow="Tarifs" h1="Tarifs Studio d'Enregistrement Paris 10 — URBE STUDIO" intro="Tarifs transparents pour l'enregistrement, le mixage et le mastering. Contacte-nous pour un devis personnalisé." />; }
+function ActusPage({ setPage }) { return <PlaceholderPage setPage={setPage} eyebrow="Le journal" h1="Actualités & Journal — URBE STUDIO" intro="Les dernières nouvelles du studio : sessions, sorties d'artistes et événements." />; }
+function NotFoundPage({ setPage }) {
+  return (
+    <div style={{ minHeight: '70vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '140px 28px 80px' }}>
+      <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 900, fontSize: 'clamp(80px,18vw,200px)', color: 'var(--rouge3)', lineHeight: 0.9 }}>404</div>
+      <h1 style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 'clamp(24px,4vw,40px)', marginBottom: 14 }}>Page introuvable</h1>
+      <p style={{ color: 'var(--dim)', marginBottom: 28, maxWidth: 420 }}>Cette page n'existe pas (ou plus). Reviens à l'accueil pour continuer.</p>
+      <button onClick={() => setPage('home')} style={{ background: 'var(--rouge)', color: '#fff', border: 'none', padding: '14px 28px', borderRadius: 100, cursor: 'pointer', fontSize: 14, fontWeight: 700 }}>← Retour à l'accueil</button>
+    </div>);
+}
+
+function AppShell() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [bookingProduct, setBookingProduct] = useState(null);
-  useEffect(() => {window.scrollTo({ top: 0, behavior: 'smooth' });if (window.closeMixBookingModal) window.closeMixBookingModal();if (window.dataLayer) window.dataLayer.push({ event: 'page_view', page_title: page, page_path: '/' + (page === 'home' ? '' : page) });if (window.gtag) window.gtag('event', 'page_view', { page_title: page });}, [page]);
-  const goTo = (p, productId = null) => { if (productId) setBookingProduct(productId); setPage(p); };
-  useEffect(() => { window.__urbeNav = goTo; return () => { delete window.__urbeNav; }; }, []);
-  // Deep-links par hash (depuis le blog : index.html#reserver → tunnel de réservation)
+  const page = PATH_PAGE[location.pathname] || 'home';
+  const goTo = (p, productId = null) => { if (productId) setBookingProduct(productId); navigate(PAGE_PATH[p] || '/'); };
+  // Expose la navigation aux pages statiques (blog) : window.__urbeNav('booking')
+  useEffect(() => { window.__urbeNav = goTo; return () => { delete window.__urbeNav; }; });
+  // Scroll haut + tracking GA4 a chaque changement d'URL
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.closeMixBookingModal) window.closeMixBookingModal();
+    if (window.dataLayer) window.dataLayer.push({ event: 'page_view', page_title: page, page_path: location.pathname });
+    if (window.gtag) window.gtag('event', 'page_view', { page_title: page });
+  }, [location.pathname]);
+  // Deep-links par hash (depuis le blog : index.html#reserver → /reservation)
   useEffect(() => {
     const HASH_MAP = { reserver: 'booking', booking: 'booking', contact: 'contact', studio: 'studio', credits: 'credits', school: 'school' };
-    const applyHash = () => { const h = (window.location.hash || '').replace('#', '').toLowerCase(); if (HASH_MAP[h]) setPage(HASH_MAP[h]); };
+    const applyHash = () => { const h = (window.location.hash || '').replace('#', '').toLowerCase(); if (HASH_MAP[h]) { navigate(PAGE_PATH[HASH_MAP[h]]); window.history.replaceState(null, '', window.location.pathname); } };
     applyHash();
     window.addEventListener('hashchange', applyHash);
     return () => window.removeEventListener('hashchange', applyHash);
@@ -4530,18 +4580,26 @@ function App() {
   return (
     <div>
       <a href="#contenu" style={{ position: 'absolute', left: -9999, top: 8, zIndex: 999, background: 'var(--rouge)', color: '#fff', padding: '10px 18px', borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: 'none' }} onFocus={(e) => { e.target.style.left = '12px'; }} onBlur={(e) => { e.target.style.left = '-9999px'; }}>Aller au contenu</a>
-      <Nav page={page} setPage={setPage} />
+      <Nav page={page} setPage={goTo} />
       <main id="contenu">
-        {page === 'home' && <HomePage setPage={goTo} />}
-        {page === 'credits' && <CreditsPage setPage={goTo} />}
-        {page === 'studio' && <StudioPage setPage={goTo} />}
-        {page === 'booking' && <BookingPage initialProductId={bookingProduct} />}
-        {page === 'school' && <SchoolPage setPage={goTo} />}
-        {page === 'contact' && <ContactPage />}
-        {/* Espace abonné masqué pour le v1 (en attente d'une vraie auth serveur). */}
-        {(page === 'mentions' || page === 'confidentialite' || page === 'cgv') && <LegalPage section={page} setPage={goTo} />}
+        <Routes>
+          <Route path="/" element={<HomePage setPage={goTo} />} />
+          <Route path="/studio" element={<StudioPage setPage={goTo} />} />
+          <Route path="/artistes" element={<CreditsPage setPage={goTo} />} />
+          <Route path="/mixage-mastering" element={<MixMasterPage setPage={goTo} />} />
+          <Route path="/tarifs" element={<TarifsPage setPage={goTo} />} />
+          <Route path="/reservation" element={<BookingPage initialProductId={bookingProduct} />} />
+          <Route path="/ecole" element={<SchoolPage setPage={goTo} />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/actualites" element={<ActusPage setPage={goTo} />} />
+          <Route path="/mentions-legales" element={<LegalPage section="mentions" setPage={goTo} />} />
+          <Route path="/confidentialite" element={<LegalPage section="confidentialite" setPage={goTo} />} />
+          <Route path="/cgv" element={<LegalPage section="cgv" setPage={goTo} />} />
+          <Route path="/credits" element={<Navigate to="/artistes" replace />} />
+          <Route path="*" element={<NotFoundPage setPage={goTo} />} />
+        </Routes>
       </main>
-      {page !== 'dashboard' && <SiteFooter setPage={goTo} />}
+      <SiteFooter setPage={goTo} />
       <StripeMockOverlay />
       <ConfirmHost />
       <ToastHost />
@@ -4550,7 +4608,10 @@ function App() {
       <ChatAgent />
       <Tweaks />
     </div>);
+}
 
+function App() {
+  return (<BrowserRouter><AppShell /></BrowserRouter>);
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
