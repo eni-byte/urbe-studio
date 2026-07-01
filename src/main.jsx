@@ -1,6 +1,34 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { seoFor, SITE as SEO_SITE, OG_IMAGE as SEO_OG } from './seo-data.mjs';
+
+/* Met à jour le <head> lors de la navigation client (le JSON-LD reste celui du
+   HTML statique servi pour la page — voir scripts/gen-pages.mjs — pour éviter les doublons). */
+function applyRuntimeHead(pageKey) {
+  try {
+    const seo = seoFor(pageKey);
+    const canonical = SEO_SITE + (seo.path || '/');
+    document.title = seo.title;
+    const setMeta = (attr, key, val) => {
+      let el = document.head.querySelector(`meta[${attr}="${key}"]`);
+      if (!el) { el = document.createElement('meta'); el.setAttribute(attr, key); document.head.appendChild(el); }
+      el.setAttribute('content', val);
+    };
+    setMeta('name', 'description', seo.description);
+    setMeta('name', 'robots', seo.noindex ? 'noindex, nofollow' : 'index, follow');
+    setMeta('property', 'og:title', seo.title);
+    setMeta('property', 'og:description', seo.description);
+    setMeta('property', 'og:url', canonical);
+    setMeta('property', 'og:image', SEO_OG);
+    setMeta('name', 'twitter:title', seo.title);
+    setMeta('name', 'twitter:description', seo.description);
+    setMeta('name', 'twitter:image', SEO_OG);
+    let link = document.head.querySelector('link[rel="canonical"]');
+    if (!link) { link = document.createElement('link'); link.setAttribute('rel', 'canonical'); document.head.appendChild(link); }
+    link.setAttribute('href', canonical);
+  } catch (e) { /* no-op */ }
+}
 
 
 
@@ -4564,6 +4592,7 @@ function AppShell() {
   useEffect(() => { window.__urbeNav = goTo; return () => { delete window.__urbeNav; }; });
   // Scroll haut + tracking GA4 a chaque changement d'URL
   useEffect(() => {
+    applyRuntimeHead(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (window.closeMixBookingModal) window.closeMixBookingModal();
     if (window.dataLayer) window.dataLayer.push({ event: 'page_view', page_title: page, page_path: location.pathname });
