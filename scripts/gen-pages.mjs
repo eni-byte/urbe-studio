@@ -53,9 +53,12 @@ try {
   const tpl = readFileSync(join(dist, 'index.html'), 'utf8');
   let n = 0;
   for (const seo of Object.values(ROUTES)) {
-    const outDir = join(dist, seo.path.replace(/^\//, ''));
-    mkdirSync(outDir, { recursive: true });
-    writeFileSync(join(outDir, 'index.html'), buildHtml(tpl, seo));
+    // Fichier PLAT (dist/studio.html) et non un dossier : Netlify sert alors
+    // /studio SANS trailing slash ni redirection 301 -> cohabite avec les
+    // canonicals (sans slash). /studio/ est redirige vers /studio par Netlify.
+    const outFile = join(dist, seo.path.replace(/^\//, '') + '.html');
+    mkdirSync(dirname(outFile), { recursive: true });
+    writeFileSync(outFile, buildHtml(tpl, seo));
     n++;
   }
   // Page 404 (statut géré côté Netlify en Phase 4)
