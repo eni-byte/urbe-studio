@@ -7,7 +7,19 @@
 
 export const SITE = 'https://www.urbestudio.fr';
 export const OG_IMAGE = SITE + '/studio/cabine.jpg'; // [À REMPLIR] idéalement une image OG dédiée 1200×630
-const PHONE = ''; // [À REMPLIR] téléphone réel (schema + lien tel:)
+const PHONE = '+33667126235'; // 06 67 12 62 35 — appel / SMS / WhatsApp
+
+/* Coordonnées réelles — source unique (JSON-LD + footer + page contact). */
+export const CONTACT = {
+  phoneDisplay: '06 67 12 62 35',
+  tel: '+33667126235',
+  sms: 'sms:+33667126235',
+  whatsapp: 'https://wa.me/33667126235',
+  email: 'contact@urbestudio.fr',
+  instagram: 'https://www.instagram.com/urbestudioparis/',
+  tiktok: 'https://www.tiktok.com/@urbe.studio.paris',
+  youtube: 'https://www.youtube.com/@urbestudio',
+};
 
 /* Bloc LocalBusiness partagé (présent sur toutes les pages) */
 const localBusiness = {
@@ -34,7 +46,7 @@ const localBusiness = {
       { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Mastering' } },
     ],
   },
-  sameAs: ['https://www.instagram.com/urbestudio', 'https://www.youtube.com/@urbestudio'], // [À COMPLÉTER] réseaux réels
+  sameAs: ['https://www.instagram.com/urbestudioparis/', 'https://www.tiktok.com/@urbe.studio.paris', 'https://www.youtube.com/@urbestudio'],
 };
 if (PHONE) localBusiness.telephone = PHONE;
 

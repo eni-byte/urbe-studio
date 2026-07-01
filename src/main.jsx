@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
-import { seoFor, SITE as SEO_SITE, OG_IMAGE as SEO_OG } from './seo-data.mjs';
+import { seoFor, SITE as SEO_SITE, OG_IMAGE as SEO_OG, CONTACT } from './seo-data.mjs';
 
 /* Met à jour le <head> lors de la navigation client (le JSON-LD reste celui du
    HTML statique servi pour la page — voir scripts/gen-pages.mjs — pour éviter les doublons). */
@@ -343,6 +343,23 @@ function SiteFooter({ setPage }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 20 }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--rouge3)', boxShadow: '0 0 8px var(--rouge3)' }} />
               <span style={{ fontFamily: 'Space Mono', fontSize: 9, color: 'var(--rouge3)', letterSpacing: '0.12em' }}>OUVERT 24H/24 · 7J/7</span>
+            </div>
+            {/* Contact + réseaux réels */}
+            <div style={{ marginTop: 22, display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <a href={`tel:${CONTACT.tel}`} style={{ fontSize: 15, color: 'var(--blanc)', fontWeight: 700, textDecoration: 'none', letterSpacing: '0.02em' }}>{CONTACT.phoneDisplay}</a>
+              <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+                <a href={CONTACT.whatsapp} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: 'var(--dim)', textDecoration: 'none', transition: 'color 0.15s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#25D366'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--dim)'}>WhatsApp</a>
+                <a href={CONTACT.sms} style={{ fontSize: 12, color: 'var(--dim)', textDecoration: 'none', transition: 'color 0.15s' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--blanc)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--dim)'}>SMS</a>
+                <a href={`mailto:${CONTACT.email}`} style={{ fontSize: 12, color: 'var(--dim)', textDecoration: 'none', transition: 'color 0.15s' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--blanc)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--dim)'}>{CONTACT.email}</a>
+              </div>
+              <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+                <SocialIcon href={CONTACT.instagram} hover="linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)" title="Instagram">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5" /><path d="M16 11.4A4 4 0 1 1 12.6 8 4 4 0 0 1 16 11.4z" /><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" /></svg>
+                </SocialIcon>
+                <SocialIcon href={CONTACT.tiktok} hover="#000000" title="TikTok">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.8a4.28 4.28 0 0 1-1-2.8h-3.05v12.26a2.59 2.59 0 1 1-2.59-2.59c.27 0 .53.04.78.12V9.7a5.65 5.65 0 0 0-.78-.05 5.6 5.6 0 1 0 5.6 5.6V9.01a7.31 7.31 0 0 0 4.3 1.38V7.4a4.28 4.28 0 0 1-3.26-1.6z" /></svg>
+                </SocialIcon>
+              </div>
             </div>
           </div>
           {[
@@ -745,10 +762,10 @@ function PromoBanner({ setPage }) {
 
 /* ─── INGÉNIEURS DU SON ──────────────────────────────────────── */
 const ENGINEERS = [
-{ nom: 'Virgile', aka: 'Punch', role: 'Ingénieur du son', initiales: 'VG', bg: '#8B1E1E', bio: 'Spécialiste rap & musiques urbaines. 10+ ans en studio, mix sur les meilleures productions FR.', credits: ['Kaaris', 'Heuss L’Enfoiré', 'Timal', 'Doria', 'Negrito', 'Skunaboi', 'Chakal', 'Gotti Marras'], bioLong: ['Virgile, aka Punch, est ingénieur du son basé à Paris depuis maintenant 5 ans. Passionné de musique depuis l’enfance, il commence la guitare à l’âge de 6 ans avant de se tourner vers la production d’instrumentales à 13 ans. Cette double approche musicale lui permet de développer très tôt une oreille précise et une compréhension approfondie de la création sonore.', 'Depuis plusieurs années, Punch se consacre pleinement à l’ingénierie sonore, avec une spécialisation sur Pro Tools, devenu son environnement de travail principal en studio. Au fil du temps, il a eu l’opportunité de collaborer avec des artistes reconnus tels que Kaaris, Heuss L’Enfoiré, Timal, Doria, Negrito, Skunaboi, Chakal, ou encore Gotti Marras.', 'Au-delà de la technique, Punch accorde une grande importance à l’accompagnement artistique en studio. Il aime résoudre les problèmes que les artistes rencontrent pendant leurs sessions, que ce soit dans la prise de son, l’interprétation ou la direction artistique, afin de leur permettre d’exprimer pleinement leur vision et d’obtenir le meilleur résultat possible.'], youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudio' },
-{ nom: 'Olid', role: 'Ingénieur du son', initiales: 'OL', bg: '#1f1f1f', bio: 'Prise de son et direction artistique. Sessions live, banque de sons sur mesure, edit voix.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudio' },
-{ nom: 'Chourak', role: 'Ingénieur du son', initiales: 'CH', bg: '#2a1414', bio: 'Mix pop & R&B, mastering analogique. Finition prête streaming, vinyle et radio.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudio' },
-{ nom: 'BMS', role: 'Ingénieur du son', initiales: 'BM', bg: '#161616', bio: 'Composition et production. Création de prods sur-mesure, arrangement et orchestration.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudio' }];
+{ nom: 'Virgile', aka: 'Punch', role: 'Ingénieur du son', initiales: 'VG', bg: '#8B1E1E', bio: 'Spécialiste rap & musiques urbaines. 10+ ans en studio, mix sur les meilleures productions FR.', credits: ['Kaaris', 'Heuss L’Enfoiré', 'Timal', 'Doria', 'Negrito', 'Skunaboi', 'Chakal', 'Gotti Marras'], bioLong: ['Virgile, aka Punch, est ingénieur du son basé à Paris depuis maintenant 5 ans. Passionné de musique depuis l’enfance, il commence la guitare à l’âge de 6 ans avant de se tourner vers la production d’instrumentales à 13 ans. Cette double approche musicale lui permet de développer très tôt une oreille précise et une compréhension approfondie de la création sonore.', 'Depuis plusieurs années, Punch se consacre pleinement à l’ingénierie sonore, avec une spécialisation sur Pro Tools, devenu son environnement de travail principal en studio. Au fil du temps, il a eu l’opportunité de collaborer avec des artistes reconnus tels que Kaaris, Heuss L’Enfoiré, Timal, Doria, Negrito, Skunaboi, Chakal, ou encore Gotti Marras.', 'Au-delà de la technique, Punch accorde une grande importance à l’accompagnement artistique en studio. Il aime résoudre les problèmes que les artistes rencontrent pendant leurs sessions, que ce soit dans la prise de son, l’interprétation ou la direction artistique, afin de leur permettre d’exprimer pleinement leur vision et d’obtenir le meilleur résultat possible.'], youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudioparis/' },
+{ nom: 'Olid', role: 'Ingénieur du son', initiales: 'OL', bg: '#1f1f1f', bio: 'Prise de son et direction artistique. Sessions live, banque de sons sur mesure, edit voix.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudioparis/' },
+{ nom: 'Chourak', role: 'Ingénieur du son', initiales: 'CH', bg: '#2a1414', bio: 'Mix pop & R&B, mastering analogique. Finition prête streaming, vinyle et radio.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudioparis/' },
+{ nom: 'BMS', role: 'Ingénieur du son', initiales: 'BM', bg: '#161616', bio: 'Composition et production. Création de prods sur-mesure, arrangement et orchestration.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudioparis/' }];
 
 
 function SocialIcon({ href, hover, title, children }) {
