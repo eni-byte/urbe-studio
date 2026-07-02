@@ -57,13 +57,19 @@
   to = "/blog/"
   status = 301
 
-# ── Fallback SPA (routeur React) ────────────────────────────────────
-# DOIT rester la DERNIERE regle. Netlify sert d'abord un fichier statique
-# s'il existe (pages SEO /blog /guides /mixage-rap-en-ligne…, et plus tard
-# les pages prerendues /studio/index.html…) ; sinon il sert l'app, qui gere
-# la route cote client via react-router. force=false (defaut) => les fichiers
-# reels ont la priorite, donc les pages statiques existantes ne sont pas cassees.
+# ── Alias legacy ────────────────────────────────────────────────────
+[[redirects]]
+  from = "/credits"
+  to = "/artistes"
+  status = 301
+
+# ── 404 propre (DOIT rester la DERNIERE regle) ──────────────────────
+# Netlify sert d'abord un fichier existant (force=false par defaut) : /
+# (index.html), les pages prerendues /studio.html /tarifs.html… et les pages
+# SEO /blog /guides /mixage-rap-en-ligne… Seules les URL vraiment inexistantes
+# tombent ici -> 404.html avec un vrai statut 404 (la 404.html est le shell de
+# l'app : react-router y affiche la page 404 stylee).
 [[redirects]]
   from = "/*"
-  to = "/index.html"
-  status = 200
+  to = "/404.html"
+  status = 404

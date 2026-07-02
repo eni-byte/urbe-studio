@@ -254,8 +254,11 @@ function Nav({ page, setPage }) {
   useEffect(() => { setMobileOpen(false); }, [page]);
 
   const links = [
-  { label: 'Crédits', p: 'credits' },
   { label: 'Le Studio', p: 'studio' },
+  { label: 'Mix & Master', p: 'mixage-mastering' },
+  { label: 'Tarifs', p: 'tarifs' },
+  { label: 'Artistes', p: 'credits' },
+  { label: 'Actualités', p: 'actualites' },
   { label: 'Contact', p: 'contact' }];
 
   const u = (typeof urbeAuth !== 'undefined') ? urbeAuth.getUser() : null;
@@ -276,7 +279,7 @@ function Nav({ page, setPage }) {
       </button>
       <div className="urbe-nav-center" style={{ display: 'flex', gap: 4, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
         {links.map((l) =>
-        <button key={l.p} onClick={() => go(l.p)} style={{
+        <button key={l.p} aria-current={page === l.p ? 'page' : undefined} onClick={() => go(l.p)} style={{
           background: page === l.p ? 'var(--s2)' : 'none',
           border: 'none', cursor: 'pointer', padding: '6px 16px', borderRadius: 100,
           fontFamily: 'Plus Jakarta Sans', fontSize: 13.5, fontWeight: 500,
@@ -313,12 +316,12 @@ function Nav({ page, setPage }) {
         position: 'fixed', top: 60, left: 0, right: 0, zIndex: 199,
         background: 'rgba(8,8,8,0.98)', backdropFilter: 'blur(20px) saturate(1.2)',
         borderBottom: mobileOpen ? '1px solid var(--br)' : '1px solid transparent',
-        overflow: 'hidden', maxHeight: mobileOpen ? 340 : 0,
+        overflow: 'hidden', maxHeight: mobileOpen ? 460 : 0,
         transition: 'max-height 0.35s cubic-bezier(.4,0,.2,1)'
       }}>
         <div style={{ padding: '12px 22px 20px', display: 'flex', flexDirection: 'column', gap: 2 }}>
           {links.map((l) =>
-            <button key={l.p} onClick={() => go(l.p)} style={{
+            <button key={l.p} aria-current={page === l.p ? 'page' : undefined} onClick={() => go(l.p)} style={{
               textAlign: 'left', background: page === l.p ? 'var(--s2)' : 'none', border: 'none', cursor: 'pointer',
               padding: '13px 14px', borderRadius: 10, fontFamily: 'Plus Jakarta Sans', fontSize: 15, fontWeight: 500,
               color: page === l.p ? 'var(--blanc)' : 'var(--dim)'
