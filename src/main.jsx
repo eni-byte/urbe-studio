@@ -2313,7 +2313,42 @@ function ContactPage() {
     <div style={{ minHeight: '100vh', paddingTop: 60 }}>
       <div style={{ padding: '64px 28px', maxWidth: 900, margin: '0 auto' }}>
         <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.16em', color: 'var(--rouge3)', textTransform: 'uppercase', marginBottom: 12 }}>Contact</div>
-        <h1 style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 'clamp(48px,6vw,72px)', letterSpacing: '0.02em', marginBottom: 48 }}>PARLONS DE<br />VOTRE PROJET.</h1>
+        <h1 style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 'clamp(48px,6vw,72px)', letterSpacing: '0.02em', marginBottom: 40 }}>PARLONS DE<br />VOTRE PROJET.</h1>
+
+        {/* Coordonnées & accès */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 18, marginBottom: 40 }}>
+          <div style={{ background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 14, padding: '20px' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--rouge3)', marginBottom: 12 }}>Adresse & accès</div>
+            <div style={{ fontSize: 14, color: 'var(--blanc)', fontWeight: 600, marginBottom: 6 }}>37 rue d'Hauteville, 75010 Paris</div>
+            <div style={{ fontSize: 12.5, color: 'var(--dim)', lineHeight: 1.7 }}>Métro Bonne Nouvelle (L8) · Strasbourg-Saint-Denis (L4, L8, L9)<br />Parkings à proximité · Ouvert 24h/24, 7j/7</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=37%20rue%20d'Hauteville%2075010%20Paris" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginTop: 12, fontSize: 12.5, fontWeight: 600, color: 'var(--rouge3)', textDecoration: 'none' }}>Itinéraire Google Maps →</a>
+          </div>
+          <div style={{ background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 14, padding: '20px' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--rouge3)', marginBottom: 12 }}>Nous joindre</div>
+            <a href={`tel:${CONTACT.tel}`} style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 30, color: 'var(--blanc)', textDecoration: 'none', display: 'inline-block', marginBottom: 10, lineHeight: 1 }}>{CONTACT.phoneDisplay}</a>
+            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', fontSize: 13, marginBottom: 10 }}>
+              <a href={CONTACT.whatsapp} target="_blank" rel="noopener noreferrer" style={{ color: '#25D366', textDecoration: 'none', fontWeight: 600 }}>WhatsApp</a>
+              <a href={CONTACT.sms} style={{ color: 'var(--dim)', textDecoration: 'none' }}>SMS</a>
+              <a href={`mailto:${CONTACT.email}`} style={{ color: 'var(--dim)', textDecoration: 'none' }}>{CONTACT.email}</a>
+            </div>
+            <div style={{ display: 'flex', gap: 14, fontSize: 13 }}>
+              <a href={CONTACT.instagram} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--dim)', textDecoration: 'none' }}>Instagram</a>
+              <a href={CONTACT.tiktok} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--dim)', textDecoration: 'none' }}>TikTok</a>
+            </div>
+          </div>
+        </div>
+
+        {/* FAQ rapide */}
+        <div style={{ marginBottom: 44 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 12 }}>FAQ rapide</div>
+          {[['Le studio est-il ouvert la nuit ?', 'Oui, ouvert 24h/24, 7j/7.'], ['Puis-je venir avec mon propre beat ?', "Oui, tu viens avec ton son, on s'occupe du reste."], ['Proposez-vous le mixage à distance ?', 'Oui, mixage et mastering en ligne.']].map(([q, a]) =>
+            <div key={q} style={{ borderBottom: '1px solid var(--br)', padding: '13px 0' }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--blanc)', marginBottom: 4 }}>{q}</div>
+              <div style={{ fontSize: 13, color: 'var(--dim)' }}>{a}</div>
+            </div>
+          )}
+        </div>
+
         {sent ?
         <div style={{ background: 'var(--s1)', border: '1px solid rgba(139,30,30,0.4)', borderRadius: '22px', padding: '56px 48px', textAlign: 'center' }}>
             <div style={{ fontSize: 40, marginBottom: 16 }}>✓</div>
@@ -4572,23 +4607,108 @@ const PATH_PAGE = {
   '/actualites': 'actualites', '/mentions-legales': 'mentions', '/confidentialite': 'confidentialite', '/cgv': 'cgv',
 };
 
-/* Pages placeholder — contenu detaille integre en Phase 3 ; design du site reutilise. */
-function PlaceholderPage({ eyebrow, h1, intro, setPage }) {
+/* ─── Pages secondaires (contenu reel + maillage interne) ──────────────── */
+function PageShell({ eyebrow, h1, intro, children }) {
   return (
-    <div style={{ minHeight: '68vh', maxWidth: 900, margin: '0 auto', padding: '128px 28px 80px' }}>
+    <div style={{ minHeight: '70vh', maxWidth: 1000, margin: '0 auto', padding: '124px 28px 80px' }}>
       <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.16em', color: 'var(--rouge3)', textTransform: 'uppercase', marginBottom: 14 }}>{eyebrow}</div>
-      <h1 style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 'clamp(34px,5vw,60px)', letterSpacing: '0.01em', lineHeight: 0.98, marginBottom: 20 }}>{h1}</h1>
-      <p style={{ fontSize: 16, lineHeight: 1.7, fontWeight: 300, color: 'var(--dim)', maxWidth: 620, marginBottom: 32 }}>{intro}</p>
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        <button onClick={() => setPage('booking')} style={{ background: 'var(--rouge)', color: '#fff', border: 'none', padding: '14px 26px', borderRadius: 100, cursor: 'pointer', fontSize: 14, fontWeight: 700 }}>Réserver →</button>
-        <button onClick={() => setPage('contact')} style={{ background: 'none', color: 'var(--blanc)', border: '1px solid var(--br2)', padding: '14px 24px', borderRadius: 100, cursor: 'pointer', fontSize: 14, fontWeight: 600 }}>Nous contacter</button>
-      </div>
-      <p style={{ marginTop: 40, fontSize: 12, color: 'var(--dim)', fontStyle: 'italic' }}>Contenu détaillé en cours d'intégration.</p>
+      <h1 style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 'clamp(34px,5vw,58px)', letterSpacing: '0.01em', lineHeight: 1, marginBottom: 18 }}>{h1}</h1>
+      {intro && <p style={{ fontSize: 16, lineHeight: 1.7, fontWeight: 300, color: 'var(--dim)', maxWidth: 680, marginBottom: 36 }}>{intro}</p>}
+      {children}
     </div>);
 }
-function MixMasterPage({ setPage }) { return <PlaceholderPage setPage={setPage} eyebrow="Services" h1="Mixage & Mastering Professionnel — Paris 10" intro="Nos ingénieurs du son certifiés mixent et masterisent tes titres, en ligne ou sur place. Tous styles." />; }
-function TarifsPage({ setPage }) { return <PlaceholderPage setPage={setPage} eyebrow="Tarifs" h1="Tarifs Studio d'Enregistrement Paris 10 — URBE STUDIO" intro="Tarifs transparents pour l'enregistrement, le mixage et le mastering. Contacte-nous pour un devis personnalisé." />; }
-function ActusPage({ setPage }) { return <PlaceholderPage setPage={setPage} eyebrow="Le journal" h1="Actualités & Journal — URBE STUDIO" intro="Les dernières nouvelles du studio : sessions, sorties d'artistes et événements." />; }
+/* Maillage interne : 2-3 liens pertinents par page */
+function PageLinks({ setPage, links }) {
+  return (
+    <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', marginTop: 44, paddingTop: 26, borderTop: '1px solid var(--br)' }}>
+      <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--dim)' }}>À voir aussi</span>
+      {links.map(([label, key]) =>
+        <button key={key} onClick={() => setPage(key)} style={{ background: 'var(--s1)', border: '1px solid var(--br2)', color: 'var(--blanc)', padding: '9px 18px', borderRadius: 100, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>{label} →</button>
+      )}
+    </div>);
+}
+function PriceCard({ item, setPage }) {
+  return (
+    <button onClick={() => setPage('booking', item.id)} style={{ textAlign: 'left', background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 14, padding: '20px', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 8, transition: 'border-color 0.2s' }}
+      onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--br2)'} onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--br)'}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10 }}>
+        <span style={{ fontWeight: 700, fontSize: 15 }}>{item.label}</span>
+        {item.badge && <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--rouge3)', border: '1px solid rgba(193,44,44,0.4)', borderRadius: 100, padding: '3px 9px', whiteSpace: 'nowrap' }}>{item.badge}</span>}
+      </div>
+      <span style={{ fontSize: 12.5, color: 'var(--dim)', lineHeight: 1.5, flex: 1 }}>{item.desc}</span>
+      <span style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 26, color: 'var(--rouge3)' }}>{item.prix}€<span style={{ fontSize: 13, color: 'var(--dim)', fontWeight: 500 }}>{item.unit}</span></span>
+    </button>);
+}
+function TarifsPage({ setPage }) {
+  const cats = ['Session studio', 'Mix & Master', 'Packs', 'Forfaits prépayés'];
+  return (
+    <PageShell eyebrow="Tarifs" h1="Tarifs Studio d'Enregistrement Paris 10" intro="Des tarifs transparents pour l'enregistrement, le mixage, le mastering et la production, au 37 rue d'Hauteville (Paris 10). Réservation et paiement en ligne. Pour un projet sur-mesure, contacte-nous pour un devis personnalisé.">
+      {cats.map((c) =>
+        <div key={c} style={{ marginBottom: 34 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--blanc)', marginBottom: 14 }}>{c}</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
+            {BOOKING_CATALOG.filter((i) => i.cat === c).map((i) => <PriceCard key={i.id} item={i} setPage={setPage} />)}
+          </div>
+        </div>
+      )}
+      <p style={{ fontSize: 12.5, color: 'var(--dim)', fontStyle: 'italic' }}>Tarifs indicatifs TTC. Le mastering est à -50% avec un mix. Contacte-nous pour un devis personnalisé.</p>
+      <PageLinks setPage={setPage} links={[['Mixage & Mastering', 'mixage-mastering'], ['Le Studio', 'studio'], ['Contact', 'contact']]} />
+    </PageShell>);
+}
+function MixMasterPage({ setPage }) {
+  const mm = BOOKING_CATALOG.filter((i) => i.cat === 'Mix & Master');
+  const svc = [
+    { t: 'Mixage', d: 'Équilibrage, EQ, compression, spatialisation et cohérence de tes pistes. Un mix propre, puissant et prêt à sonner sur toutes les plateformes.' },
+    { t: 'Mastering', d: 'Finalisation, loudness optimisé et export prêt pour le streaming, la radio et le vinyle. La dernière touche qui fait sonner ton titre pro.' },
+    { t: 'Bundle Mix & Master', d: 'Le combo complet, du mix au master, pour une chaîne cohérente et un rendu homogène. Mastering à -50% avec ton mix.' },
+  ];
+  return (
+    <PageShell eyebrow="Services" h1="Mixage & Mastering Professionnel — Paris 10" intro="Nos ingénieurs du son mixent et masterisent tes titres, en ligne ou sur place à Paris 10, tous styles (rap, pop, afro, r&b, électro). Tu envoies tes pistes, on s'occupe du reste. Livraison mix sous 7 jours (48h en urgence).">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14, marginBottom: 34 }}>
+        {svc.map((s) =>
+          <div key={s.t} style={{ background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 14, padding: '22px 20px' }}>
+            <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 22, marginBottom: 10 }}>{s.t}</div>
+            <p style={{ fontSize: 13, color: 'var(--dim)', lineHeight: 1.6, margin: 0 }}>{s.d}</p>
+          </div>
+        )}
+      </div>
+      <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 14 }}>Tarifs mix & master</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
+        {mm.map((i) => <PriceCard key={i.id} item={i} setPage={setPage} />)}
+      </div>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 26 }}>
+        <button onClick={() => (window.openMixBookingModal ? window.openMixBookingModal({}) : setPage('booking', 'mix-standard'))} style={{ background: 'var(--rouge)', color: '#fff', border: 'none', padding: '14px 26px', borderRadius: 100, cursor: 'pointer', fontSize: 14, fontWeight: 700 }}>Réserver un mix →</button>
+        <button onClick={() => setPage('contact')} style={{ background: 'none', color: 'var(--blanc)', border: '1px solid var(--br2)', padding: '14px 24px', borderRadius: 100, cursor: 'pointer', fontSize: 14, fontWeight: 600 }}>Devis gratuit</button>
+      </div>
+      <PageLinks setPage={setPage} links={[['Tarifs', 'tarifs'], ['Le Studio', 'studio'], ['Contact', 'contact']]} />
+    </PageShell>);
+}
+function ActusPage({ setPage }) {
+  const posts = [
+    { titre: 'Fête de la Musique 2026 à Paris', cat: 'Événement', date: '21 JUIN 2026', href: 'blog/fete-de-la-musique-2026-paris.html', excerpt: 'Open air gratuit avec Urbe & Saphir : quand la passion dépasse les obstacles.' },
+    { titre: 'Mixage & mastering audio en ligne : le guide', cat: 'Le journal', date: '12 JUIN 2026', href: 'blog/mixage-mastering-en-ligne.html', excerpt: 'Envoyez vos pistes, choisissez votre ingénieur, recevez votre mix prêt pour le streaming.' },
+    { titre: "Notre studio d'enregistrement à Paris 10ᵉ", cat: 'Studio', date: '2 JUIN 2026', href: 'blog/studio-enregistrement-paris.html', excerpt: 'Cabine traitée, régie pro, ouvert 24h/24 au cœur du 10ᵉ arrondissement.' },
+  ];
+  return (
+    <PageShell eyebrow="Le journal" h1="Actualités & Journal — URBE STUDIO" intro="Les dernières nouvelles du studio : sessions, sorties d'artistes, événements et conseils prod. Studio ouvert 24h/24 au 37 rue d'Hauteville, Paris 10.">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 14 }}>
+        {posts.map((p) =>
+          <a key={p.href} href={p.href} style={{ textDecoration: 'none', background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 14, padding: '20px', display: 'flex', flexDirection: 'column', gap: 8, transition: 'border-color 0.2s' }}
+            onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--br2)'} onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--br)'}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
+              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--rouge3)' }}>{p.cat}</span>
+              <span style={{ fontFamily: 'Space Mono', fontSize: 10, color: 'var(--dim)' }}>{p.date}</span>
+            </div>
+            <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 19, color: 'var(--blanc)', lineHeight: 1.1 }}>{p.titre}</div>
+            <p style={{ fontSize: 12.5, color: 'var(--dim)', lineHeight: 1.5, margin: 0, flex: 1 }}>{p.excerpt}</p>
+            <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--rouge3)' }}>Lire l'article →</span>
+          </a>
+        )}
+      </div>
+      <div style={{ marginTop: 22 }}><a href="blog/index.html" style={{ fontSize: 13, fontWeight: 600, color: 'var(--blanc)' }}>Tous les articles du blog →</a></div>
+      <PageLinks setPage={setPage} links={[['Le Studio', 'studio'], ['Mixage & Mastering', 'mixage-mastering'], ['Contact', 'contact']]} />
+    </PageShell>);
+}
 function NotFoundPage({ setPage }) {
   return (
     <div style={{ minHeight: '70vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '140px 28px 80px' }}>
