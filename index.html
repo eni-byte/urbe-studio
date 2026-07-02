@@ -261,11 +261,14 @@
   /* ─── Responsive (audit MOB-01/02) ─────────────────────── */
   .urbe-mobile-panel { display: none; }
   .urbe-burger { display: none; }
-  @media (max-width: 860px) {
+  /* Nav : burger plus tôt (6 liens) pour éviter le chevauchement logo/CTA sur tablette */
+  @media (max-width: 980px) {
     .urbe-nav-center { display: none !important; }
-    .urbe-hide-mobile { display: none !important; }
     .urbe-burger { display: flex !important; }
     .urbe-mobile-panel { display: block; }
+  }
+  @media (max-width: 860px) {
+    .urbe-hide-mobile { display: none !important; }
     .urbe-featured-grid { grid-template-columns: repeat(2, 1fr) !important; }
     .urbe-footer-grid { grid-template-columns: 1fr 1fr !important; }
   }
