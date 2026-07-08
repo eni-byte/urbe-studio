@@ -301,7 +301,7 @@ function Nav({ page, setPage }) {
         onMouseLeave={(e) => {e.currentTarget.style.background = 'var(--rouge)';e.currentTarget.style.transform = 'none';}}>
           Réserver →</button>
         <button className="urbe-burger" onClick={() => setMobileOpen((o) => !o)} aria-label="Menu" aria-expanded={mobileOpen} style={{
-          width: 40, height: 40, alignItems: 'center', justifyContent: 'center',
+          width: 44, height: 44, alignItems: 'center', justifyContent: 'center',
           background: 'none', border: '1px solid var(--br2)', borderRadius: 10, cursor: 'pointer', color: 'var(--blanc)', flexShrink: 0
         }}>
           {mobileOpen
@@ -772,7 +772,7 @@ const ENGINEERS = [
 
 function SocialIcon({ href, hover, title, children }) {
   const real = !!href && href !== '#' && /^https?:\/\//i.test(href);
-  const base = { width: 32, height: 32, borderRadius: 8, background: 'rgba(241,236,231,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--dim)', textDecoration: 'none', transition: 'all 0.2s' };
+  const base = { width: 40, height: 40, borderRadius: 9, background: 'rgba(241,236,231,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--dim)', textDecoration: 'none', transition: 'all 0.2s' };
   if (!real) {
     // Placeholder profile: render an inert icon instead of a dead "#" link that opens a blank tab.
     return <span title={title} aria-hidden="true" style={{ ...base, opacity: 0.4, cursor: 'default' }}>{children}</span>;
@@ -866,7 +866,7 @@ function EngineerModal({ e, onClose }) {
   return (
     <div onClick={onClose} role="dialog" aria-modal="true" aria-label={`Profil de ${e.nom}`} style={{ position: 'fixed', inset: 0, zIndex: 2000, background: 'rgba(0,0,0,0.78)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '40px 20px', overflowY: 'auto' }}>
       <div onClick={(ev) => ev.stopPropagation()} style={{ width: '100%', maxWidth: 600, background: 'var(--s1)', border: '1px solid var(--br2)', borderRadius: 18, padding: '28px 28px 32px', position: 'relative' }}>
-        <button onClick={onClose} aria-label="Fermer le profil" style={{ position: 'absolute', top: 16, right: 16, width: 34, height: 34, borderRadius: '50%', background: 'var(--s2)', border: '1px solid var(--br)', color: 'var(--blanc)', cursor: 'pointer', fontSize: 15, lineHeight: 1 }}>✕</button>
+        <button onClick={onClose} aria-label="Fermer le profil" style={{ position: 'absolute', top: 12, right: 12, width: 44, height: 44, borderRadius: '50%', background: 'var(--s2)', border: '1px solid var(--br)', color: 'var(--blanc)', cursor: 'pointer', fontSize: 15, lineHeight: 1 }}>✕</button>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 22, paddingRight: 40 }}>
           <div style={{ width: 72, height: 72, borderRadius: '50%', background: e.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 26, letterSpacing: '0.04em', flexShrink: 0 }}>{e.initiales}</div>
           <div>
@@ -4558,7 +4558,7 @@ function ChatAgent() {
               <div style={{ fontSize: 10.5, color: '#3ad17a', display: 'flex', alignItems: 'center', gap: 5 }}><span style={{ width: 6, height: 6, borderRadius: '50%', background: '#3ad17a', boxShadow: '0 0 6px #3ad17a' }} />en ligne</div>
             </div>
             <button onClick={goBooking} style={{ background: 'var(--rouge)', color: '#fff', border: 'none', padding: '7px 13px', borderRadius: 100, fontSize: 12, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}>Réserver →</button>
-            <button onClick={() => setOpen(false)} aria-label="Fermer le chat" style={{ background: 'none', border: 'none', color: 'var(--dim)', fontSize: 22, lineHeight: 1, cursor: 'pointer', padding: '0 2px' }}>×</button>
+            <button onClick={() => setOpen(false)} aria-label="Fermer le chat" style={{ background: 'none', border: 'none', color: 'var(--dim)', fontSize: 22, lineHeight: 1, cursor: 'pointer', width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>×</button>
           </div>
           <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '14px 14px 6px', display: 'flex', flexDirection: 'column', gap: 10 }}>
             {msgs.map((m, i) =>
