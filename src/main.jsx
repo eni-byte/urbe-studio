@@ -1501,7 +1501,7 @@ const BOOKING_CATALOG = [
   { id: 'session-avec', cat: 'Session studio', label: 'Avec Ingénieur du Son', desc: 'Session encadrée par un ingénieur. 2h minimum.', prix: 30, unit: '/h', billing: 'hourly', needsDate: true, featured: true, badge: 'Le + réservé', stripeKey: 'session-avec' },
   { id: 'session-sans', cat: 'Session studio', label: 'Sans Ingénieur du Son', desc: 'Autonomie totale. Ordinateur portable requis.', prix: 20, unit: '/h', billing: 'hourly', needsDate: true, stripeKey: 'session-sans' },
   { id: 'session-nuit', cat: 'Session studio', label: 'Session de Nuit', desc: 'Après 21h. Studio ouvert 24/24.', prix: 35, unit: '/h', billing: 'hourly', needsDate: true, stripeKey: 'session-nuit' },
-  { id: 'rec-1h', cat: 'Session studio', label: "2h d'enregistrement", desc: 'Séance découverte de deux heures, ingénieur inclus.', prix: 30, unit: ' · 2h', billing: 'flat', needsDate: true, stripeKey: 'rec-1h' },
+  { id: 'rec-1h', cat: 'Session studio', label: "Découverte 2h", desc: 'Séance découverte de deux heures, ingénieur inclus. Durée minimum du studio.', prix: 70, unit: ' · 2h', billing: 'flat', needsDate: true, stripeKey: 'rec-1h' },
   // Catégorie : Mix & Master
   { id: 'mix-standard', cat: 'Mix & Master', label: 'Mixage Standard', desc: 'Mix pro · livraison 7 jours · acompte 50%.', prix: 120, unit: '/titre', billing: 'flat', needsDate: false, featured: true, badge: 'Service phare', stripeKey: 'mix-standard' },
   { id: 'mix-urgent', cat: 'Mix & Master', label: 'Mixage Urgent 48h', desc: 'Mix livré sous 48h · supplément 50€.', prix: 170, unit: '/titre', billing: 'flat', needsDate: false, stripeKey: 'mix-urgent' },
