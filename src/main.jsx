@@ -653,11 +653,11 @@ function PromoBanner({ setPage }) {
         </div>
 
         {/* ── DROITE : cartes 3D ── */}
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', perspective: '900px', position: 'relative' }}
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', perspective: '900px', position: 'relative', overflow: 'hidden' }}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setTilt({ x: 0, y: 0 })}>
 
-          {/* Photos flottantes — overlay décoratif */}
+          {/* Photos flottantes — overlay décoratif (masqué sur mobile : positionnement en negatif, deborde a coup sur en dessous de 860px) */}
           {[
             { src: 'covers/c/nahir.png',   top: '-32px',  left: '-24px',  size: 68, rot: -8,  z: 0 },
             { src: 'covers/sheriff.jpg',    top: '-18px',  right: '-20px', size: 56, rot: 10,  z: 0 },
@@ -666,7 +666,7 @@ function PromoBanner({ setPage }) {
             { src: 'covers/c/bishop.png',   top: '42%',    left: '-44px',  size: 48, rot: 5,  z: 0 },
             { src: 'covers/c/ryflo.png',    top: '38%',    right: '-42px', size: 52, rot: -7, z: 0 },
           ].map(({ src, top, left, right, bottom, size, rot }, i) => (
-            <div key={i} style={{
+            <div key={i} className="urbe-hide-mobile" style={{
               position: 'absolute',
               top, left, right, bottom,
               width: size, height: size,
@@ -683,7 +683,7 @@ function PromoBanner({ setPage }) {
             </div>
           ))}
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`, transformStyle: 'preserve-3d', transition: 'transform 0.14s ease-out' }}>
+          <div className="urbe-promo-cards" style={{ display: 'flex', alignItems: 'center', gap: 16, transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`, transformStyle: 'preserve-3d', transition: 'transform 0.14s ease-out' }}>
 
             {/* Carte 1 — MIX acheté */}
             <div style={{
@@ -1328,8 +1328,8 @@ function HomePage({ setPage }) {
         <MixWidget />
 
         
-        {/* Bottom marquee — récemment au studio */}
-        <div style={{ position: 'absolute', bottom: 28, left: 0, right: 0, zIndex: 3, padding: '0 clamp(20px,3vw,56px)', display: 'flex', alignItems: 'center', gap: 24, whiteSpace: 'nowrap', overflow: 'hidden', maskImage: 'linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%)', WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%)' }}>
+        {/* Bottom marquee — récemment au studio (masqué sur mobile : le contenu du hero, plus haut avec les CTA empilés, entre en collision avec ce bandeau décoratif ancré en bas) */}
+        <div className="urbe-hide-mobile" style={{ position: 'absolute', bottom: 28, left: 0, right: 0, zIndex: 3, padding: '0 clamp(20px,3vw,56px)', display: 'flex', alignItems: 'center', gap: 24, whiteSpace: 'nowrap', overflow: 'hidden', maskImage: 'linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%)', WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%)' }}>
           <span style={{ fontFamily: 'Space Mono', fontSize: 10, letterSpacing: '0.22em', color: 'rgba(241,236,231,0.6)', textTransform: 'uppercase', fontWeight: 600, flexShrink: 0 }}>Ils sont passés ici →</span>
           <div className="urbe-hero-marquee-track" style={{ display: 'flex', gap: 22, alignItems: 'center', opacity: 0.65, flexShrink: 0 }}>
             {[...Array(2)].flatMap((_, dup) => [
@@ -1370,7 +1370,7 @@ function HomePage({ setPage }) {
 
       {/* ── TRUST STRIP ──────────────────────────────────────── */}
       <div style={{ borderTop: '1px solid var(--br)', borderBottom: '1px solid var(--br)', background: 'var(--s1)', padding: '20px 28px' }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
+        <div className="urbe-trust-strip" style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
           {[
           { n: '30m²', l: 'Studio traité' },
           { n: '200+', l: 'Artistes enregistrés' },
@@ -1378,7 +1378,7 @@ function HomePage({ setPage }) {
           { n: '7j/7', l: 'Ouvert — même les nuits' },
           { n: '98%', l: 'Satisfaction client' }].
           map((s, i) =>
-          <div key={s.l} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div key={s.l} className="urbe-trust-item" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               {i > 0 && <div style={{ width: 1, height: 28, background: 'var(--br)', marginRight: 12 }} />}
               <div>
                 <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 26, letterSpacing: '0.02em', color: 'var(--rouge3)', lineHeight: 1 }}>{s.n}</div>
@@ -4429,7 +4429,7 @@ function CookieBanner({ setPage }) {
   if (decided) return null;
   const choose = (v) => { urbeSetConsent(v); setDecided(true); };
   return (
-    <div role="dialog" aria-label="Consentement aux cookies" style={{ position: 'fixed', left: 16, right: 16, bottom: 16, zIndex: 9998, maxWidth: 720, margin: '0 auto', background: 'rgba(14,14,14,0.97)', backdropFilter: 'blur(16px) saturate(1.2)', border: '1px solid var(--br2)', borderRadius: 16, padding: '20px 22px', boxShadow: '0 24px 70px rgba(0,0,0,0.6)', display: 'flex', gap: 18, alignItems: 'center', flexWrap: 'wrap' }}>
+    <div role="dialog" aria-label="Consentement aux cookies" className="urbe-safe-bottom-16" style={{ position: 'fixed', left: 16, right: 16, bottom: 16, zIndex: 9998, maxWidth: 720, margin: '0 auto', background: 'rgba(14,14,14,0.97)', backdropFilter: 'blur(16px) saturate(1.2)', border: '1px solid var(--br2)', borderRadius: 16, padding: '20px 22px', boxShadow: '0 24px 70px rgba(0,0,0,0.6)', display: 'flex', gap: 18, alignItems: 'center', flexWrap: 'wrap' }}>
       <div style={{ flex: '1 1 280px', minWidth: 240 }}>
         <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--blanc)', marginBottom: 6 }}>Cookies &amp; contenus tiers</div>
         <div style={{ fontSize: 13, color: 'var(--dim)', fontWeight: 300, lineHeight: 1.6 }}>Nous utilisons des cookies pour les lecteurs Spotify, YouTube et l'agenda. Vous pouvez accepter ou refuser ces traceurs tiers. <span onClick={() => { choose('essential'); setPage && setPage('confidentialite'); }} style={{ color: 'var(--rouge3)', cursor: 'pointer', textDecoration: 'underline' }}>En savoir plus</span></div>
@@ -4550,7 +4550,7 @@ function ChatAgent() {
   return (
     <React.Fragment>
       {open &&
-      <div style={{ position: 'fixed', bottom: 92, right: 24, width: 360, maxWidth: 'calc(100vw - 32px)', height: 520, maxHeight: 'calc(100vh - 130px)', background: 'rgba(14,14,14,0.98)', border: '1px solid var(--br2)', borderRadius: 18, boxShadow: '0 30px 80px rgba(0,0,0,0.6)', backdropFilter: 'blur(16px)', zIndex: 9000, display: 'flex', flexDirection: 'column', overflow: 'hidden', fontFamily: 'Plus Jakarta Sans, system-ui, sans-serif' }}>
+      <div className="urbe-safe-bottom-92" style={{ position: 'fixed', bottom: 92, right: 24, width: 360, maxWidth: 'calc(100vw - 32px)', height: 520, maxHeight: 'calc(100vh - 130px)', background: 'rgba(14,14,14,0.98)', border: '1px solid var(--br2)', borderRadius: 18, boxShadow: '0 30px 80px rgba(0,0,0,0.6)', backdropFilter: 'blur(16px)', zIndex: 9000, display: 'flex', flexDirection: 'column', overflow: 'hidden', fontFamily: 'Plus Jakarta Sans, system-ui, sans-serif' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '13px 14px', borderBottom: '1px solid var(--br)', background: 'var(--s1)' }}>
             <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'var(--rouge)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Barlow Condensed', fontWeight: 800, color: '#fff', fontSize: 16, flexShrink: 0 }}>U</div>
             <div style={{ flex: 1, minWidth: 0 }}>
@@ -4574,7 +4574,7 @@ function ChatAgent() {
           </div>
         </div>
       }
-      <button onClick={() => setOpen((o) => !o)} aria-label="Ouvrir le chat" style={{ position: 'fixed', bottom: 24, right: 24, width: 58, height: 58, borderRadius: '50%', background: 'var(--rouge)', border: 'none', cursor: 'pointer', boxShadow: '0 12px 32px rgba(139,30,30,0.5)', zIndex: 9001, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'transform 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.06)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}>
+      <button onClick={() => setOpen((o) => !o)} aria-label="Ouvrir le chat" className="urbe-safe-bottom-24" style={{ position: 'fixed', bottom: 24, right: 24, width: 58, height: 58, borderRadius: '50%', background: 'var(--rouge)', border: 'none', cursor: 'pointer', boxShadow: '0 12px 32px rgba(139,30,30,0.5)', zIndex: 9001, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'transform 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.06)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}>
         {open ?
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#fff" strokeWidth="2" strokeLinecap="round" /></svg> :
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 0 1-.9-3.8A8.38 8.38 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z" stroke="#fff" strokeWidth="1.8" strokeLinejoin="round" /></svg>}
@@ -4752,6 +4752,16 @@ function NotFoundPage({ setPage }) {
     </div>);
 }
 
+const STICKY_CTA_HIDDEN_PAGES = new Set(['booking', 'mentions', 'confidentialite', 'cgv']);
+function StickyBookingBar({ page, onNavigate }) {
+  if (STICKY_CTA_HIDDEN_PAGES.has(page)) return null;
+  return (
+    <div className="urbe-sticky-cta urbe-sticky-cta-active">
+      <a href="/reservation" onClick={(e) => { e.preventDefault(); onNavigate('booking'); }}>Réserver une session →</a>
+    </div>
+  );
+}
+
 function AppShell() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -4803,6 +4813,7 @@ function AppShell() {
       <ConfirmHost />
       <ToastHost />
       <CookieBanner setPage={goTo} />
+      <StickyBookingBar page={page} onNavigate={goTo} />
       <Analytics />
       <ChatAgent />
       <Tweaks />

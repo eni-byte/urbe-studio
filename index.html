@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Studio d'Enregistrement Paris 10 | URBE STUDIO — Mix &amp; Mastering 24h/24</title>
 <meta name="description" content="Studio pro Paris 10ème ouvert 24h/24. Enregistrement, mixage et mastering pour rap, pop, électro. 200+ artistes. Réserve au 37 rue d'Hauteville." />
 <meta name="keywords" content="mixage en ligne, mastering en ligne, mix en ligne, mixage et mastering audio en ligne, mixage rap, mixage afro, mixage pop, mixage r&b, mixage trap, mastering musical, studio d'enregistrement Paris, studio enregistrement Paris 10, ingénieur du son Paris, réserver un mix, Urbe Studio" />
@@ -199,6 +199,57 @@
   ::selection { background: var(--rouge2); color: #fff; }
   input, textarea, button { font-family: inherit; }
 
+  /* ─── Polish mobile "appli" ──────────────────────────────────────────
+     Le site n'a jamais eu de retour tactile : les boutons ne reagissaient
+     qu'au survol souris (:hover), invisible sur ecran tactile -> un tap
+     ne "faisait" rien visuellement. On coupe le flash gris/bleu par defaut
+     du navigateur et on le remplace par un vrai feedback d'appui (scale +
+     opacite), + on retire le delai de 300ms sur les zones tactiles. */
+  * { -webkit-tap-highlight-color: transparent; }
+  button, a, [role="button"] { touch-action: manipulation; }
+  @media (hover: none) and (pointer: coarse) {
+    button:not(:disabled):active,
+    a:active,
+    [role="button"]:active {
+      transform: scale(0.96);
+      opacity: 0.82;
+      transition: transform 0.08s ease, opacity 0.08s ease;
+    }
+  }
+  /* Zone de securite (encoche / barre d'accueil iPhone) : env() vaut 0 sur les
+     appareils sans encoche, donc sans effet ailleurs -> safe a appliquer partout. */
+  .urbe-safe-bottom-16 { bottom: calc(16px + env(safe-area-inset-bottom)) !important; }
+  .urbe-safe-bottom-24 { bottom: calc(24px + env(safe-area-inset-bottom)) !important; }
+  .urbe-safe-bottom-92 { bottom: calc(92px + env(safe-area-inset-bottom)) !important; }
+
+  /* ─── Barre CTA collante mobile ("Reserver" toujours a portee de pouce) ─── */
+  .urbe-sticky-cta {
+    display: none;
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 60;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid var(--br);
+  }
+  .urbe-sticky-cta a {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; height: 48px;
+    background: var(--rouge2, #e0263f);
+    color: #fff; font-weight: 700; font-size: 15px;
+    border-radius: 12px; text-decoration: none;
+    letter-spacing: 0.01em;
+  }
+  @media (max-width: 760px) {
+    .urbe-sticky-cta.urbe-sticky-cta-active { display: block; }
+    /* le bouton chat remonte au-dessus de la barre collante quand elle est presente */
+    body:has(.urbe-sticky-cta-active) .urbe-safe-bottom-24 { bottom: calc(24px + env(safe-area-inset-bottom) + 64px) !important; }
+    body:has(.urbe-sticky-cta-active) .urbe-safe-bottom-92 { bottom: calc(92px + env(safe-area-inset-bottom) + 64px) !important; }
+    footer { padding-bottom: 96px !important; }
+  }
+
   @keyframes pulse {
     0%, 100% { opacity: 1; }
     50%      { opacity: 0.45; }
@@ -247,6 +298,19 @@
   /* Promo grid */
   .promo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
   @media (max-width: 860px) { .promo-grid { grid-template-columns: 1fr; } }
+  /* Cartes promo 3D : concues pour le tilt souris desktop (172px x2 + connecteur + photos
+     flottantes en negatif) -> debordement garanti sur mobile. On reduit proportionnellement. */
+  @media (max-width: 860px) { .urbe-promo-cards { transform: scale(0.78) !important; margin: -24px 0; } }
+  @media (max-width: 400px) { .urbe-promo-cards { transform: scale(0.68) !important; margin: -36px 0; } }
+
+  /* Trust strip (30m²/200+/4/7j7/98%) : rangee fixe non-wrap -> deborde sur mobile.
+     Transformee en bandeau defilant horizontalement (pattern "chips" natif). */
+  @media (max-width: 760px) {
+    .urbe-trust-strip { overflow-x: auto; justify-content: flex-start !important; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 2px; }
+    .urbe-trust-strip::-webkit-scrollbar { display: none; }
+    .urbe-trust-item { flex-shrink: 0; scroll-snap-align: start; }
+    .urbe-trust-strip { scroll-snap-type: x proximity; }
+  }
 
   @keyframes promoCardIn {
     from { opacity: 0; transform: rotateY(40deg) translateX(16px); }

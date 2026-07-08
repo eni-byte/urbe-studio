@@ -94,8 +94,8 @@ export const ROUTES = {
   },
   'mixage-mastering': {
     path: '/mixage-mastering',
-    title: 'Mixage & Mastering Paris | URBE STUDIO — En Ligne ou Sur Place',
-    description: 'Mixage et mastering professionnel à Paris 10. Ingénieurs certifiés, tous styles. Service en ligne disponible. Devis gratuit.',
+    title: 'Mixage & Mastering au Studio — Paris 10 | URBE STUDIO',
+    description: "Mixage et mastering avec nos ingénieurs du son au studio, 37 rue d'Hauteville (Paris 10). Tous styles, écoute sur monitoring pro. Devis gratuit.",
     jsonLd: [localBusiness, mixService, breadcrumb('Mixage & Mastering', '/mixage-mastering')],
   },
   tarifs: {
