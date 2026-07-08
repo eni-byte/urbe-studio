@@ -258,7 +258,6 @@ function Nav({ page, setPage }) {
   { label: 'Mix & Master', p: 'mixage-mastering' },
   { label: 'Tarifs', p: 'tarifs' },
   { label: 'Artistes', p: 'credits' },
-  { label: 'Actualités', p: 'actualites' },
   { label: 'Contact', p: 'contact' }];
 
   const u = (typeof urbeAuth !== 'undefined') ? urbeAuth.getUser() : null;
@@ -368,7 +367,7 @@ function SiteFooter({ setPage }) {
           {[
           { titre: 'Studio', liens: [['Avec ingénieur', 'booking'], ['Sans ingénieur', 'booking'], ['Session de nuit', 'booking'], ['Tarifs', 'booking']] },
           { titre: 'Services', liens: [['Enregistrement', 'booking'], ['Mixage', 'booking'], ['Mastering', 'booking'], ['Production', 'booking']] },
-          { titre: 'Urbe', liens: [['Crédits', 'credits'], ['Le Studio', 'studio'], ['Contact', 'contact'], ['Urbe School', 'school']] }].
+          { titre: 'Urbe', liens: [['Crédits', 'credits'], ['Le Studio', 'studio'], ['Contact', 'contact'], ['Urbe School', 'school'], ['Actualités', 'actualites']] }].
           map((col) =>
           <div key={col.titre}>
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--blanc)', marginBottom: 18 }}>{col.titre}</div>
@@ -4675,6 +4674,25 @@ function MixMasterPage({ setPage }) {
           </div>
         )}
       </div>
+
+      {/* Nos ingénieurs du son */}
+      <div style={{ marginBottom: 34 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 14 }}>Nos ingénieurs du son</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 12 }}>
+          {ENGINEERS.map((e) =>
+            <div key={e.nom} style={{ background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 14, padding: '18px 20px', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+              <div style={{ width: 46, height: 46, borderRadius: '50%', background: e.bg, color: '#fff', fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 15, letterSpacing: '0.04em', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{e.initiales}</div>
+              <div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 18, color: 'var(--blanc)', lineHeight: 1.1 }}>{e.nom}{e.aka ? <span style={{ color: 'var(--dim)', fontWeight: 500 }}> · {e.aka}</span> : null}</div>
+                <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--rouge3)', margin: '3px 0 6px' }}>{e.role}</div>
+                <p style={{ fontSize: 12.5, color: 'var(--dim)', lineHeight: 1.5, margin: 0 }}>{e.bio}</p>
+              </div>
+            </div>
+          )}
+        </div>
+        <button onClick={() => setPage('credits')} style={{ marginTop: 14, background: 'none', border: 'none', color: 'var(--rouge3)', fontSize: 13, fontWeight: 700, cursor: 'pointer', padding: 0 }}>Voir toute l'équipe →</button>
+      </div>
+
       <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 14 }}>Tarifs mix & master</div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
         {mm.map((i) => <PriceCard key={i.id} item={i} setPage={setPage} />)}
