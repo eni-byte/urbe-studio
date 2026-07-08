@@ -4665,44 +4665,33 @@ function MixMasterPage({ setPage }) {
     { t: 'Bundle Mix & Master', d: 'Le combo complet, du mix au master, pour une chaîne cohérente et un rendu homogène. Mastering à -50% avec ton mix.' },
   ];
   return (
-    <PageShell eyebrow="Services" h1="Mixage & Mastering Professionnel — Paris 10" intro="Nos ingénieurs du son mixent et masterisent tes titres, en ligne ou sur place à Paris 10, tous styles (rap, pop, afro, r&b, électro). Tu envoies tes pistes, on s'occupe du reste. Livraison mix sous 7 jours (48h en urgence).">
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14, marginBottom: 34 }}>
-        {svc.map((s) =>
-          <div key={s.t} style={{ background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 14, padding: '22px 20px' }}>
-            <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 22, marginBottom: 10 }}>{s.t}</div>
-            <p style={{ fontSize: 13, color: 'var(--dim)', lineHeight: 1.6, margin: 0 }}>{s.d}</p>
-          </div>
-        )}
-      </div>
-
-      {/* Nos ingénieurs du son */}
-      <div style={{ marginBottom: 34 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 14 }}>Nos ingénieurs du son</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 12 }}>
-          {ENGINEERS.map((e) =>
-            <div key={e.nom} style={{ background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 14, padding: '18px 20px', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-              <div style={{ width: 46, height: 46, borderRadius: '50%', background: e.bg, color: '#fff', fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 15, letterSpacing: '0.04em', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{e.initiales}</div>
-              <div>
-                <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 18, color: 'var(--blanc)', lineHeight: 1.1 }}>{e.nom}{e.aka ? <span style={{ color: 'var(--dim)', fontWeight: 500 }}> · {e.aka}</span> : null}</div>
-                <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--rouge3)', margin: '3px 0 6px' }}>{e.role}</div>
-                <p style={{ fontSize: 12.5, color: 'var(--dim)', lineHeight: 1.5, margin: 0 }}>{e.bio}</p>
-              </div>
+    <div>
+      <PageShell eyebrow="Services" h1="Mixage & Mastering Professionnel — Paris 10" intro="Nos ingénieurs du son mixent et masterisent tes titres, en ligne ou sur place à Paris 10, tous styles (rap, pop, afro, r&b, électro). Tu envoies tes pistes, on s'occupe du reste. Livraison mix sous 7 jours (48h en urgence).">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
+          {svc.map((s) =>
+            <div key={s.t} style={{ background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 14, padding: '22px 20px' }}>
+              <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 22, marginBottom: 10 }}>{s.t}</div>
+              <p style={{ fontSize: 13, color: 'var(--dim)', lineHeight: 1.6, margin: 0 }}>{s.d}</p>
             </div>
           )}
         </div>
-        <button onClick={() => setPage('credits')} style={{ marginTop: 14, background: 'none', border: 'none', color: 'var(--rouge3)', fontSize: 13, fontWeight: 700, cursor: 'pointer', padding: 0 }}>Voir toute l'équipe →</button>
-      </div>
+      </PageShell>
 
-      <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 14 }}>Tarifs mix & master</div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
-        {mm.map((i) => <PriceCard key={i.id} item={i} setPage={setPage} />)}
+      {/* Nos ingénieurs du son — fiches cliquables, modale complète (bio, crédits, réseaux) */}
+      <EngineersSection />
+
+      <div style={{ maxWidth: 1000, margin: '0 auto', padding: '0 28px 80px' }}>
+        <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 14 }}>Tarifs mix & master</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
+          {mm.map((i) => <PriceCard key={i.id} item={i} setPage={setPage} />)}
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 26 }}>
+          <button onClick={() => (window.openMixBookingModal ? window.openMixBookingModal({}) : setPage('booking', 'mix-standard'))} style={{ background: 'var(--rouge)', color: '#fff', border: 'none', padding: '14px 26px', borderRadius: 100, cursor: 'pointer', fontSize: 14, fontWeight: 700 }}>Réserver un mix →</button>
+          <button onClick={() => setPage('contact')} style={{ background: 'none', color: 'var(--blanc)', border: '1px solid var(--br2)', padding: '14px 24px', borderRadius: 100, cursor: 'pointer', fontSize: 14, fontWeight: 600 }}>Devis gratuit</button>
+        </div>
+        <PageLinks setPage={setPage} links={[['Tarifs', 'tarifs'], ['Le Studio', 'studio'], ['Contact', 'contact']]} />
       </div>
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 26 }}>
-        <button onClick={() => (window.openMixBookingModal ? window.openMixBookingModal({}) : setPage('booking', 'mix-standard'))} style={{ background: 'var(--rouge)', color: '#fff', border: 'none', padding: '14px 26px', borderRadius: 100, cursor: 'pointer', fontSize: 14, fontWeight: 700 }}>Réserver un mix →</button>
-        <button onClick={() => setPage('contact')} style={{ background: 'none', color: 'var(--blanc)', border: '1px solid var(--br2)', padding: '14px 24px', borderRadius: 100, cursor: 'pointer', fontSize: 14, fontWeight: 600 }}>Devis gratuit</button>
-      </div>
-      <PageLinks setPage={setPage} links={[['Tarifs', 'tarifs'], ['Le Studio', 'studio'], ['Contact', 'contact']]} />
-    </PageShell>);
+    </div>);
 }
 function ActusPage({ setPage }) {
   const posts = [
