@@ -101,7 +101,7 @@ export const ROUTES = {
   tarifs: {
     path: '/tarifs',
     title: "Tarifs Studio d'Enregistrement Paris 10 | URBE STUDIO",
-    description: "Tarifs transparents pour l'enregistrement, le mixage et le mastering à Paris 10. Sessions à partir de XX€/heure. Devis personnalisé.", // [À REMPLIR] prix
+    description: "Tarifs transparents pour l'enregistrement, le mixage et le mastering à Paris 10. Sessions dès 20€/h, mix 120€, mastering 50€. Devis personnalisé.",
     jsonLd: [localBusiness, breadcrumb('Tarifs', '/tarifs')],
   },
   credits: {
