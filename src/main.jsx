@@ -1260,7 +1260,7 @@ function HomePage({ setPage }) {
             {formStep === 0 ?
             <div style={{ background: 'rgba(16,16,16,0.85)', backdropFilter: 'blur(20px)', border: '1px solid var(--br2)', borderRadius: '22px', padding: '28px 28px 24px', maxWidth: 520 }}>
                 <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.04em', marginBottom: 18, color: 'var(--blanc)' }}>Dis-nous en quoi on peut t'aider</div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+                <div className="urbe-r-stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
                   {[
                 { key: 'nom', label: 'Ton nom ou ton projet', ph: 'Artiste, beatmaker…' },
                 { key: 'email', label: 'Email', ph: 'ton@email.fr' }].
@@ -1993,11 +1993,11 @@ function BookingPage({ initialProductId }) {
               {/* Collecte d'identité → HubSpot (CRM) */}
               <div style={{ background: 'var(--s1)', border: '1px solid var(--br)', borderRadius: 14, padding: 22, marginBottom: 18 }}>
                 <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', color: 'var(--dim)', textTransform: 'uppercase', marginBottom: 16 }}>Tes coordonnées</div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+                <div className="urbe-r-stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
                   <div><label htmlFor="bk-firstName" style={labelStyle}>Prénom *</label><input {...champA11y('firstName')} value={contact.firstName} onChange={setC('firstName')} onBlur={onBlur('firstName')} placeholder="Prénom" autoComplete="given-name" style={{ ...champStyle, borderColor: showErr('firstName') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('firstName') && <div id="bk-firstName-err" role="alert" style={errStyle}>{champErr('firstName')}</div>}</div>
                   <div><label htmlFor="bk-lastName" style={labelStyle}>Nom *</label><input {...champA11y('lastName')} value={contact.lastName} onChange={setC('lastName')} onBlur={onBlur('lastName')} placeholder="Nom" autoComplete="family-name" style={{ ...champStyle, borderColor: showErr('lastName') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('lastName') && <div id="bk-lastName-err" role="alert" style={errStyle}>{champErr('lastName')}</div>}</div>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+                <div className="urbe-r-stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
                   <div><label htmlFor="bk-email" style={labelStyle}>Email *</label><input {...champA11y('email')} type="email" value={contact.email} onChange={setC('email')} onBlur={onBlur('email')} placeholder="toi@email.com" autoComplete="email" style={{ ...champStyle, borderColor: showErr('email') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('email') && <div id="bk-email-err" role="alert" style={errStyle}>{champErr('email')}</div>}</div>
                   <div><label htmlFor="bk-phone" style={labelStyle}>Téléphone *</label><input {...champA11y('phone')} type="tel" value={contact.phone} onChange={setC('phone')} onBlur={onBlur('phone')} placeholder="06 12 34 56 78" autoComplete="tel" style={{ ...champStyle, borderColor: showErr('phone') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('phone') && <div id="bk-phone-err" role="alert" style={errStyle}>{champErr('phone')}</div>}</div>
                 </div>
@@ -3476,7 +3476,7 @@ function ProjectDetail({ project, setPage }) {
       )}
 
       {/* Timeline + source files */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+      <div className="urbe-r-stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
         <div style={{ border: '1px solid var(--br)', borderRadius: 14, background: 'var(--s1)', padding: 20 }}>
           <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 14 }}>Pistes sources</div>
           {p.tracks.length === 0 ? <p style={{ fontSize: 12, color: 'var(--dim)' }}>Aucune piste déposée.</p> : (
@@ -3707,7 +3707,7 @@ function StaffProjectManager({ project, isAdmin }) {
       {/* Stepper */}
       <div style={{ border: '1px solid var(--br)', borderRadius: 14, background: 'var(--noir)', padding: '16px 20px', overflowX: 'auto' }}><StageStepper stage={p.stage} /></div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, alignItems: 'start' }}>
+      <div className="urbe-r-stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, alignItems: 'start' }}>
         {/* Client tracks + brief */}
         <div style={{ border: '1px solid var(--br)', borderRadius: 14, background: 'var(--s1)', padding: 20 }}>
           <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Pistes & infos client</div>
@@ -3756,7 +3756,7 @@ function ForfaitManager() {
   const card = { border: '1px solid var(--br)', borderRadius: 16, background: 'var(--s1)' };
   if (rows.length === 0) return <div style={Object.assign({}, card, { padding: '40px 24px', textAlign: 'center' })}><p style={{ fontSize: 13.5, color: 'var(--dim)' }}>Aucun forfait client actif pour l'instant.</p></div>;
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 14, alignItems: 'start' }}>
+    <div className="urbe-r-stack" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 14, alignItems: 'start' }}>
       <div style={Object.assign({}, card, { padding: 22 })}>
         <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 16 }}>Forfaits clients</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -3783,7 +3783,7 @@ function ForfaitManager() {
         <select value={sel} onChange={(e) => setSel(e.target.value)} style={{ width: '100%', padding: '11px 14px', borderRadius: 10, background: 'var(--noir)', border: '1px solid var(--br2)', color: 'var(--blanc)', fontSize: 13, fontFamily: 'Plus Jakarta Sans', marginBottom: 12, cursor: 'pointer' }}>
           {rows.map(r => <option key={r.email} value={r.email}>{nameForEmail(auth, r.email)} ({Math.max(0, r.credit - r.used)}h restantes)</option>)}
         </select>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 14 }}>
+        <div className="urbe-r-stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 14 }}>
           <div>
             <label style={{ fontSize: 10, color: 'var(--dim)', letterSpacing: '0.08em', textTransform: 'uppercase', display: 'block', marginBottom: 6 }}>Heures</label>
             <input type="number" step="0.5" min="0.5" value={hours} onChange={(e) => setHours(parseFloat(e.target.value) || 0)} style={{ width: '100%', padding: '11px 14px', borderRadius: 10, background: 'var(--noir)', border: '1px solid var(--br2)', color: 'var(--blanc)', fontSize: 13, fontFamily: 'Plus Jakarta Sans', boxSizing: 'border-box' }} />
