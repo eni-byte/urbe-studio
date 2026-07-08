@@ -764,7 +764,7 @@ function PromoBanner({ setPage }) {
 
 /* ─── INGÉNIEURS DU SON ──────────────────────────────────────── */
 const ENGINEERS = [
-{ nom: 'Virgile', aka: 'Punch', role: 'Ingénieur du son', initiales: 'VG', bg: '#8B1E1E', bio: 'Spécialiste rap & musiques urbaines. 10+ ans en studio, mix sur les meilleures productions FR.', credits: ['Kaaris', 'Heuss L’Enfoiré', 'Timal', 'Doria', 'Negrito', 'Skunaboi', 'Chakal', 'Gotti Marras'], bioLong: ['Virgile, aka Punch, est ingénieur du son basé à Paris depuis maintenant 5 ans. Passionné de musique depuis l’enfance, il commence la guitare à l’âge de 6 ans avant de se tourner vers la production d’instrumentales à 13 ans. Cette double approche musicale lui permet de développer très tôt une oreille précise et une compréhension approfondie de la création sonore.', 'Depuis plusieurs années, Punch se consacre pleinement à l’ingénierie sonore, avec une spécialisation sur Pro Tools, devenu son environnement de travail principal en studio. Au fil du temps, il a eu l’opportunité de collaborer avec des artistes reconnus tels que Kaaris, Heuss L’Enfoiré, Timal, Doria, Negrito, Skunaboi, Chakal, ou encore Gotti Marras.', 'Au-delà de la technique, Punch accorde une grande importance à l’accompagnement artistique en studio. Il aime résoudre les problèmes que les artistes rencontrent pendant leurs sessions, que ce soit dans la prise de son, l’interprétation ou la direction artistique, afin de leur permettre d’exprimer pleinement leur vision et d’obtenir le meilleur résultat possible.'], youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudioparis/' },
+{ nom: 'Virgile', aka: 'Punch', role: 'Ingénieur du son', initiales: 'VG', bg: '#8B1E1E', bio: 'Spécialiste rap & musiques urbaines. 10+ ans en studio, mix sur les meilleures productions FR.', credits: ['Kaaris', 'Heuss L’Enfoiré', 'Timal', 'Doria', 'Negrito', 'Skunaboi', 'Chakal', 'Gotti Marras'], bioLong: ['Virgile, aka Punch, est ingénieur du son basé à Paris depuis maintenant 5 ans. Passionné de musique depuis l’enfance, il commence la guitare à l’âge de 6 ans avant de se tourner vers la production d’instrumentales à 13 ans. Cette double approche musicale lui permet de développer très tôt une oreille précise et une compréhension approfondie de la création sonore.', 'Depuis plusieurs années, Punch se consacre pleinement à l’ingénierie sonore, avec une spécialisation sur Pro Tools, devenu son environnement de travail principal en studio. Au fil du temps, il a eu l’opportunité de collaborer avec des artistes reconnus tels que Kaaris, Heuss L’Enfoiré, Timal, Doria, Negrito, Skunaboi, Chakal, ou encore Gotti Marras.', 'Au-delà de la technique, Punch accorde une grande importance à l’accompagnement artistique en studio. Il aime résoudre les problèmes que les artistes rencontrent pendant leurs sessions, que ce soit dans la prise de son, l’interprétation ou la direction artistique, afin de leur permettre d’exprimer pleinement leur vision et d’obtenir le meilleur résultat possible.'], videos: [{ id: 'zleBETU4eXA', titre: "Heuss L'Enfoiré — Chef d'Orchestre" }, { id: 'rSIENBgBFVg', titre: "Heuss L'Enfoiré — Bar-Mitzvah" }, { id: '4CpV_ymIeso', titre: 'Kei — OG Bounce' }, { id: 'jqm6KKmQqh8', titre: 'Iliana — Ma Maison' }], youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/punch075/' },
 { nom: 'Olid', role: 'Ingénieur du son', initiales: 'OL', bg: '#1f1f1f', bio: 'Prise de son et direction artistique. Sessions live, banque de sons sur mesure, edit voix.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudioparis/' },
 { nom: 'Chourak', role: 'Ingénieur du son', initiales: 'CH', bg: '#2a1414', bio: 'Mix pop & R&B, mastering analogique. Finition prête streaming, vinyle et radio.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudioparis/' },
 { nom: 'BMS', role: 'Ingénieur du son', initiales: 'BM', bg: '#161616', bio: 'Composition et production. Création de prods sur-mesure, arrangement et orchestration.', youtube: 'https://www.youtube.com/@urbestudio', spotify: 'https://open.spotify.com/playlist/47SYmVwSFHwMFFScujjiul', instagram: 'https://www.instagram.com/urbestudioparis/' }];
@@ -855,6 +855,7 @@ function EngineersSection() {
 
 /* Modale profil ingénieur (bio + crédits) — design system réutilisé. */
 function EngineerModal({ e, onClose }) {
+  const [playing, setPlaying] = useState({});
   useEffect(() => {
     const fn = (ev) => { if (ev.key === 'Escape') onClose(); };
     document.addEventListener('keydown', fn);
@@ -881,6 +882,28 @@ function EngineerModal({ e, onClose }) {
             </div>
           </div>}
         {(e.bioLong || []).map((p, i) => <p key={i} style={{ fontSize: 14, color: 'var(--dim)', lineHeight: 1.75, marginBottom: 14, fontWeight: 300 }}>{p}</p>)}
+        {e.videos && e.videos.length > 0 &&
+          <div style={{ marginTop: 22, paddingTop: 18, borderTop: '1px solid var(--br)' }}>
+            <div style={{ fontSize: 10, color: 'var(--dim)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 12 }}>Ses derniers clips</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
+              {e.videos.map((v) =>
+                <div key={v.id} style={{ borderRadius: 10, overflow: 'hidden', background: '#000', border: '1px solid var(--br)' }}>
+                  <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%' }}>
+                    {playing[v.id]
+                    ? <iframe title={v.titre} src={`https://www.youtube.com/embed/${v.id}?rel=0&modestbranding=1&color=white&iv_load_policy=3&autoplay=1`} frameBorder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' }} />
+                    : <button onClick={() => setPlaying((p) => ({ ...p, [v.id]: true }))} aria-label={`Lire ${v.titre}`} style={{ position: 'absolute', inset: 0, padding: 0, border: 'none', background: 'none', cursor: 'pointer', overflow: 'hidden' }}>
+                        <img src={`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`} onError={(ev) => { ev.currentTarget.src = `https://img.youtube.com/vi/${v.id}/hqdefault.jpg`; }} alt={v.titre} loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, transparent 40%, rgba(0,0,0,0.65) 100%)' }} />
+                        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 40, height: 40, borderRadius: '50%', background: 'rgba(139,30,30,0.92)', border: '1.5px solid rgba(255,255,255,0.22)', boxShadow: '0 8px 22px rgba(139,30,30,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M8 5l13 7-13 7V5z" /></svg>
+                        </div>
+                        <div style={{ position: 'absolute', bottom: 6, left: 8, right: 8, fontSize: 10.5, fontWeight: 600, color: '#fff', textShadow: '0 1px 3px rgba(0,0,0,0.8)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{v.titre}</div>
+                      </button>}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>}
         <div style={{ display: 'flex', gap: 10, marginTop: 18, paddingTop: 18, borderTop: '1px solid var(--br)' }}>
           <SocialIcon href={e.youtube} hover="#FF0000" title="YouTube"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z" /></svg></SocialIcon>
           <SocialIcon href={e.spotify} hover="#1DB954" title="Spotify"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24zm5.5 17.3a.75.75 0 0 1-1 .25c-2.8-1.7-6.3-2.1-10.4-1.1a.75.75 0 1 1-.3-1.5c4.5-1 8.4-.6 11.5 1.3.4.2.5.7.2 1.05zm1.5-3.3a1 1 0 0 1-1.3.3c-3.2-2-8.1-2.5-11.9-1.4a1 1 0 0 1-.6-1.9c4.3-1.3 9.7-.7 13.4 1.6a1 1 0 0 1 .4 1.4zm.1-3.5C15.4 8.3 8.9 8 5.2 9.2a1.2 1.2 0 1 1-.7-2.3c4.2-1.3 11.4-1 15.7 1.5a1.2 1.2 0 0 1-1.1 2.1z" /></svg></SocialIcon>
