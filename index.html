@@ -312,6 +312,11 @@
     .urbe-trust-strip { scroll-snap-type: x proximity; }
   }
 
+  /* Carrousel video (titres mixes au studio, page Mix & Master) : defilement
+     horizontal au doigt/trackpad, scrollbar masquee, snap sur chaque carte. */
+  .urbe-video-carousel { scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
+  .urbe-video-carousel::-webkit-scrollbar { display: none; }
+
   @keyframes promoCardIn {
     from { opacity: 0; transform: rotateY(40deg) translateX(16px); }
     to   { opacity: 1; transform: rotateY(0deg) translateX(0); }

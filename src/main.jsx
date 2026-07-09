@@ -4636,7 +4636,15 @@ function TarifsPage({ setPage }) {
       <PageLinks setPage={setPage} links={[['Mixage & Mastering', 'mixage-mastering'], ['Le Studio', 'studio'], ['Contact', 'contact']]} />
     </PageShell>);
 }
+const MIX_VIDEOS = [
+  { id: '4CpV_ymIeso', titre: 'Kei — OG Bounce' },
+  { id: 'RcbEQQVLXRQ', titre: 'TITI33 — Caramel' },
+  { id: 'zleBETU4eXA', titre: "Heuss L'Enfoiré — Chef d'Orchestre" },
+  { id: 'rSIENBgBFVg', titre: "Heuss L'Enfoiré — Bar-Mitzvah" },
+  { id: 'jqm6KKmQqh8', titre: 'Iliana — Ma Maison' },
+];
 function MixMasterPage({ setPage }) {
+  const [mvPlaying, setMvPlaying] = useState({});
   const mm = BOOKING_CATALOG.filter((i) => i.cat === 'Mix & Master');
   const svc = [
     { t: 'Mixage', d: 'Équilibrage, EQ, compression, spatialisation et cohérence de tes pistes. Un mix propre, puissant et prêt à sonner sur toutes les plateformes.' },
@@ -4668,6 +4676,38 @@ function MixMasterPage({ setPage }) {
           <button onClick={() => (window.openMixBookingModal ? window.openMixBookingModal({}) : setPage('booking', 'mix-standard'))} style={{ background: 'var(--rouge)', color: '#fff', border: 'none', padding: '14px 26px', borderRadius: 100, cursor: 'pointer', fontSize: 14, fontWeight: 700 }}>Réserver un mix →</button>
           <button onClick={() => setPage('contact')} style={{ background: 'none', color: 'var(--blanc)', border: '1px solid var(--br2)', padding: '14px 24px', borderRadius: 100, cursor: 'pointer', fontSize: 14, fontWeight: 600 }}>Devis gratuit</button>
         </div>
+      </div>
+
+      {/* ── TITRES MIXÉS AU STUDIO — carrousel vidéo YouTube ──────────── */}
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 0 64px' }}>
+        <div style={{ padding: '0 28px', marginBottom: 18 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.16em', color: 'var(--rouge3)', textTransform: 'uppercase', marginBottom: 8 }}>Ils sont passés au studio</div>
+          <h2 style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 'clamp(30px,4vw,44px)', letterSpacing: '0.02em', lineHeight: 0.95 }}>TITRES MIXÉS AU STUDIO</h2>
+        </div>
+        <div className="urbe-video-carousel" style={{ display: 'flex', gap: 14, overflowX: 'auto', padding: '2px 28px 10px' }}>
+          {MIX_VIDEOS.map((v) => (
+            <div key={v.id} style={{ flex: '0 0 260px', scrollSnapAlign: 'start', borderRadius: 14, overflow: 'hidden', background: 'var(--s1)', border: '1px solid var(--br)' }}>
+              <div style={{ position: 'relative', width: '100%', paddingBottom: '177%', background: '#000' }}>
+                {mvPlaying[v.id]
+                ? <iframe title={v.titre} src={`https://www.youtube.com/embed/${v.id}?rel=0&modestbranding=1&color=white&iv_load_policy=3&autoplay=1`} frameBorder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen loading="lazy" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} />
+                : <button onClick={() => setMvPlaying((p) => ({ ...p, [v.id]: true }))} style={{ position: 'absolute', inset: 0, padding: 0, border: 'none', background: 'none', cursor: 'pointer', overflow: 'hidden' }}>
+                    <img src={`https://img.youtube.com/vi/${v.id}/hqdefault.jpg`} alt={v.titre} loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, transparent 40%, rgba(0,0,0,0.6) 100%)' }} />
+                    <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 56, height: 56, borderRadius: '50%', background: 'rgba(139,30,30,0.92)', border: '1.5px solid rgba(255,255,255,0.22)', boxShadow: '0 12px 32px rgba(139,30,30,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M8 5l13 7-13 7V5z" /></svg>
+                    </div>
+                  </button>
+                }
+              </div>
+              <div style={{ padding: '12px 14px 14px' }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--blanc)', lineHeight: 1.3 }}>{v.titre}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 1000, margin: '0 auto', padding: '0 28px 80px' }}>
         <PageLinks setPage={setPage} links={[['Tarifs', 'tarifs'], ['Le Studio', 'studio'], ['Contact', 'contact']]} />
       </div>
     </div>);
