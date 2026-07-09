@@ -2431,7 +2431,7 @@ function StudioPage({ setPage }) {
   const [playing, setPlaying] = useState({});
   const [openService, setOpenService] = useState('enreg');
   const [albumIdx, setAlbumIdx] = useState({});
-  const [videoIdx, setVideoIdx] = useState(0);
+  const [heroVidIdx, setHeroVidIdx] = useState(0);
   const [galFailed, setGalFailed] = useState({});
 
   const studioMedia = import.meta.glob('./assets/galerie/02-Le-Studio/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}', { eager: true, query: '?url', import: 'default' });
@@ -2477,8 +2477,6 @@ function StudioPage({ setPage }) {
     photos: albumsMap[dir].filter((p) => !galFailed[p.src]),
   })).filter((a) => a.photos.length > 0);
   const galVideos = galVideosAll.filter((g) => !galFailed[g.src]);
-  const vN = galVideos.length || 1;
-  const vi = (((videoIdx % vN) + vN) % vN);
 
   const videos = [
   { id: '4CpV_ymIeso', titre: 'Kei — OG Bounce', desc: '', featured: true },
@@ -2576,10 +2574,10 @@ function StudioPage({ setPage }) {
           ))}
         </div>
 
-        {/* ── GALERIE — integree, pas depliable, sans legendes, photos par album ── */}
+        {/* ── GALERIE — integree, pas depliable, sans legendes, photos par album (pas de video ici, cf. bloc hero video plus bas) ── */}
         <div style={{ marginTop: 14 }}>
           <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.16em', color: 'var(--rouge3)', textTransform: 'uppercase', marginBottom: 12 }}>Galerie</div>
-          <div className="urbe-r-stack" style={{ display: 'grid', gridTemplateColumns: galVideos.length ? '1.4fr 1fr' : '1fr', gap: 14 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {/* Photos — un carrousel par album */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {photoAlbums.map((al) => {
@@ -2613,23 +2611,25 @@ function StudioPage({ setPage }) {
                 );
               })}
             </div>
-
-            {/* Video — fichier a part, jamais dans un album/carrousel photos */}
-            {galVideos.length > 0 && (
-              <div style={{ borderRadius: 18, overflow: 'hidden', border: '1px solid var(--br)', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ position: 'relative', aspectRatio: '16 / 9', minHeight: 260, background: '#000', flex: 1 }}>
-                  <video key={galVideos[vi].src} src={galVideos[vi].src} controls playsInline preload="none" onError={() => setGalFailed((f) => ({ ...f, [galVideos[vi].src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', background: '#000' }} />
-                </div>
-                {galVideos.length > 1 && (
-                  <div style={{ display: 'flex', gap: 8, justifyContent: 'center', padding: '14px 0', background: 'var(--s1)', borderTop: '1px solid var(--br)', flexWrap: 'wrap' }}>
-                    {galVideos.map((g, i) => <button key={g.src} onClick={() => setVideoIdx(i)} aria-label={`Vidéo ${i + 1}`} style={{ width: i === vi ? 28 : 8, height: 3, borderRadius: 2, border: 'none', cursor: 'pointer', background: i === vi ? 'var(--rouge)' : 'rgba(241,236,231,0.25)', transition: 'all 0.3s' }} />)}
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         </div>
       </section>
+
+      {/* ── HERO VIDÉO — carrousel de fond auto (silencieux), overlay léger + CTA ── */}
+      {galVideos.length > 0 && (
+        <section style={{ position: 'relative', minHeight: 420, overflow: 'hidden', margin: '0 0 64px' }}>
+          <video key={galVideos[heroVidIdx % galVideos.length].src} src={galVideos[heroVidIdx % galVideos.length].src} autoPlay muted loop={galVideos.length === 1} playsInline preload="auto" onEnded={() => setHeroVidIdx((p) => (p + 1) % galVideos.length)} onError={() => setGalFailed((f) => ({ ...f, [galVideos[heroVidIdx % galVideos.length].src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(5,5,5,0.35) 0%, rgba(5,5,5,0.15) 45%, rgba(5,5,5,0.75) 100%)' }} />
+          <div style={{ position: 'relative', zIndex: 2, minHeight: 420, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '40px 28px', maxWidth: 1100, margin: '0 auto' }}>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.16em', color: 'var(--rouge3)', textTransform: 'uppercase', marginBottom: 10 }}>Immersion</div>
+            <h2 style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 'clamp(30px,4.5vw,50px)', letterSpacing: '0.02em', lineHeight: 0.95, color: '#fff', marginBottom: 14, maxWidth: 560 }}>DANS L'AMBIANCE DU STUDIO.</h2>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <button onClick={() => setPage('booking')} style={{ background: 'var(--rouge)', color: '#fff', border: 'none', padding: '13px 26px', borderRadius: 100, cursor: 'pointer', fontSize: 14, fontWeight: 700, boxShadow: '0 8px 28px rgba(139,30,30,0.4)' }}>Réserver →</button>
+              <button onClick={() => setPage('contact')} style={{ background: 'rgba(8,8,8,0.5)', backdropFilter: 'blur(8px)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)', padding: '13px 24px', borderRadius: 100, cursor: 'pointer', fontSize: 14, fontWeight: 600 }}>Contact</button>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── SERVICES & TARIFS (formules + accordéon) ──────────────────── */}
       <section style={{ padding: '0 28px 64px', maxWidth: 1100, margin: '0 auto' }}>
