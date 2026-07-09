@@ -2440,9 +2440,15 @@ function StudioPage({ setPage }) {
   const [galIdx, setGalIdx] = useState(0);
   const [galFailed, setGalFailed] = useState({});
 
+  const studioMedia = import.meta.glob('./assets/galerie/02-Le-Studio/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}', { eager: true, query: '?url', import: 'default' });
+  const findStudioMedia = (frag) => { const k = Object.keys(studioMedia).find((p) => p.toLowerCase().includes(frag)); return k ? studioMedia[k] : null; };
+  const deskFocal = findStudioMedia('desk-focal');
+  const salonVueLarge = findStudioMedia('salon-vue-large');
   const mediaSlides = [
   { type: 'photo', img: 'studio/cabine.jpg',  label: 'Salon & Régie', pos: 'center center' },
   { type: 'photo', img: 'studio/cabine2.jpg', label: 'La Cabine · Enregistrement', pos: 'center 15%' },
+  ...(deskFocal ? [{ type: 'photo', img: deskFocal, label: 'Bureau & Monitoring Focal', pos: 'center center' }] : []),
+  ...(salonVueLarge ? [{ type: 'photo', img: salonVueLarge, label: 'Le Salon', pos: 'center center' }] : []),
   { type: 'photo', img: 'fdlm/DSC07462.jpg', label: 'Fête de la Musique 2026 · Urbe en live', pos: 'center 45%' },
   { type: 'photo', img: 'fdlm/DSC06916.jpg', label: 'Fête de la Musique 2026 · La nuit', pos: 'center 45%' }];
 
