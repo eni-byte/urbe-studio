@@ -2430,7 +2430,7 @@ function StudioPage({ setPage }) {
   const [activeMedia, setActiveMedia] = useState(0);
   const [playing, setPlaying] = useState({});
   const [openService, setOpenService] = useState('enreg');
-  const [galIdx, setGalIdx] = useState(0);
+  const [albumIdx, setAlbumIdx] = useState({});
   const [videoIdx, setVideoIdx] = useState(0);
   const [galFailed, setGalFailed] = useState({});
 
@@ -2447,23 +2447,36 @@ function StudioPage({ setPage }) {
 
   // ── GALERIE — AUTO, integree (pas depliable), sans legendes ──────────
   // Toute photo/video deposee dans un sous-dossier de src/assets/galerie/
-  // apparait ici automatiquement (photos dans le carrousel, videos a part).
-  // GERER SANS CODE (via GitHub « Add file ▸ Upload files ») : depose ou
-  // supprime un fichier dans un sous-dossier existant, prefixe numerique
-  // pour l'ordre (01-, 02-…). Formats : .jpg .jpeg .png .webp (photos) ·
-  // .mp4 .webm .mov (videos).
+  // apparait ici automatiquement : les photos sont regroupees par album
+  // (= le sous-dossier), les videos sont a part, jamais melangees aux
+  // photos dans un carrousel. GERER SANS CODE (via GitHub « Add file ▸
+  // Upload files ») : depose ou supprime un fichier dans un sous-dossier
+  // existant, prefixe numerique pour l'ordre (01-, 02-…). Formats :
+  // .jpg .jpeg .png .webp (photos) · .mp4 .webm .mov (videos).
+  const albumTitle = (dir) => dir
+    .replace(/^\d+[-_\s]*/, '')
+    .split(/[-_\s]+/).filter(Boolean)
+    .map((w) => (w === w.toUpperCase() ? w : w.charAt(0).toUpperCase() + w.slice(1)))
+    .join(' ');
   const galModules = import.meta.glob(
     './assets/galerie/*/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP,mp4,webm,mov,MP4,WEBM,MOV}',
     { eager: true, query: '?url', import: 'default' }
   );
-  const galAll = Object.keys(galModules).sort().map((path) => ({
-    type: /\.(mp4|webm|mov)$/i.test(path) ? 'video' : 'photo',
-    src: galModules[path],
-  }));
-  const galPhotos = galAll.filter((g) => g.type === 'photo' && !galFailed[g.src]);
-  const galVideos = galAll.filter((g) => g.type === 'video' && !galFailed[g.src]);
-  const pN = galPhotos.length || 1;
-  const pi = (((galIdx % pN) + pN) % pN);
+  const albumsMap = {};
+  const galVideosAll = [];
+  Object.keys(galModules).sort().forEach((path) => {
+    const parts = path.split('/');
+    const dir = parts[parts.length - 2];
+    const src = galModules[path];
+    if (/\.(mp4|webm|mov)$/i.test(path)) galVideosAll.push({ src });
+    else (albumsMap[dir] = albumsMap[dir] || []).push({ src });
+  });
+  const photoAlbums = Object.keys(albumsMap).sort().map((dir) => ({
+    key: dir,
+    title: albumTitle(dir),
+    photos: albumsMap[dir].filter((p) => !galFailed[p.src]),
+  })).filter((a) => a.photos.length > 0);
+  const galVideos = galVideosAll.filter((g) => !galFailed[g.src]);
   const vN = galVideos.length || 1;
   const vi = (((videoIdx % vN) + vN) % vN);
 
@@ -2563,35 +2576,45 @@ function StudioPage({ setPage }) {
           ))}
         </div>
 
-        {/* ── GALERIE — integree, pas depliable, sans legendes ──────────── */}
+        {/* ── GALERIE — integree, pas depliable, sans legendes, photos par album ── */}
         <div style={{ marginTop: 14 }}>
           <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.16em', color: 'var(--rouge3)', textTransform: 'uppercase', marginBottom: 12 }}>Galerie</div>
           <div className="urbe-r-stack" style={{ display: 'grid', gridTemplateColumns: galVideos.length ? '1.4fr 1fr' : '1fr', gap: 14 }}>
-            {/* Carrousel photos */}
-            <div style={{ borderRadius: 18, overflow: 'hidden', border: '1px solid var(--br)' }}>
-              <div style={{ position: 'relative', aspectRatio: '16 / 9', minHeight: 260, background: '#070707' }}>
-                {galPhotos.map((g, i) => (
-                  <div key={g.src} style={{ position: 'absolute', inset: 0, opacity: pi === i ? 1 : 0, transition: 'opacity 0.7s ease', pointerEvents: pi === i ? 'auto' : 'none' }}>
-                    <img src={g.src} alt="" loading="lazy" decoding="async" onError={() => setGalFailed((f) => ({ ...f, [g.src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+            {/* Photos — un carrousel par album */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {photoAlbums.map((al) => {
+                const n = al.photos.length;
+                const ai = (((albumIdx[al.key] || 0) % n) + n) % n;
+                const setAi = (updater) => setAlbumIdx((prev) => ({ ...prev, [al.key]: typeof updater === 'function' ? updater(prev[al.key] || 0) : updater }));
+                return (
+                  <div key={al.key} style={{ borderRadius: 18, overflow: 'hidden', border: '1px solid var(--br)' }}>
+                    <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', color: 'var(--dim)', textTransform: 'uppercase', padding: '10px 16px', background: 'var(--s1)', borderBottom: '1px solid var(--br)' }}>{al.title}</div>
+                    <div style={{ position: 'relative', aspectRatio: '16 / 9', minHeight: 260, background: '#070707' }}>
+                      {al.photos.map((g, i) => (
+                        <div key={g.src} style={{ position: 'absolute', inset: 0, opacity: ai === i ? 1 : 0, transition: 'opacity 0.7s ease', pointerEvents: ai === i ? 'auto' : 'none' }}>
+                          <img src={g.src} alt="" loading="lazy" decoding="async" onError={() => setGalFailed((f) => ({ ...f, [g.src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+                      ))}
+                      {n > 1 && <>
+                        <button onClick={() => setAi((p) => (p - 1 + n) % n)} aria-label={`${al.title} — photo précédente`} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'rgba(8,8,8,0.6)', border: '1px solid var(--br2)', color: 'var(--blanc)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', zIndex: 3 }}>
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                        </button>
+                        <button onClick={() => setAi((p) => (p + 1) % n)} aria-label={`${al.title} — photo suivante`} style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'rgba(8,8,8,0.6)', border: '1px solid var(--br2)', color: 'var(--blanc)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', zIndex: 3 }}>
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                        </button>
+                      </>}
+                    </div>
+                    {n > 1 && (
+                      <div style={{ display: 'flex', gap: 8, justifyContent: 'center', padding: '14px 0', background: 'var(--s1)', borderTop: '1px solid var(--br)', flexWrap: 'wrap' }}>
+                        {al.photos.map((g, i) => <button key={g.src} onClick={() => setAi(i)} aria-label={`${al.title} — photo ${i + 1}`} style={{ width: i === ai ? 28 : 8, height: 3, borderRadius: 2, border: 'none', cursor: 'pointer', background: i === ai ? 'var(--rouge)' : 'rgba(241,236,231,0.25)', transition: 'all 0.3s' }} />)}
+                      </div>
+                    )}
                   </div>
-                ))}
-                {galPhotos.length > 1 && <>
-                  <button onClick={() => setGalIdx((p) => (p - 1 + galPhotos.length) % galPhotos.length)} aria-label="Photo précédente" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'rgba(8,8,8,0.6)', border: '1px solid var(--br2)', color: 'var(--blanc)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', zIndex: 3 }}>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-                  </button>
-                  <button onClick={() => setGalIdx((p) => (p + 1) % galPhotos.length)} aria-label="Photo suivante" style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'rgba(8,8,8,0.6)', border: '1px solid var(--br2)', color: 'var(--blanc)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', zIndex: 3 }}>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-                  </button>
-                </>}
-              </div>
-              {galPhotos.length > 1 && (
-                <div style={{ display: 'flex', gap: 8, justifyContent: 'center', padding: '14px 0', background: 'var(--s1)', borderTop: '1px solid var(--br)', flexWrap: 'wrap' }}>
-                  {galPhotos.map((g, i) => <button key={g.src} onClick={() => setGalIdx(i)} aria-label={`Photo ${i + 1}`} style={{ width: i === pi ? 28 : 8, height: 3, borderRadius: 2, border: 'none', cursor: 'pointer', background: i === pi ? 'var(--rouge)' : 'rgba(241,236,231,0.25)', transition: 'all 0.3s' }} />)}
-                </div>
-              )}
+                );
+              })}
             </div>
 
-            {/* Video — fichier a part, jamais dans le carrousel photos */}
+            {/* Video — fichier a part, jamais dans un album/carrousel photos */}
             {galVideos.length > 0 && (
               <div style={{ borderRadius: 18, overflow: 'hidden', border: '1px solid var(--br)', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ position: 'relative', aspectRatio: '16 / 9', minHeight: 260, background: '#000', flex: 1 }}>
@@ -4639,12 +4662,22 @@ function TarifsPage({ setPage }) {
 const MIX_VIDEOS = [
   { id: '4CpV_ymIeso', titre: 'Kei — OG Bounce' },
   { id: 'RcbEQQVLXRQ', titre: 'TITI33 — Caramel' },
-  { id: 'zleBETU4eXA', titre: "Heuss L'Enfoiré — Chef d'Orchestre" },
-  { id: 'rSIENBgBFVg', titre: "Heuss L'Enfoiré — Bar-Mitzvah" },
   { id: 'jqm6KKmQqh8', titre: 'Iliana — Ma Maison' },
 ];
 function MixMasterPage({ setPage }) {
-  const [mvPlaying, setMvPlaying] = useState({});
+  const [mvPlayingId, setMvPlayingId] = useState(null);
+  const mvTrackRef = useRef(null);
+  const mvCardRefs = useRef({});
+  const mvScrollBy = (dir) => { if (mvTrackRef.current) mvTrackRef.current.scrollBy({ left: dir * 280, behavior: 'smooth' }); };
+  // Stoppe la lecture (et donc le son) quand la carte sort de l'ecran, pour n'avoir jamais 2 sons en meme temps.
+  useEffect(() => {
+    if (!mvPlayingId) return undefined;
+    const el = mvCardRefs.current[mvPlayingId];
+    if (!el) return undefined;
+    const obs = new IntersectionObserver(([entry]) => { if (!entry.isIntersecting) setMvPlayingId(null); }, { threshold: 0.35 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [mvPlayingId]);
   const mm = BOOKING_CATALOG.filter((i) => i.cat === 'Mix & Master');
   const svc = [
     { t: 'Mixage', d: 'Équilibrage, EQ, compression, spatialisation et cohérence de tes pistes. Un mix propre, puissant et prêt à sonner sur toutes les plateformes.' },
@@ -4680,17 +4713,27 @@ function MixMasterPage({ setPage }) {
 
       {/* ── TITRES MIXÉS AU STUDIO — carrousel vidéo YouTube ──────────── */}
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 0 64px' }}>
-        <div style={{ padding: '0 28px', marginBottom: 18 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.16em', color: 'var(--rouge3)', textTransform: 'uppercase', marginBottom: 8 }}>Ils sont passés au studio</div>
-          <h2 style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 'clamp(30px,4vw,44px)', letterSpacing: '0.02em', lineHeight: 0.95 }}>TITRES MIXÉS AU STUDIO</h2>
+        <div style={{ padding: '0 28px', marginBottom: 18, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.16em', color: 'var(--rouge3)', textTransform: 'uppercase', marginBottom: 8 }}>Ils sont passés au studio</div>
+            <h2 style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 'clamp(30px,4vw,44px)', letterSpacing: '0.02em', lineHeight: 0.95 }}>TITRES MIXÉS AU STUDIO</h2>
+          </div>
+          <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+            <button onClick={() => mvScrollBy(-1)} aria-label="Précédent" style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--s1)', border: '1px solid var(--br2)', color: 'var(--blanc)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+            </button>
+            <button onClick={() => mvScrollBy(1)} aria-label="Suivant" style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--s1)', border: '1px solid var(--br2)', color: 'var(--blanc)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+            </button>
+          </div>
         </div>
-        <div className="urbe-video-carousel" style={{ display: 'flex', gap: 14, overflowX: 'auto', padding: '2px 28px 10px' }}>
+        <div ref={mvTrackRef} className="urbe-video-carousel" style={{ display: 'flex', gap: 14, overflowX: 'auto', padding: '2px 28px 10px' }}>
           {MIX_VIDEOS.map((v) => (
-            <div key={v.id} style={{ flex: '0 0 260px', scrollSnapAlign: 'start', borderRadius: 14, overflow: 'hidden', background: 'var(--s1)', border: '1px solid var(--br)' }}>
+            <div key={v.id} ref={(el) => { mvCardRefs.current[v.id] = el; }} style={{ flex: '0 0 260px', scrollSnapAlign: 'start', borderRadius: 14, overflow: 'hidden', background: 'var(--s1)', border: '1px solid var(--br)' }}>
               <div style={{ position: 'relative', width: '100%', paddingBottom: '177%', background: '#000' }}>
-                {mvPlaying[v.id]
+                {mvPlayingId === v.id
                 ? <iframe title={v.titre} src={`https://www.youtube.com/embed/${v.id}?rel=0&modestbranding=1&color=white&iv_load_policy=3&autoplay=1`} frameBorder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen loading="lazy" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} />
-                : <button onClick={() => setMvPlaying((p) => ({ ...p, [v.id]: true }))} style={{ position: 'absolute', inset: 0, padding: 0, border: 'none', background: 'none', cursor: 'pointer', overflow: 'hidden' }}>
+                : <button onClick={() => setMvPlayingId(v.id)} style={{ position: 'absolute', inset: 0, padding: 0, border: 'none', background: 'none', cursor: 'pointer', overflow: 'hidden' }}>
                     <img src={`https://img.youtube.com/vi/${v.id}/hqdefault.jpg`} alt={v.titre} loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                     <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, transparent 40%, rgba(0,0,0,0.6) 100%)' }} />
                     <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 56, height: 56, borderRadius: '50%', background: 'rgba(139,30,30,0.92)', border: '1.5px solid rgba(255,255,255,0.22)', boxShadow: '0 12px 32px rgba(139,30,30,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
