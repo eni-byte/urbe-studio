@@ -1146,15 +1146,12 @@ function HomePage({ setPage }) {
     setTimeout(() => {setFormOpen(false);setFormStep(0);setFormData({ nom: '', email: '', projet: '', message: '', hp: '' });}, 2800);
   };
 
-  // ── HERO accueil : fond en CARROUSEL auto (photo studio, cabine, FDLM kebab, aftermovie) ──
-  // Reutilise les medias de l'album FDLM (src/assets/galerie/01-FDLM-2026/). La video
-  // aftermovie n'apparait que si le fichier "…aftermovie.*" existe (sinon ignoree).
-  const heroFdlm = import.meta.glob('./assets/galerie/01-FDLM-2026/*.{jpg,jpeg,png,webp,mp4,webm,mov,JPG,JPEG,PNG,WEBP,MP4,WEBM,MOV}', { eager: true, query: '?url', import: 'default' });
+  // ── HERO accueil : fond en CARROUSEL auto (photo studio, cabine, FDLM kebab) — photos uniquement, pas de video ──
+  const heroFdlm = import.meta.glob('./assets/galerie/01-FDLM-2026/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}', { eager: true, query: '?url', import: 'default' });
   const heroStudio = import.meta.glob('./assets/galerie/02-Le-Studio/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}', { eager: true, query: '?url', import: 'default' });
   const findHero = (frag) => { const k = Object.keys(heroFdlm).find((p) => p.toLowerCase().includes(frag)); return k ? heroFdlm[k] : null; };
   const findHeroStudio = (frag) => { const k = Object.keys(heroStudio).find((p) => p.toLowerCase().includes(frag)); return k ? heroStudio[k] : null; };
   const heroKebab = findHero('photographe-kebab');
-  const heroAftermovie = findHero('aftermovie');
   const heroDesk = findHeroStudio('desk-focal');
   const heroSalon = findHeroStudio('salon-vue-large');
   const heroSlides = [
@@ -1163,7 +1160,6 @@ function HomePage({ setPage }) {
     ...(heroDesk ? [{ type: 'photo', src: heroDesk, pos: 'center center' }] : []),
     ...(heroSalon ? [{ type: 'photo', src: heroSalon, pos: 'center center' }] : []),
     ...(heroKebab ? [{ type: 'photo', src: heroKebab, pos: 'center center' }] : []),
-    ...(heroAftermovie ? [{ type: 'video', src: heroAftermovie }] : []),
   ];
   const [heroIdx, setHeroIdx] = useState(0);
   useEffect(() => {
