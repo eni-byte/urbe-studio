@@ -317,6 +317,16 @@
   .urbe-video-carousel { scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
   .urbe-video-carousel::-webkit-scrollbar { display: none; }
 
+  /* Galerie /studio : bloc bento compact (1 grande tuile + petites tuiles),
+     integre en un seul bloc plutot que plusieurs sections carrousel empilees. */
+  .urbe-bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); gap: 4px; height: 420px; }
+  .urbe-bento-big { grid-column: span 2; grid-row: span 2; }
+  .urbe-bento img, .urbe-bento video { transition: transform 0.4s ease; }
+  .urbe-bento > div:hover img, .urbe-bento > div:hover video { transform: scale(1.04); }
+  @media (max-width: 640px) {
+    .urbe-bento { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(4, 1fr); height: 480px; }
+  }
+
   @keyframes promoCardIn {
     from { opacity: 0; transform: rotateY(40deg) translateX(16px); }
     to   { opacity: 1; transform: rotateY(0deg) translateX(0); }

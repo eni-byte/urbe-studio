@@ -2430,8 +2430,6 @@ function StudioPage({ setPage }) {
   const [activeMedia, setActiveMedia] = useState(0);
   const [playing, setPlaying] = useState({});
   const [openService, setOpenService] = useState('enreg');
-  const [albumIdx, setAlbumIdx] = useState({});
-  const [heroVidIdx, setHeroVidIdx] = useState(0);
   const [galFailed, setGalFailed] = useState({});
 
   const studioMedia = import.meta.glob('./assets/galerie/02-Le-Studio/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}', { eager: true, query: '?url', import: 'default' });
@@ -2445,38 +2443,26 @@ function StudioPage({ setPage }) {
   { type: 'photo', img: 'fdlm/DSC07462.jpg', label: 'Fête de la Musique 2026 · Urbe en live', pos: 'center 45%' },
   { type: 'photo', img: 'fdlm/DSC06916.jpg', label: 'Fête de la Musique 2026 · La nuit', pos: 'center 45%' }];
 
-  // ── GALERIE — AUTO, integree (pas depliable), sans legendes ──────────
-  // Toute photo/video deposee dans un sous-dossier de src/assets/galerie/
-  // apparait ici automatiquement : les photos sont regroupees par album
-  // (= le sous-dossier), les videos sont a part, jamais melangees aux
-  // photos dans un carrousel. GERER SANS CODE (via GitHub « Add file ▸
-  // Upload files ») : depose ou supprime un fichier dans un sous-dossier
-  // existant, prefixe numerique pour l'ordre (01-, 02-…). Formats :
-  // .jpg .jpeg .png .webp (photos) · .mp4 .webm .mov (videos).
-  const albumTitle = (dir) => dir
-    .replace(/^\d+[-_\s]*/, '')
-    .split(/[-_\s]+/).filter(Boolean)
-    .map((w) => (w === w.toUpperCase() ? w : w.charAt(0).toUpperCase() + w.slice(1)))
-    .join(' ');
+  // ── GALERIE — bloc bento compact, integre (pas depliable), sans legendes ──
+  // Toute photo deposee dans un sous-dossier de src/assets/galerie/ apparait
+  // ici automatiquement (les 4 premieres en aperçu). GERER SANS CODE (via
+  // GitHub « Add file ▸ Upload files ») : depose ou supprime un fichier,
+  // prefixe numerique pour l'ordre (01-, 02-…).
   const galModules = import.meta.glob(
     './assets/galerie/*/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP,mp4,webm,mov,MP4,WEBM,MOV}',
     { eager: true, query: '?url', import: 'default' }
   );
-  const albumsMap = {};
-  const galVideosAll = [];
-  Object.keys(galModules).sort().forEach((path) => {
-    const parts = path.split('/');
-    const dir = parts[parts.length - 2];
-    const src = galModules[path];
-    if (/\.(mp4|webm|mov)$/i.test(path)) galVideosAll.push({ src });
-    else (albumsMap[dir] = albumsMap[dir] || []).push({ src });
-  });
-  const photoAlbums = Object.keys(albumsMap).sort().map((dir) => ({
-    key: dir,
-    title: albumTitle(dir),
-    photos: albumsMap[dir].filter((p) => !galFailed[p.src]),
-  })).filter((a) => a.photos.length > 0);
-  const galVideos = galVideosAll.filter((g) => !galFailed[g.src]);
+  const galAll = Object.keys(galModules).sort().map((path) => ({
+    type: /\.(mp4|webm|mov)$/i.test(path) ? 'video' : 'photo',
+    src: galModules[path],
+  }));
+  const galPhotos = galAll.filter((g) => g.type === 'photo' && !galFailed[g.src]);
+  const video3D = galAll.find((g) => g.type === 'video' && g.src.toLowerCase().includes('studio-3d') && !galFailed[g.src]) || null;
+  const bentoBig = galPhotos[0] || null;
+  const bentoSmallPhotos = galPhotos.slice(1, video3D ? 4 : 5);
+  const bentoSmalls = video3D
+    ? [{ ...video3D, isVideo: true }, ...bentoSmallPhotos.map((p) => ({ ...p, isVideo: false }))]
+    : bentoSmallPhotos.map((p) => ({ ...p, isVideo: false }));
 
   const videos = [
   { id: '4CpV_ymIeso', titre: 'Kei — OG Bounce', desc: '', featured: true },
@@ -2574,62 +2560,26 @@ function StudioPage({ setPage }) {
           ))}
         </div>
 
-        {/* ── GALERIE — integree, pas depliable, sans legendes, photos par album (pas de video ici, cf. bloc hero video plus bas) ── */}
+        {/* ── GALERIE — bloc bento unique, compact, integre (pas depliable), overlays minimaux ── */}
         <div style={{ marginTop: 14 }}>
           <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.16em', color: 'var(--rouge3)', textTransform: 'uppercase', marginBottom: 12 }}>Galerie</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            {/* Photos — un carrousel par album */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {photoAlbums.map((al) => {
-                const n = al.photos.length;
-                const ai = (((albumIdx[al.key] || 0) % n) + n) % n;
-                const setAi = (updater) => setAlbumIdx((prev) => ({ ...prev, [al.key]: typeof updater === 'function' ? updater(prev[al.key] || 0) : updater }));
-                return (
-                  <div key={al.key} style={{ borderRadius: 18, overflow: 'hidden', border: '1px solid var(--br)' }}>
-                    <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', color: 'var(--dim)', textTransform: 'uppercase', padding: '10px 16px', background: 'var(--s1)', borderBottom: '1px solid var(--br)' }}>{al.title}</div>
-                    <div style={{ position: 'relative', aspectRatio: '16 / 9', minHeight: 260, background: '#070707' }}>
-                      {al.photos.map((g, i) => (
-                        <div key={g.src} style={{ position: 'absolute', inset: 0, opacity: ai === i ? 1 : 0, transition: 'opacity 0.7s ease', pointerEvents: ai === i ? 'auto' : 'none' }}>
-                          <img src={g.src} alt="" loading="lazy" decoding="async" onError={() => setGalFailed((f) => ({ ...f, [g.src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-                        </div>
-                      ))}
-                      {n > 1 && <>
-                        <button onClick={() => setAi((p) => (p - 1 + n) % n)} aria-label={`${al.title} — photo précédente`} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'rgba(8,8,8,0.6)', border: '1px solid var(--br2)', color: 'var(--blanc)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', zIndex: 3 }}>
-                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-                        </button>
-                        <button onClick={() => setAi((p) => (p + 1) % n)} aria-label={`${al.title} — photo suivante`} style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'rgba(8,8,8,0.6)', border: '1px solid var(--br2)', color: 'var(--blanc)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', zIndex: 3 }}>
-                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-                        </button>
-                      </>}
-                    </div>
-                    {n > 1 && (
-                      <div style={{ display: 'flex', gap: 8, justifyContent: 'center', padding: '14px 0', background: 'var(--s1)', borderTop: '1px solid var(--br)', flexWrap: 'wrap' }}>
-                        {al.photos.map((g, i) => <button key={g.src} onClick={() => setAi(i)} aria-label={`${al.title} — photo ${i + 1}`} style={{ width: i === ai ? 28 : 8, height: 3, borderRadius: 2, border: 'none', cursor: 'pointer', background: i === ai ? 'var(--rouge)' : 'rgba(241,236,231,0.25)', transition: 'all 0.3s' }} />)}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+          <div className="urbe-bento" style={{ borderRadius: 18, overflow: 'hidden', border: '1px solid var(--br)' }}>
+            {bentoBig && (
+              <div className="urbe-bento-big" style={{ position: 'relative', overflow: 'hidden', background: '#070707' }}>
+                <img src={bentoBig.src} alt="" loading="lazy" decoding="async" onError={() => setGalFailed((f) => ({ ...f, [bentoBig.src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+            )}
+            {bentoSmalls.map((t) => (
+              <div key={t.src} style={{ position: 'relative', overflow: 'hidden', background: '#070707' }}>
+                {t.isVideo
+                  ? <video src={t.src} autoPlay muted loop playsInline preload="none" onError={() => setGalFailed((f) => ({ ...f, [t.src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                  : <img src={t.src} alt="" loading="lazy" decoding="async" onError={() => setGalFailed((f) => ({ ...f, [t.src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />}
+                {t.isVideo && <span style={{ position: 'absolute', top: 8, left: 8, padding: '3px 9px', borderRadius: 100, background: 'rgba(8,8,8,0.55)', backdropFilter: 'blur(6px)', fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', color: '#fff' }}>3D</span>}
+              </div>
+            ))}
           </div>
         </div>
       </section>
-
-      {/* ── HERO VIDÉO — carrousel de fond auto (silencieux), overlay léger + CTA ── */}
-      {galVideos.length > 0 && (
-        <section style={{ position: 'relative', minHeight: 420, overflow: 'hidden', margin: '0 0 64px' }}>
-          <video key={galVideos[heroVidIdx % galVideos.length].src} src={galVideos[heroVidIdx % galVideos.length].src} autoPlay muted loop={galVideos.length === 1} playsInline preload="auto" onEnded={() => setHeroVidIdx((p) => (p + 1) % galVideos.length)} onError={() => setGalFailed((f) => ({ ...f, [galVideos[heroVidIdx % galVideos.length].src]: true }))} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(5,5,5,0.35) 0%, rgba(5,5,5,0.15) 45%, rgba(5,5,5,0.75) 100%)' }} />
-          <div style={{ position: 'relative', zIndex: 2, minHeight: 420, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '40px 28px', maxWidth: 1100, margin: '0 auto' }}>
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.16em', color: 'var(--rouge3)', textTransform: 'uppercase', marginBottom: 10 }}>Immersion</div>
-            <h2 style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 'clamp(30px,4.5vw,50px)', letterSpacing: '0.02em', lineHeight: 0.95, color: '#fff', marginBottom: 14, maxWidth: 560 }}>DANS L'AMBIANCE DU STUDIO.</h2>
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <button onClick={() => setPage('booking')} style={{ background: 'var(--rouge)', color: '#fff', border: 'none', padding: '13px 26px', borderRadius: 100, cursor: 'pointer', fontSize: 14, fontWeight: 700, boxShadow: '0 8px 28px rgba(139,30,30,0.4)' }}>Réserver →</button>
-              <button onClick={() => setPage('contact')} style={{ background: 'rgba(8,8,8,0.5)', backdropFilter: 'blur(8px)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)', padding: '13px 24px', borderRadius: 100, cursor: 'pointer', fontSize: 14, fontWeight: 600 }}>Contact</button>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* ── SERVICES & TARIFS (formules + accordéon) ──────────────────── */}
       <section style={{ padding: '0 28px 64px', maxWidth: 1100, margin: '0 auto' }}>
