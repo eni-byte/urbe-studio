@@ -567,7 +567,7 @@ function PromoBanner({ setPage }) {
     <section style={{ background: 'var(--s1)', borderTop: '1px solid var(--br)', borderBottom: '1px solid var(--br)', position: 'relative', overflow: 'hidden', padding: '80px 28px' }}>
 
       {/* Photo studio en fond */}
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${R('studio/cabine.jpg')})`, backgroundSize: 'cover', backgroundPosition: 'center 30%', opacity: 0.07, pointerEvents: 'none', filter: 'blur(2px)', transform: 'scale(1.05)' }} />
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${R('studio/cabine2.jpg')})`, backgroundSize: 'cover', backgroundPosition: 'center 30%', opacity: 0.07, pointerEvents: 'none', filter: 'blur(2px)', transform: 'scale(1.05)' }} />
 
       {/* Glow background */}
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: 'radial-gradient(ellipse 70% 130% at 50% 50%, rgba(139,30,30,0.17) 0%, transparent 65%)' }} />
@@ -955,7 +955,7 @@ function TarifsSection({ setPage }) {
 
   return (
     <section style={{ padding: '88px 28px', background: 'var(--s1)', borderTop: '1px solid var(--br)', borderBottom: '1px solid var(--br)', position: 'relative', overflow: 'hidden' }}>
-      <img src={R('studio/cabine.jpg')} alt="" aria-hidden="true" loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.12, filter: 'grayscale(0.5) contrast(1.05)', pointerEvents: 'none' }} />
+      <img src={R('studio/cabine2.jpg')} alt="" aria-hidden="true" loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.12, filter: 'grayscale(0.5) contrast(1.05)', pointerEvents: 'none' }} />
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(16,16,16,0.96) 0%, rgba(16,16,16,0.82) 50%, rgba(16,16,16,0.95) 100%)', pointerEvents: 'none' }} />
       <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 55% 70% at 50% 30%, rgba(139,30,30,0.09) 0%, transparent 65%)', pointerEvents: 'none' }} />
 
@@ -1155,7 +1155,6 @@ function HomePage({ setPage }) {
   const heroDesk = findHeroStudio('desk-focal');
   const heroSalon = findHeroStudio('salon-vue-large');
   const heroSlides = [
-    { type: 'photo', src: R('studio/cabine.jpg'), pos: 'center center' },
     { type: 'photo', src: R('studio/cabine2.jpg'), pos: 'center 15%' },
     ...(heroDesk ? [{ type: 'photo', src: heroDesk, pos: 'center center' }] : []),
     ...(heroSalon ? [{ type: 'photo', src: heroSalon, pos: 'center center' }] : []),
@@ -2441,7 +2440,6 @@ function StudioPage({ setPage }) {
   const deskFocal = findStudioMedia('desk-focal');
   const salonVueLarge = findStudioMedia('salon-vue-large');
   const mediaSlides = [
-  { type: 'photo', img: 'studio/cabine.jpg',  label: 'Salon & Régie', pos: 'center center' },
   { type: 'photo', img: 'studio/cabine2.jpg', label: 'La Cabine · Enregistrement', pos: 'center 15%' },
   ...(deskFocal ? [{ type: 'photo', img: deskFocal, label: 'Bureau & Monitoring Focal', pos: 'center center' }] : []),
   ...(salonVueLarge ? [{ type: 'photo', img: salonVueLarge, label: 'Le Salon', pos: 'center center' }] : []),
@@ -2542,9 +2540,9 @@ function StudioPage({ setPage }) {
 
           {/* Photo gauche */}
           <div style={{ borderRadius: 18, overflow: 'hidden', position: 'relative', minHeight: 370 }}>
-            <img src={R('studio/cabine.jpg')} alt="Régie Urbe" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center', display: 'block' }} />
+            <img src={deskFocal || R('studio/cabine2.jpg')} alt="Régie Urbe" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center', display: 'block' }} />
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 55%, rgba(5,5,5,0.85) 100%)' }} />
-            <div style={{ position: 'absolute', bottom: 16, left: 16, fontSize: 10, color: 'rgba(241,236,231,0.65)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>Salon & Régie</div>
+            <div style={{ position: 'absolute', bottom: 16, left: 16, fontSize: 10, color: 'rgba(241,236,231,0.65)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>Bureau & Monitoring</div>
           </div>
 
           {/* Info centrale */}

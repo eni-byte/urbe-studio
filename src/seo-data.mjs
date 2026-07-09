@@ -6,7 +6,7 @@
    MODIF SEO d'une page = ici, un seul endroit. */
 
 export const SITE = 'https://www.urbestudio.fr';
-export const OG_IMAGE = SITE + '/studio/cabine.jpg'; // [À REMPLIR] idéalement une image OG dédiée 1200×630
+export const OG_IMAGE = SITE + '/studio/cabine2.jpg'; // [À REMPLIR] idéalement une image OG dédiée 1200×630
 const PHONE = '+33667126235'; // 06 67 12 62 35 — appel / SMS / WhatsApp
 
 /* Coordonnées réelles — source unique (JSON-LD + footer + page contact). */
@@ -29,7 +29,7 @@ const localBusiness = {
   name: 'URBE STUDIO',
   description: "Studio d'enregistrement professionnel à Paris 10, ouvert 24h/24 et 7j/7. Enregistrement, mixage et mastering pour rap, hip-hop, pop et électro.",
   url: SITE + '/',
-  image: SITE + '/studio/cabine.jpg',
+  image: SITE + '/studio/cabine2.jpg',
   logo: SITE + '/studio/urbe-logo.png',
   email: 'contact@urbestudio.fr',
   priceRange: '€€',
