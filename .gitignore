@@ -17,3 +17,7 @@ preview-main.js
 .claude/settings.local.json
 /fdlm
 /guides
+
+# Playwright
+test-results/
+playwright-report/

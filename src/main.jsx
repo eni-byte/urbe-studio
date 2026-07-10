@@ -4801,8 +4801,41 @@ function AppShell() {
     </div>);
 }
 
+/* ── Filet de sécurité : ErrorBoundary + Sentry ─────────────────────────
+   Avant : une exception React en prod = écran noir silencieux, personne
+   n'est prévenu. L'ErrorBoundary affiche un écran de secours navigable,
+   et Sentry (activé uniquement si VITE_SENTRY_DSN est défini dans les
+   variables d'env Netlify) remonte l'erreur — import dynamique : zéro
+   octet dans le bundle tant que le DSN n'est pas configuré. */
+const SENTRY_DSN = import.meta.env.VITE_SENTRY_DSN;
+if (SENTRY_DSN) {
+  import('@sentry/react').then((Sentry) => {
+    Sentry.init({ dsn: SENTRY_DSN, environment: import.meta.env.MODE, tracesSampleRate: 0 });
+    window.__urbeSentry = Sentry;
+  }).catch(() => {});
+}
+
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { error: null }; }
+  static getDerivedStateFromError(error) { return { error }; }
+  componentDidCatch(error, info) {
+    if (window.__urbeSentry) window.__urbeSentry.captureException(error, { extra: { componentStack: info && info.componentStack } });
+    else console.error('[urbe] Erreur React non rattrapée :', error, info);
+  }
+  render() {
+    if (!this.state.error) return this.props.children;
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '40px 24px', background: 'var(--noir, #080808)', color: 'var(--blanc, #f1ece7)', fontFamily: 'Plus Jakarta Sans, system-ui, sans-serif' }}>
+        <div style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 800, fontSize: 'clamp(28px,5vw,44px)', marginBottom: 14 }}>Oups, quelque chose a planté.</div>
+        <p style={{ fontSize: 15, color: 'rgba(241,236,231,0.65)', maxWidth: 420, lineHeight: 1.7, marginBottom: 26 }}>Ce n'est pas toi, c'est nous. Recharge la page — si ça persiste, écris-nous à contact@urbestudio.fr.</p>
+        <button onClick={() => window.location.reload()} style={{ background: 'var(--rouge, #8B1E1E)', color: '#fff', border: 'none', padding: '14px 30px', borderRadius: 100, fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>Recharger la page</button>
+      </div>
+    );
+  }
+}
+
 function App() {
-  return (<BrowserRouter><AppShell /></BrowserRouter>);
+  return (<ErrorBoundary><BrowserRouter><AppShell /></BrowserRouter></ErrorBoundary>);
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);

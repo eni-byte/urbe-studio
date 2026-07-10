@@ -1,0 +1,41 @@
+# CI Urbe Studio — filet de sécurité avant déploiement Netlify.
+# Le webServer Playwright lance `npm run build` : un build cassé OU un
+# smoke test rouge (home, tarifs, tunnel de réservation) fait échouer le run.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Installer Chromium (Playwright)
+        run: npx playwright install --with-deps chromium
+
+      - name: Build + smoke tests (home, tarifs, réservation)
+        run: npx playwright test
+
+      - name: Audit des dépendances (informatif, ne bloque pas)
+        run: npm audit --audit-level=high || true
+
+      - name: Rapport Playwright en cas d'échec
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
