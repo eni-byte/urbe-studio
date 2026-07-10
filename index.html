@@ -119,25 +119,23 @@
 <!-- ─── Standalone export: code-referenced resources (inlined by bundler) ─── -->
 <meta name="ext-resource-dependency" content="studio/urbe-logo-c.png" data-resource-id="studio/urbe-logo-c.png" />
 <meta name="ext-resource-dependency" content="studio/cabine2.jpg" data-resource-id="studio/cabine2.jpg" />
-<meta name="ext-resource-dependency" content="studio/cabine2.jpg" data-resource-id="studio/cabine2.jpg" />
-<meta name="ext-resource-dependency" content="studio/session-live.mp4" data-resource-id="studio/session-live.mp4" />
 <meta name="ext-resource-dependency" content="covers/nono.jpg" data-resource-id="covers/nono.jpg" />
 <meta name="ext-resource-dependency" content="covers/sheriff.jpg" data-resource-id="covers/sheriff.jpg" />
-<meta name="ext-resource-dependency" content="covers/c/nahir.png" data-resource-id="covers/c/nahir.png" />
-<meta name="ext-resource-dependency" content="covers/c/bishop.png" data-resource-id="covers/c/bishop.png" />
-<meta name="ext-resource-dependency" content="covers/c/asiki.png" data-resource-id="covers/c/asiki.png" />
-<meta name="ext-resource-dependency" content="covers/c/somyke.png" data-resource-id="covers/c/somyke.png" />
-<meta name="ext-resource-dependency" content="covers/c/ryflo.png" data-resource-id="covers/c/ryflo.png" />
+<meta name="ext-resource-dependency" content="covers/c/nahir.jpg" data-resource-id="covers/c/nahir.jpg" />
+<meta name="ext-resource-dependency" content="covers/c/bishop.jpg" data-resource-id="covers/c/bishop.jpg" />
+<meta name="ext-resource-dependency" content="covers/c/asiki.jpg" data-resource-id="covers/c/asiki.jpg" />
+<meta name="ext-resource-dependency" content="covers/c/somyke.jpg" data-resource-id="covers/c/somyke.jpg" />
+<meta name="ext-resource-dependency" content="covers/c/ryflo.jpg" data-resource-id="covers/c/ryflo.jpg" />
 <meta name="ext-resource-dependency" content="covers/saki225.jpg" data-resource-id="covers/saki225.jpg" />
 <meta name="ext-resource-dependency" content="covers/63kluf.jpg" data-resource-id="covers/63kluf.jpg" />
 <meta name="ext-resource-dependency" content="covers/berna.jpg" data-resource-id="covers/berna.jpg" />
 <meta name="ext-resource-dependency" content="covers/gotti.jpg" data-resource-id="covers/gotti.jpg" />
-<meta name="ext-resource-dependency" content="covers/c/maxdlg.png" data-resource-id="covers/c/maxdlg.png" />
+<meta name="ext-resource-dependency" content="covers/c/maxdlg.jpg" data-resource-id="covers/c/maxdlg.jpg" />
 <meta name="ext-resource-dependency" content="covers/gemen.jpg" data-resource-id="covers/gemen.jpg" />
 <meta name="ext-resource-dependency" content="covers/cashdico.jpg" data-resource-id="covers/cashdico.jpg" />
 <meta name="ext-resource-dependency" content="covers/titi33.jpg" data-resource-id="covers/titi33.jpg" />
 <meta name="ext-resource-dependency" content="covers/detox.jpg" data-resource-id="covers/detox.jpg" />
-<meta name="ext-resource-dependency" content="covers/c/gregoire.png" data-resource-id="covers/c/gregoire.png" />
+<meta name="ext-resource-dependency" content="covers/c/gregoire.jpg" data-resource-id="covers/c/gregoire.jpg" />
 <template id="__bundler_thumbnail" data-bg-color="#080808">
   <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
     <rect width="1200" height="800" fill="#080808"/>
@@ -207,6 +205,9 @@
      opacite), + on retire le delai de 300ms sur les zones tactiles. */
   * { -webkit-tap-highlight-color: transparent; }
   button, a, [role="button"] { touch-action: manipulation; }
+  /* Focus clavier visible (WCAG 2.4.7) : le tap-highlight est coupe ci-dessus,
+     ce contour prend le relais pour la navigation au clavier. */
+  :focus-visible { outline: 2px solid var(--rouge3); outline-offset: 3px; border-radius: 4px; }
   @media (hover: none) and (pointer: coarse) {
     button:not(:disabled):active,
     a:active,

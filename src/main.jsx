@@ -372,7 +372,7 @@ function SiteFooter({ setPage }) {
           <div key={col.titre}>
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--blanc)', marginBottom: 18 }}>{col.titre}</div>
               {col.liens.map(([l, p]) =>
-            <div key={l} onClick={() => setPage && setPage(p)} style={{ fontSize: 13, color: 'var(--dim)', marginBottom: 10, cursor: 'pointer', fontWeight: 300, transition: 'color 0.15s' }}
+            <div key={l} onClick={() => setPage && setPage(p)} {...cardKeys(() => setPage && setPage(p))} style={{ fontSize: 13, color: 'var(--dim)', marginBottom: 10, cursor: 'pointer', fontWeight: 300, transition: 'color 0.15s' }}
             onMouseEnter={(e) => e.target.style.color = 'var(--blanc)'}
             onMouseLeave={(e) => e.target.style.color = 'var(--dim)'}>{l}</div>
             )}
@@ -659,12 +659,12 @@ function PromoBanner({ setPage }) {
 
           {/* Photos flottantes — overlay décoratif (masqué sur mobile : positionnement en negatif, deborde a coup sur en dessous de 860px) */}
           {[
-            { src: 'covers/c/nahir.png',   top: '-32px',  left: '-24px',  size: 68, rot: -8,  z: 0 },
+            { src: 'covers/c/nahir.jpg',   top: '-32px',  left: '-24px',  size: 68, rot: -8,  z: 0 },
             { src: 'covers/sheriff.jpg',    top: '-18px',  right: '-20px', size: 56, rot: 10,  z: 0 },
             { src: 'covers/nono.jpg',       bottom: '-28px', left: '-16px', size: 62, rot: 6,  z: 0 },
             { src: 'covers/gotti.jpg',      bottom: '-22px', right: '-18px', size: 54, rot: -11, z: 0 },
-            { src: 'covers/c/bishop.png',   top: '42%',    left: '-44px',  size: 48, rot: 5,  z: 0 },
-            { src: 'covers/c/ryflo.png',    top: '38%',    right: '-42px', size: 52, rot: -7, z: 0 },
+            { src: 'covers/c/bishop.jpg',   top: '42%',    left: '-44px',  size: 48, rot: 5,  z: 0 },
+            { src: 'covers/c/ryflo.jpg',    top: '38%',    right: '-42px', size: 52, rot: -7, z: 0 },
           ].map(({ src, top, left, right, bottom, size, rot }, i) => (
             <div key={i} className="urbe-hide-mobile" style={{
               position: 'absolute',
@@ -1172,7 +1172,7 @@ function HomePage({ setPage }) {
       {/* ── HERO · V4 "Now Recording" ─────────────────────────── */}
       <section style={{ minHeight: 'max(720px, 100vh)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
 
-        {/* Fond : carrousel auto (photo studio · cabine · FDLM kebab · aftermovie) */}
+        {/* Fond : carrousel auto de photos (cabine · bureau · salon · FDLM kebab) */}
         {heroSlides.map((s, i) => (
           <div key={i} style={{ position: 'absolute', inset: 0, opacity: heroIdx === i ? 1 : 0, transition: 'opacity 1s ease', pointerEvents: 'none' }}>
             {s.type === 'video'
@@ -1428,8 +1428,8 @@ function HomePage({ setPage }) {
           <div className="urbe-r-cards" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
             {[
             { nom: 'NONO LA GRINTA', type: 'Composition · Rec', img: 'covers/nono.jpg' },
-            { nom: 'RICKY BISHOP', type: 'Composition · Rec', img: 'covers/c/bishop.png' },
-            { nom: 'NAHIR', type: 'Rec', img: 'covers/c/nahir.png' },
+            { nom: 'RICKY BISHOP', type: 'Composition · Rec', img: 'covers/c/bishop.jpg' },
+            { nom: 'NAHIR', type: 'Rec', img: 'covers/c/nahir.jpg' },
             { nom: 'GEMEN', type: 'Rec', img: 'covers/gemen.jpg' },
             { nom: 'CASH DICO × WESTSIDEBOOGIE', type: 'Comp · Rec · Mix/Master', img: 'covers/cashdico.jpg' },
             { nom: 'TITI33', type: 'Comp · Rec · Mix/Master', img: 'covers/titi33.jpg' }].
@@ -2125,16 +2125,16 @@ function CreditsPage() {
   const studio = [
   { nom: 'NONO LA GRINTA', type: 'Composition · Rec', img: 'covers/nono.jpg', spotify: '6CcoMrijDlPb1bDJxwvlCK' },
   { nom: 'SHERIFF LA ZONE', type: 'Composition · Rec', img: 'covers/sheriff.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'NAHIR', type: 'Rec', img: 'covers/c/nahir.png', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'RICKY BISHOP', type: 'Composition · Rec', img: 'covers/c/bishop.png', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'ASIKI', type: 'Composition · Rec', img: 'covers/c/asiki.png', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'SOMYKE', type: 'Composition · Rec', img: 'covers/c/somyke.png', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'RYFLO', type: 'Composition · Rec', img: 'covers/c/ryflo.png', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+  { nom: 'NAHIR', type: 'Rec', img: 'covers/c/nahir.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+  { nom: 'RICKY BISHOP', type: 'Composition · Rec', img: 'covers/c/bishop.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+  { nom: 'ASIKI', type: 'Composition · Rec', img: 'covers/c/asiki.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+  { nom: 'SOMYKE', type: 'Composition · Rec', img: 'covers/c/somyke.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+  { nom: 'RYFLO', type: 'Composition · Rec', img: 'covers/c/ryflo.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
   { nom: 'SAKI225', type: 'Composition · Rec', img: 'covers/saki225.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
   { nom: '63KLUF', type: 'Composition · Rec', img: 'covers/63kluf.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
   { nom: 'BERNA', type: 'Rec', img: 'covers/berna.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
   { nom: 'GOTTI MARRAS', type: 'Composition · Rec', img: 'covers/gotti.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'MAX DLG', type: 'Composition · Rec', img: 'covers/c/maxdlg.png', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+  { nom: 'MAX DLG', type: 'Composition · Rec', img: 'covers/c/maxdlg.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
   { nom: 'GEMEN', type: 'Rec', img: 'covers/gemen.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
   { nom: 'CASH DICO × WESTSIDEBOOGIE', type: 'Comp · Rec · Mix/Master', img: 'covers/cashdico.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
   { nom: 'TITI33', type: 'Comp · Rec · Mix/Master', img: 'covers/titi33.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
@@ -2143,7 +2143,7 @@ function CreditsPage() {
 
   // Son à l'image — voix off, pub, doc, podcast
   const sonImage = [
-  { nom: 'EMMANUEL GREGOIRE', type: 'Voix Off · Direction artistique', img: 'covers/c/gregoire.png' }];
+  { nom: 'EMMANUEL GREGOIRE', type: 'Voix Off · Direction artistique', img: 'covers/c/gregoire.jpg' }];
 
 
   const list = tab === 'studio' ? studio : sonImage;
@@ -3153,15 +3153,7 @@ function AuthScreen() {
           {err && <div style={{ fontSize: 12, color: "var(--rouge3)", padding: "2px 2px" }}>{err}</div>}
           <button type="submit" style={{ marginTop: 4, padding: "14px", borderRadius: 100, background: "var(--rouge)", color: "#fff", border: "none", fontSize: 14, fontWeight: 700, cursor: "pointer", boxShadow: "0 8px 28px rgba(139,30,30,0.4)" }}>{mode === "signup" ? "Créer mon compte →" : "Se connecter →"}</button>
         </form>
-        <p style={{ fontSize: 11, color: "var(--dim)", textAlign: "center", marginTop: 18, lineHeight: 1.6, opacity: 0.7 }}>Démo · tes infos restent sur cet appareil (aucun serveur). Pour un envoi d’emails réel, connecte un service de mailing.</p>
-        <details style={{ marginTop: 14, fontSize: 11, color: "var(--dim)", textAlign: "center" }}>
-          <summary style={{ cursor: "pointer", color: "var(--rouge3)", fontWeight: 600, listStyle: "none" }}>Accès staff (démo)</summary>
-          <div style={{ marginTop: 10, padding: "12px 14px", borderRadius: 10, background: "var(--noir)", border: "1px solid var(--br)", lineHeight: 1.8, textAlign: "left" }}>
-            <div><strong style={{ color: "var(--blanc)" }}>Direction :</strong> direction@urbestudio.fr · urbe2026</div>
-            <div><strong style={{ color: "var(--blanc)" }}>Ingénieur :</strong> virgile@urbestudio.fr · virgile</div>
-            <div style={{ marginTop: 6, opacity: 0.7 }}>On se connecte au même endroit — le rôle est défini par les identifiants.</div>
-          </div>
-        </details>
+        <p style={{ fontSize: 11, color: "var(--dim)", textAlign: "center", marginTop: 18, lineHeight: 1.6, opacity: 0.7 }}>Tes informations restent confidentielles et ne sont jamais partagées.</p>
       </div>
     </div>
   );
@@ -4758,7 +4750,7 @@ function AppShell() {
   const page = PATH_PAGE[location.pathname] || 'home';
   const goTo = (p, productId = null) => { if (productId) setBookingProduct(productId); navigate(PAGE_PATH[p] || '/'); };
   // Expose la navigation aux pages statiques (blog) : window.__urbeNav('booking')
-  useEffect(() => { window.__urbeNav = goTo; return () => { delete window.__urbeNav; }; });
+  useEffect(() => { window.__urbeNav = goTo; return () => { delete window.__urbeNav; }; }, []);
   // Scroll haut + tracking GA4 a chaque changement d'URL
   useEffect(() => {
     applyRuntimeHead(page);
