@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Ton son est-il prêt à sortir ? Le diagnostic — Urbe Studio</title>
+<meta name="description" content="Diagnostic gratuit en 6 questions : ton son est-il prêt à sortir ou lui manque-t-il un dernier passage ? Voix, basses, mastering — le check complet avant streaming.">
+<meta name="keywords" content="mon mix est-il pret, diagnostic mixage gratuit, checklist avant de sortir un son, test avant sortie single, mastering avant streaming">
+<link rel="canonical" href="https://www.urbestudio.fr/blog/ton-son-est-il-pret-a-sortir.html">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ton son est-il prêt à sortir ? — Urbe Studio">
+<meta property="og:description" content="Diagnostic gratuit en 6 questions avant de sortir ton titre en streaming.">
+<meta property="og:image" content="https://www.urbestudio.fr/studio/cabine2.jpg">
+<meta property="og:url" content="https://www.urbestudio.fr/blog/ton-son-est-il-pret-a-sortir.html">
+<meta property="og:locale" content="fr_FR">
+<meta name="theme-color" content="#080808">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://www.urbestudio.fr/" },
+    { "@type": "ListItem", "position": 2, "name": "Le journal", "item": "https://www.urbestudio.fr/blog/index.html" },
+    { "@type": "ListItem", "position": 3, "name": "Ton son est-il prêt à sortir ?", "item": "https://www.urbestudio.fr/blog/ton-son-est-il-pret-a-sortir.html" }
+  ]
+}
+</script>
+<style>
+  :root{
+    --noir:#080808;
+    --s1:#101010;
+    --s2:#161616;
+    --line:rgba(241,236,231,0.08);
+    --line2:rgba(241,236,231,0.14);
+    --blanc:#f1ece7;
+    --dim:rgba(241,236,231,0.5);
+    --rouge:#8B1E1E;
+    --rouge3:#c12c2c;
+    --vert:#3ad17a;
+    --ambre:#d9a441;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(139,30,30,0.12) 0%, transparent 60%),
+      var(--noir);
+    color:var(--blanc);
+    font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+    line-height:1.6;
+  }
+  a{color:var(--rouge3)}
+  :focus-visible{outline:2px solid var(--rouge3);outline-offset:3px;border-radius:4px}
+  .sitewrap{max-width:760px;margin:0 auto;padding:0 24px}
+  header.site{border-bottom:1px solid rgba(241,236,231,0.1);padding:18px 0;position:sticky;top:0;background:rgba(8,8,8,0.92);backdrop-filter:blur(10px);z-index:5}
+  header.site .sitewrap{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;letter-spacing:0.04em;color:var(--blanc);text-decoration:none}
+  .logo b{color:var(--rouge3)}
+  .btn-nav{background:var(--rouge);color:#fff;padding:10px 20px;border-radius:100px;text-decoration:none;font-weight:700;font-size:13px;white-space:nowrap}
+  .crumb{font-family:'Space Mono',monospace;font-size:11px;color:var(--dim);padding:22px 0 0}
+  .crumb a{color:var(--dim)}
+  .wrap{width:100%;max-width:520px;margin:0 auto;padding:28px 24px 72px;text-align:center;perspective:1400px}
+
+  .eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--rouge3);display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px}
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--rouge3);box-shadow:0 0 8px var(--rouge3);animation:pulse 1.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
+
+  h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(32px,7vw,48px);line-height:0.95;letter-spacing:0.01em;margin:0 0 8px;text-transform:uppercase}
+  .sub{color:var(--dim);font-size:14px;line-height:1.5;margin:0 auto 34px;max-width:40ch;font-weight:300}
+
+  /* Potard 3D */
+  .knob-wrap{display:flex;justify-content:center;margin-bottom:34px;transform-style:preserve-3d}
+  .knob-outer{
+    width:132px;height:132px;border-radius:50%;position:relative;
+    transform:rotateX(28deg);transform-style:preserve-3d;
+    background:radial-gradient(circle at 35% 30%, #2e2a28 0%, #151210 65%, #080606 100%);
+    box-shadow:0 22px 30px -10px rgba(0,0,0,0.7), inset 0 2px 3px rgba(241,236,231,0.08), inset 0 -6px 10px rgba(0,0,0,0.6);
+  }
+  .knob-ring{
+    position:absolute;inset:8px;border-radius:50%;
+    background:conic-gradient(from -132deg, var(--vert) 0deg, var(--ambre) calc(var(--pct,0) * 1.2deg), var(--line2) calc(var(--pct,0) * 1.2deg), var(--line2) 264deg, transparent 264deg);
+    mask:radial-gradient(farthest-side, transparent calc(100% - 10px), #000 calc(100% - 9px));
+    -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 10px), #000 calc(100% - 9px));
+    transition:background 0.5s ease;
+  }
+  .knob-face{
+    position:absolute;inset:20px;border-radius:50%;
+    background:radial-gradient(circle at 40% 35%, #242020 0%, #121010 70%);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:inset 0 3px 6px rgba(0,0,0,0.6), inset 0 -2px 3px rgba(241,236,231,0.05);
+  }
+  .knob-readout{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--rouge3)}
+  .knob-caption{font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:0.1em;color:var(--dim);margin-top:10px}
+
+  /* Carte flip */
+  .stage{perspective:1200px;margin-bottom:6px}
+  .card{
+    background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:28px 24px;position:relative;
+    transform-style:preserve-3d;transition:transform 0.45s cubic-bezier(.4,.1,.2,1), opacity 0.3s ease;
+    box-shadow:0 30px 50px -20px rgba(0,0,0,0.6);overflow:hidden;
+  }
+  .card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--vert),var(--ambre),var(--rouge3))}
+  .card.flip-out{transform:rotateY(90deg);opacity:0}
+  .card.flip-in{transform:rotateY(0deg);opacity:1}
+
+  .q-num{font-family:'Space Mono',monospace;font-size:12px;color:var(--rouge3);letter-spacing:0.1em;margin-bottom:10px;text-align:left}
+  .q-text{font-size:19px;font-weight:700;line-height:1.35;margin-bottom:22px;text-align:left}
+  .options{display:flex;flex-direction:column;gap:10px}
+  .opt{
+    text-align:left;background:var(--s2);border:1px solid var(--line2);color:var(--blanc);
+    font-family:'Plus Jakarta Sans',sans-serif;font-size:14.5px;padding:14px 16px;border-radius:12px;cursor:pointer;
+    transition:border-color .15s ease, background .15s ease, transform .12s ease;
+    display:flex;align-items:center;gap:12px;
+  }
+  .opt:hover{border-color:rgba(193,44,44,0.55);background:#1c1414;transform:translateZ(4px)}
+  .opt .tag{font-family:'Space Mono',monospace;font-size:10px;color:var(--dim);border:1px solid var(--line2);border-radius:4px;padding:2px 6px;flex-shrink:0}
+
+  /* Résultat : vinyle */
+  .result{display:none}
+  .result.show{display:block}
+  .quiz.hide{display:none}
+
+  .vinyl-wrap{display:flex;justify-content:center;margin:6px 0 24px}
+  .vinyl{
+    width:180px;height:180px;border-radius:50%;position:relative;
+    transform:rotateX(22deg);transform-style:preserve-3d;
+    background:repeating-radial-gradient(circle at 50% 50%, #0d0d0d 0px, #0d0d0d 2px, #1a1a1a 2px, #1a1a1a 4px);
+    box-shadow:0 26px 40px -14px rgba(0,0,0,0.75), inset 0 0 0 6px #000;
+    animation:spin 5s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce){ .vinyl{animation:none} .eyebrow .dot{animation:none} }
+  @keyframes spin{ from{transform:rotateX(22deg) rotate(0deg)} to{transform:rotateX(22deg) rotate(360deg)} }
+  .vinyl-label{position:absolute;inset:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;padding:6px}
+  .vinyl-label span{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.05em;font-weight:700;line-height:1.2}
+  .vinyl-hole{position:absolute;inset:86px;border-radius:50%;background:var(--noir);box-shadow:inset 0 2px 3px rgba(0,0,0,0.8)}
+
+  .verdict{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(28px,6.5vw,40px);text-transform:uppercase;line-height:1;margin:0 0 6px}
+  .verdict-sub{font-size:13px;color:var(--dim);margin-bottom:18px}
+  .verdict-desc{font-size:15px;line-height:1.65;text-align:left;margin-bottom:22px;color:rgba(241,236,231,0.82)}
+  .verdict-desc strong{color:var(--rouge3)}
+
+  .cta-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .btn{
+    font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;padding:13px 22px;border-radius:100px;
+    text-decoration:none;display:inline-flex;align-items:center;gap:6px;cursor:pointer;border:1px solid transparent;
+  }
+  .btn-primary{background:var(--rouge);color:#fff;box-shadow:0 8px 28px rgba(139,30,30,0.4)}
+  .btn-primary:hover{background:#a82424}
+  .btn-secondary{background:transparent;border-color:var(--line2);color:var(--dim)}
+  .btn-secondary:hover{color:var(--blanc);border-color:var(--dim)}
+
+  .foot-link{display:block;text-align:center;margin-top:22px;font-size:13px;color:var(--dim);text-decoration:none}
+  .foot-link:hover{color:var(--blanc)}
+
+  footer.site{border-top:1px solid rgba(241,236,231,0.1);padding:28px 0 48px;font-size:13px;color:var(--dim);text-align:left}
+  footer.site a{color:var(--rouge3)}
+
+  @media (max-width:420px){ .card{padding:22px 18px} }
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="sitewrap">
+    <a class="logo" href="../index.html">URBE<b>.</b>STUDIO</a>
+    <a class="btn-nav" href="../index.html#reserver">Réserver →</a>
+  </div>
+</header>
+
+<div class="sitewrap">
+  <nav class="crumb"><a href="../index.html">Accueil</a> · <a href="index.html">Le journal</a> · Ton son est-il prêt à sortir ?</nav>
+</div>
+
+<div class="wrap">
+
+  <div class="eyebrow"><span class="dot"></span> Urbe Studio — Diagnostic</div>
+  <h1>Ton son est-il<br>prêt à sortir ?</h1>
+  <p class="sub">6 questions rapides. À la fin, un verdict clair et ce qu'il te reste à faire avant streaming.</p>
+
+  <div class="knob-wrap">
+    <div class="knob-outer">
+      <div class="knob-ring" id="knobRing"></div>
+      <div class="knob-face">
+        <div>
+          <div class="knob-readout" id="knobReadout">0/12</div>
+          <div class="knob-caption">SCORE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz">
+    <div class="stage">
+      <div class="card" id="card">
+        <div class="q-num" id="qNum">Q1</div>
+        <div class="q-text" id="qText"></div>
+        <div class="options" id="qOptions"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="vinyl-wrap">
+      <div class="vinyl">
+        <div class="vinyl-label" id="vinylLabel"></div>
+        <div class="vinyl-hole"></div>
+      </div>
+    </div>
+    <div class="verdict" id="verdictTitle"></div>
+    <div class="verdict-sub" id="verdictTag"></div>
+    <div class="verdict-desc" id="verdictDesc"></div>
+    <div class="cta-row">
+      <a class="btn btn-primary" id="ctaBook" href="../index.html#reserver">Réserver mon mix →</a>
+      <a class="btn btn-secondary" id="ctaRead" href="#">En savoir plus</a>
+    </div>
+    <a class="foot-link" href="#" id="restart">↺ Refaire le diagnostic</a>
+  </div>
+
+</div>
+
+<footer class="site">
+  <div class="sitewrap">
+    Urbe Studio · 37 rue d'Hauteville, 75010 Paris · Ouvert 24h/24 · Contact : <a href="mailto:contact@urbestudio.fr">contact@urbestudio.fr</a><br />
+    <a href="../index.html">← Retour au site</a>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const questions = [
+    {
+      q:"T'as écouté ton son sur plusieurs systèmes (casque, enceinte, voiture, téléphone) ?",
+      opts:[
+        {t:"Oui, sur au moins 3 systèmes différents",tag:"OUI",v:2},
+        {t:"Juste au casque pour l'instant",tag:"PARTIEL",v:1},
+        {t:"Non, écouté qu'une fois",tag:"NON",v:0}
+      ]
+    },
+    {
+      q:"Le niveau sonore de ton mix tient la route à côté d'une référence pro du même style ?",
+      opts:[
+        {t:"Oui, ça tape aussi fort",tag:"OUI",v:2},
+        {t:"Un peu en dessous",tag:"PRESQUE",v:1},
+        {t:"Je ne sais pas / pas comparé",tag:"NON",v:0}
+      ]
+    },
+    {
+      q:"La voix reste claire même quand la prod monte en intensité ?",
+      opts:[
+        {t:"Oui, elle passe toujours devant",tag:"OUI",v:2},
+        {t:"Elle se noie un peu par moments",tag:"PARTIEL",v:1},
+        {t:"Non, elle disparaît souvent",tag:"NON",v:0}
+      ]
+    },
+    {
+      q:"Les basses tapent sans devenir floues sur une petite enceinte (type téléphone) ?",
+      opts:[
+        {t:"Oui, ça reste net",tag:"OUI",v:2},
+        {t:"Un peu boueux mais ça passe",tag:"PARTIEL",v:1},
+        {t:"Non, ça devient une bouillie",tag:"NON",v:0}
+      ]
+    },
+    {
+      q:"T'as fait écouter le titre à quelqu'un d'autre que toi, à froid ?",
+      opts:[
+        {t:"Oui, plusieurs retours extérieurs",tag:"OUI",v:2},
+        {t:"À une seule personne",tag:"PARTIEL",v:1},
+        {t:"Non, personne d'autre ne l'a entendu",tag:"NON",v:0}
+      ]
+    },
+    {
+      q:"Le morceau est mixé ET masterisé, prêt techniquement pour le streaming ?",
+      opts:[
+        {t:"Oui, les deux sont faits",tag:"OUI",v:2},
+        {t:"Mixé mais pas encore masterisé",tag:"PARTIEL",v:1},
+        {t:"Ni l'un ni l'autre",tag:"NON",v:0}
+      ]
+    }
+  ];
+
+  let current = 0;
+  let score = 0;
+  const total = questions.length;
+
+  const qNum = document.getElementById('qNum');
+  const qText = document.getElementById('qText');
+  const qOptions = document.getElementById('qOptions');
+  const card = document.getElementById('card');
+  const knobRing = document.getElementById('knobRing');
+  const knobReadout = document.getElementById('knobReadout');
+  const quizEl = document.getElementById('quiz');
+  const resultEl = document.getElementById('result');
+
+  function updateKnob(){
+    const pct = Math.round((score/(total*2))*100);
+    knobRing.style.setProperty('--pct', pct);
+    knobReadout.textContent = score + "/" + (total*2);
+  }
+
+  function renderQuestion(){
+    const item = questions[current];
+    qNum.textContent = "Q" + (current+1) + " / " + total;
+    qText.textContent = item.q;
+    qOptions.innerHTML = "";
+    item.opts.forEach(o=>{
+      const btn = document.createElement('button');
+      btn.className = "opt";
+      btn.innerHTML = '<span class="tag">'+o.tag+'</span><span>'+o.t+'</span>';
+      btn.addEventListener('click', ()=>answer(o.v));
+      qOptions.appendChild(btn);
+    });
+  }
+
+  function answer(points){
+    score += points;
+    updateKnob();
+    card.classList.add('flip-out');
+    setTimeout(()=>{
+      current++;
+      if(current >= questions.length){
+        finish();
+      } else {
+        renderQuestion();
+        card.classList.remove('flip-out');
+        card.classList.add('flip-in');
+        setTimeout(()=>card.classList.remove('flip-in'), 450);
+      }
+    }, 260);
+  }
+
+  const verdicts = {
+    ready:{
+      label:"PRÊT",
+      title:"PRÊT À SORTIR",
+      tag:"Ton son passe le check technique",
+      desc:"Voix claire, basses contrôlées, niveau qui tient la comparaison — ton titre est prêt techniquement. Il ne reste plus que la stratégie de sortie : le bon moment, la bonne playlist, et si tu veux, on peut vérifier le mastering une dernière fois avant la mise en ligne.",
+      color:"var(--vert)",
+      colorHex:"#3ad17a",
+      link:"mixage-mastering-en-ligne.html",
+      linkText:"→ Vérifier mon mastering"
+    },
+    almost:{
+      label:"PRESQUE",
+      title:"PRESQUE PRÊT",
+      tag:"Un dernier passage recommandé",
+      desc:"Ton titre est proche du compte, mais il reste un ou deux points à corriger — souvent la voix qui se noie, ou un mastering qui manque encore. Un dernier passage par un ingénieur peut suffire à combler l'écart avant la sortie.",
+      color:"var(--ambre)",
+      colorHex:"#d9a441",
+      link:"ingenieur-du-son-professionnel.html",
+      linkText:"→ Pourquoi un vrai ingénieur fait la différence"
+    },
+    notyet:{
+      label:"PAS ENCORE",
+      title:"PAS ENCORE PRÊT",
+      tag:"Un vrai passage en mixage s'impose",
+      desc:"Plusieurs points bloquants ressortent — voix qui se perd, basses floues, pas de mastering. Rien de grave, c'est exactement le rôle du mixage : reprendre tout ça avec un ingénieur avant de sortir le titre, pour ne pas le griller sur une sortie mal préparée.",
+      color:"var(--rouge3)",
+      colorHex:"#c12c2c",
+      link:"mixage-a-distance-vacances-rentree.html",
+      linkText:"→ Mixer à distance avant la rentrée"
+    }
+  };
+
+  function finish(){
+    const pct = score/(total*2);
+    let v;
+    if(pct >= 0.75) v = verdicts.ready;
+    else if(pct >= 0.4) v = verdicts.almost;
+    else v = verdicts.notyet;
+
+    document.getElementById('verdictTitle').textContent = v.title;
+    document.getElementById('verdictTitle').style.color = v.colorHex;
+    document.getElementById('verdictTag').textContent = v.tag;
+    document.getElementById('verdictDesc').innerHTML = v.desc;
+    document.getElementById('ctaRead').href = v.link;
+    document.getElementById('ctaRead').textContent = v.linkText;
+    const label = document.getElementById('vinylLabel');
+    label.style.background = v.colorHex;
+    label.innerHTML = '<span style="color:#141311">'+v.label+'<br>'+score+'/'+(total*2)+'</span>';
+
+    quizEl.classList.add('hide');
+    resultEl.classList.add('show');
+  }
+
+  document.getElementById('restart').addEventListener('click', function(e){
+    e.preventDefault();
+    current = 0; score = 0;
+    updateKnob();
+    resultEl.classList.remove('show');
+    quizEl.classList.remove('hide');
+    renderQuestion();
+  });
+
+  updateKnob();
+  renderQuestion();
+})();
+</script>
+
+</body>
+</html>
