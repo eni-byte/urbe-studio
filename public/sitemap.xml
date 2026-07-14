@@ -188,4 +188,18 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+
+  <!-- Ciblage Afrique francophone (pilier + genres + pays) -->
+  <url><loc>https://www.urbestudio.fr/blog/mixage-en-ligne-afrique.html</loc><lastmod>2026-07-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.urbestudio.fr/blog/mastering-en-ligne-afrique.html</loc><lastmod>2026-07-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.urbestudio.fr/blog/ingenieur-du-son-afrique.html</loc><lastmod>2026-07-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.urbestudio.fr/blog/mixage-rap-afrique.html</loc><lastmod>2026-07-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.urbestudio.fr/blog/mixage-afrobeat.html</loc><lastmod>2026-07-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.urbestudio.fr/blog/mixage-amapiano.html</loc><lastmod>2026-07-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.urbestudio.fr/blog/mixage-cameroun.html</loc><lastmod>2026-07-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.urbestudio.fr/blog/mixage-rdc.html</loc><lastmod>2026-07-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.urbestudio.fr/blog/mixage-mali.html</loc><lastmod>2026-07-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.urbestudio.fr/blog/mixage-burkina-faso.html</loc><lastmod>2026-07-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.urbestudio.fr/blog/mixage-benin.html</loc><lastmod>2026-07-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.urbestudio.fr/blog/mixage-guinee.html</loc><lastmod>2026-07-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
 </urlset>
