@@ -195,6 +195,18 @@ function redirectToStripe(productKey, summary) {
   window.open(finalUrl, '_blank', 'noopener,noreferrer');
   return true;
 }
+/* ID client GA4 (cookie _ga posé par gtag) — transmis à n8n via la session Stripe
+   (metadata) pour que l'événement "purchase" server-side s'attribue à la bonne
+   session au lieu de créer un utilisateur GA4 anonyme déconnecté du parcours. */
+function getGaClientId() {
+  try {
+    const m = document.cookie.match(/(?:^|;\s*)_ga=([^;]+)/);
+    if (!m) return '';
+    const parts = decodeURIComponent(m[1]).split('.');
+    return parts.length >= 4 ? parts.slice(-2).join('.') : '';
+  } catch (e) { return ''; }
+}
+window.getGaClientId = getGaClientId;
 /* Crée une session Stripe dynamique (montant recalculé côté serveur via n8n) et
    renvoie l'URL de paiement. Utilisé par la modale mix de index.html — la clé du
    webhook reste encapsulée ici plutôt que dans le HTML public. */
@@ -203,7 +215,7 @@ function createStripeSession({ ref, productLabel, email, name }) {
   return fetchWithTimeout(URBE_CONFIG.sessionWebhook, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-Urbe-Key': URBE_WEBHOOK_KEY },
-    body: JSON.stringify({ productLabel, ref, email, name }),
+    body: JSON.stringify({ productLabel, ref, email, name, gaClientId: getGaClientId() }),
   }, 15000).then((r) => r.json()).then((d) => (d && d.url) ? d.url : null);
 }
 window.createStripeSession = createStripeSession;
@@ -1745,7 +1757,7 @@ function BookingPage({ initialProductId }) {
       fetchWithTimeout(URBE_CONFIG.sessionWebhook, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Urbe-Key': URBE_WEBHOOK_KEY },
-        body: JSON.stringify({ productLabel: summary.productLabel, ref, email: contact.email.trim(), name: `${contact.firstName.trim()} ${contact.lastName.trim()}`.trim() }),
+        body: JSON.stringify({ productLabel: summary.productLabel, ref, email: contact.email.trim(), name: `${contact.firstName.trim()} ${contact.lastName.trim()}`.trim(), gaClientId: getGaClientId() }),
       }, 15000).then((r) => r.json()).then((d) => {
         if (d && d.url) { if (payWin) payWin.location.href = d.url; else window.location.href = d.url; goConfirm(); }
         else { if (payWin) payWin.close(); onSessionFail(); }
