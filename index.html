@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<!-- Consent Mode v2 (Google) : etats par defaut AVANT tout tag — doit s'executer
+     en tout premier, avant GA4/Ads. Ne charge rien : pose juste l'etat "refuse"
+     tant que le bandeau cookies n'a pas ete valide (RGPD). -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    wait_for_update: 500
+  });
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Studio d'Enregistrement Paris 10 | URBE STUDIO — Mix &amp; Mastering 24h/24</title>
@@ -1162,6 +1176,10 @@
     function resetPay() { paying = false; payBtn.disabled = false; payBtn.textContent = prev; }
     var key = state.delay === 'urgent' ? 'mix-urgent' : 'mix-standard';
     var titre = (root.querySelector('#urbe-bm-titre') || {}).value || '';
+    if (typeof window.gtag === 'function') {
+      var ccTotal = 120 + (state.delay === 'urgent' ? 50 : 0) + (state.master ? 25 : 0);
+      window.gtag('event', 'begin_checkout', { currency: 'EUR', value: ccTotal, items: [{ item_id: key, item_name: 'Mix' + (state.master ? ' + Mastering' : '') }] });
+    }
     // Référence encodée → recalcul prix serveur (n8n) + confirmation après paiement.
     // Mastering en option : -50% (25€) ajouté côté serveur quand un mix est présent.
     var ref = 'M~' + key + (state.master ? '~master' : '');

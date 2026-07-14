@@ -229,6 +229,12 @@ function postLead(data) {
   }, 10000).then((r) => r.ok).catch(() => false);
 }
 window.postLead = postLead;
+/* Envoie un événement GA4 (no-op tant que le consentement analytics n'est pas
+   accordé : gtag ne pousse rien vers Google, seulement dans dataLayer local). */
+function urbeTrackEvent(name, params) {
+  if (typeof window.gtag === 'function') window.gtag('event', name, params || {});
+}
+window.urbeTrackEvent = urbeTrackEvent;
 window.URBE_CONFIG = URBE_CONFIG;
 window.buildGCalAddLink = buildGCalAddLink;
 window.buildICSDataUrl = buildICSDataUrl;
@@ -1141,6 +1147,7 @@ function HomePage({ setPage }) {
     // Honeypot : si le champ piège est rempli, c'est un bot → succès factice, rien envoyé.
     if (!formData.hp) {
       postLead({ nom: formData.nom, email: formData.email, type: formData.projet, message: formData.message, source: 'Formulaire accueil' });
+      urbeTrackEvent('generate_lead', { source: 'accueil' });
     }
     setFormStep(1);
     setTimeout(() => {setFormOpen(false);setFormStep(0);setFormData({ nom: '', email: '', projet: '', message: '', hp: '' });}, 2800);
@@ -1670,6 +1677,13 @@ function BookingPage({ initialProductId }) {
     const ref = hasDate
       ? `B~${summary.date}~${String(summary.time).replace(':', '')}~${summary.hours || 2}~${productKey}~${addonsRef}`
       : `M~${productKey}`;
+    // GA4 : entrée dans le tunnel de paiement (valeur estimée client — le montant
+    // exact facturé, recalculé côté serveur, part séparément via n8n → Stripe).
+    urbeTrackEvent('begin_checkout', {
+      currency: 'EUR',
+      value: summary.total || undefined,
+      items: [{ item_id: productKey, item_name: summary.productLabel }],
+    });
     // 1) On enregistre le prospect + la commande dans HubSpot (non bloquant).
     //    Honeypot rempli = bot → on saute la capture CRM (le paiement reste possible).
     if (!contact.hp) postLead({
@@ -2325,6 +2339,7 @@ function ContactPage() {
   };
   const submit = () => {
     if (!validate()) return;
+    urbeTrackEvent('generate_lead', { source: 'contact' });
     // Capture le lead dans le CRM via n8n. Repli mailto uniquement si le webhook échoue.
     postLead({ nom: form.nom, email: form.email, type: form.type, message: form.message, source: 'Formulaire contact' }).then((ok) => {
       if (!ok) {
@@ -4323,6 +4338,14 @@ function ToastHost() {
 /* ─── CONSENTEMENT COOKIES / FACADE TIERS (CONF-02) ──────────── */
 function urbeSetConsent(v) {
   try { localStorage.setItem('urbe_cookie_consent', v); } catch (e) {}
+  // Consent Mode v2 : informe Google du choix (les defauts "refuse" sont poses
+  // au tout debut de index.html, avant tout chargement de tag).
+  if (typeof window.gtag === 'function') {
+    window.gtag('consent', 'update', {
+      analytics_storage: v === 'all' ? 'granted' : 'denied',
+      ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied',
+    });
+  }
   window.dispatchEvent(new Event('urbe-consent'));
 }
 function useConsent() {
@@ -4530,12 +4553,29 @@ function Analytics() {
         document.head.appendChild(s);
         window.gtag = function () { window.dataLayer.push(arguments); };
         window.gtag('js', new Date());
+        // Le consentement est déjà "all" à ce stade (load() n'est appelé qu'après) :
+        // on le confirme explicitement à GA4 avant le config (Consent Mode v2).
+        window.gtag('consent', 'update', { analytics_storage: 'granted' });
         window.gtag('config', ga4Id, { anonymize_ip: true });
       }
     };
     load();
     window.addEventListener('urbe-consent', load);
     return () => window.removeEventListener('urbe-consent', load);
+  }, []);
+  // Clic sur un lien tél/WhatsApp/email : conversion "hors tunnel" fréquente pour
+  // un studio (beaucoup de clients réservent par appel plutôt que par le site).
+  useEffect(() => {
+    const onClick = (e) => {
+      const a = e.target.closest && e.target.closest('a[href]');
+      if (!a) return;
+      const href = a.getAttribute('href') || '';
+      if (href.startsWith('tel:')) urbeTrackEvent('contact_click', { method: 'phone' });
+      else if (href.includes('wa.me') || href.includes('whatsapp')) urbeTrackEvent('contact_click', { method: 'whatsapp' });
+      else if (href.startsWith('mailto:')) urbeTrackEvent('contact_click', { method: 'email' });
+    };
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
   }, []);
   return null;
 }
