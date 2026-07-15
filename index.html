@@ -226,6 +226,13 @@
   /* Focus clavier visible (WCAG 2.4.7) : le tap-highlight est coupe ci-dessus,
      ce contour prend le relais pour la navigation au clavier. */
   :focus-visible { outline: 2px solid var(--rouge3); outline-offset: 3px; border-radius: 4px; }
+  /* Anti-zoom iOS : Safari zoome toute la page quand on tape dans un champ
+     dont la police fait moins de 16px. Tous nos champs sont a 13-13.5px en
+     inline -> on force 16px sur ecran tactile (le !important est necessaire
+     pour ecraser les styles inline du JSX et de la modale mix). */
+  @media (max-width: 860px) {
+    input:not([type="checkbox"]):not([type="radio"]), textarea, select { font-size: 16px !important; }
+  }
   @media (hover: none) and (pointer: coarse) {
     button:not(:disabled):active,
     a:active,
@@ -463,13 +470,14 @@
   @media (max-width: 640px) { .urbe-bm-modal { padding: 24px 22px 22px; } }
 
   .urbe-bm-close {
-    position: absolute; top: 16px; right: 18px;
-    width: 36px; height: 36px; border-radius: 50%;
+    position: absolute; top: 12px; right: 14px;
+    width: 44px; height: 44px; border-radius: 50%; /* 44px = zone tactile minimum */
     background: rgba(241,236,231,0.06);
     border: 1px solid rgba(241,236,231,0.1);
     color: #f1ece7; font-size: 18px; line-height: 1;
     cursor: pointer; transition: all 0.2s;
     display: flex; align-items: center; justify-content: center;
+    z-index: 2;
   }
   .urbe-bm-close:hover { background: #8B1E1E; border-color: #8B1E1E; }
 
@@ -479,6 +487,8 @@
     margin: 6px 12px 28px;
     position: relative;
   }
+  /* Mobile : reserve la place du bouton fermer, sinon le dot "4" passe dessous */
+  @media (max-width: 640px) { .urbe-bm-stepper { margin-right: 56px; } }
   .urbe-bm-stepper::before {
     content: ''; position: absolute; top: 50%; left: 18px; right: 18px;
     height: 1px; background: rgba(241,236,231,0.12); z-index: 0;

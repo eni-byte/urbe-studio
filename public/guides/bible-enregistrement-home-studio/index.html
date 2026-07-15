@@ -118,6 +118,8 @@
   .field input:focus{border-color:var(--rouge)}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   @media(max-width:480px){.row2{grid-template-columns:1fr}}
+  /* Anti-zoom iOS : moins de 16px sur un champ = zoom force de la page au focus */
+  @media(max-width:860px){.field input{font-size:16px}}
   .dl-err{color:var(--rouge3);font-size:12.5px;margin:6px 0 0;min-height:1px}
   .dl-ok{color:var(--good);font-size:14px;margin:10px 0 0;font-weight:600}
   .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
