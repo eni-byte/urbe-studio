@@ -1149,6 +1149,31 @@ function ActuSection({ setPage }) {
 
 }
 
+/* ─── CRÉDITS STUDIO — source unique (page Crédits + bandeau accueil) ── */
+const CREDITS_STUDIO = [
+{ nom: 'NONO LA GRINTA', type: 'Composition · Rec', img: 'covers/nono.jpg', spotify: '6CcoMrijDlPb1bDJxwvlCK' },
+{ nom: 'SHERIFF LA ZONE', type: 'Composition · Rec', img: 'covers/sheriff.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+{ nom: 'NAHIR', type: 'Rec', img: 'covers/c/nahir.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+{ nom: 'DARLING CHOUCHOU', type: 'Composition · Rec', img: 'covers/c/darling-chouchou.jpg' },
+{ nom: 'EVE LA MARKE', type: 'Composition · Rec', img: 'covers/c/eve-la-marke.jpg' },
+{ nom: 'SAKI225', type: 'Composition · Rec', img: 'covers/saki225.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+{ nom: 'RICKY BISHOP', type: 'Composition · Rec', img: 'covers/c/bishop.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+{ nom: 'ASIKI', type: 'Composition · Rec', img: 'covers/c/asiki.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+{ nom: 'SOMYKE', type: 'Composition · Rec', img: 'covers/c/somyke.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+{ nom: 'RYFLO', type: 'Composition · Rec', img: 'covers/c/ryflo.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+{ nom: '63KLUF', type: 'Composition · Rec', img: 'covers/63kluf.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+{ nom: 'BERNA', type: 'Rec', img: 'covers/berna.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+{ nom: 'GOTTI MARRAS', type: 'Composition · Rec', img: 'covers/gotti.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+{ nom: 'MAX DLG', type: 'Composition · Rec', img: 'covers/c/maxdlg.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+{ nom: 'GEMEN', type: 'Rec', img: 'covers/gemen.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+{ nom: 'CASH DICO × WESTSIDEBOOGIE', type: 'Comp · Rec · Mix/Master', img: 'covers/cashdico.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+{ nom: 'TITI33', type: 'Comp · Rec · Mix/Master', img: 'covers/titi33.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+{ nom: 'DETOX', type: 'Mix · Master', img: 'covers/detox.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
+{ nom: 'THBW', type: 'Composition · Rec', img: 'covers/c/thbw.jpg' },
+{ nom: 'TIM KTA', type: 'Composition · Rec', img: 'covers/c/tim-kta.jpg' },
+{ nom: 'LOW-JAY', type: 'Composition · Rec', img: 'covers/c/low-jay.jpg' },
+{ nom: 'KLS LE K', type: 'Composition · Rec', img: 'covers/c/kls-le-k.jpg' }];
+
 /* ─── HOMEPAGE ───────────────────────────────────────────────── */
 function HomePage({ setPage }) {
   const [formOpen, setFormOpen] = useState(false);
@@ -1352,26 +1377,10 @@ function HomePage({ setPage }) {
         <div className="urbe-hide-mobile" style={{ position: 'absolute', bottom: 28, left: 0, right: 0, zIndex: 3, padding: '0 clamp(20px,3vw,56px)', display: 'flex', alignItems: 'center', gap: 24, whiteSpace: 'nowrap', overflow: 'hidden', maskImage: 'linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%)', WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%)' }}>
           <span style={{ fontFamily: 'Space Mono', fontSize: 10, letterSpacing: '0.22em', color: 'rgba(241,236,231,0.6)', textTransform: 'uppercase', fontWeight: 600, flexShrink: 0 }}>Ils sont passés ici →</span>
           <div className="urbe-hero-marquee-track" style={{ display: 'flex', gap: 22, alignItems: 'center', opacity: 0.65, flexShrink: 0 }}>
-            {[...Array(2)].flatMap((_, dup) => [
-            'NONO LA GRINTA · Compo · Rec',
-            'SHERIFF LA ZONE · Compo · Rec',
-            'NAHIR · Rec',
-            'RICKY BISHOP · Compo · Rec',
-            'ASIKI · Compo · Rec',
-            'SOMYKE · Compo · Rec',
-            'RYFLO · Compo · Rec',
-            'SAKI225 · Compo · Rec',
-            '63KLUF · Compo · Rec',
-            'BERNA · Rec',
-            'GOTTI MARRAS · Compo · Rec',
-            'MAX DLG · Compo · Rec',
-            'GEMEN · Rec',
-            'CASH DICO × WESTSIDEBOOGIE · Comp · Rec · Mix/Master',
-            'TITI33 · Comp · Rec · Mix/Master',
-            'DETOX · Mix · Master'].
-            map((s, i) =>
+            {[...Array(2)].flatMap((_, dup) =>
+            CREDITS_STUDIO.map((c, i) =>
             <React.Fragment key={`${dup}-${i}`}>
-                <span style={{ fontFamily: 'Space Mono', fontSize: 11, letterSpacing: '0.06em', color: 'rgba(241,236,231,0.7)', fontWeight: 400 }}>{s}</span>
+                <span style={{ fontFamily: 'Space Mono', fontSize: 11, letterSpacing: '0.06em', color: 'rgba(241,236,231,0.7)', fontWeight: 400 }}>{c.nom} · {c.type}</span>
                 <span style={{ width: 4, height: 4, background: 'var(--rouge3)', borderRadius: '50%', flexShrink: 0 }} />
               </React.Fragment>
             ))}
@@ -2148,28 +2157,13 @@ function CreditsPage() {
   const [selected, setSelected] = useState(null);
 
   // Productions Studio — artistes passés au studio (pas de prods solo)
-  const studio = [
-  { nom: 'NONO LA GRINTA', type: 'Composition · Rec', img: 'covers/nono.jpg', spotify: '6CcoMrijDlPb1bDJxwvlCK' },
-  { nom: 'SHERIFF LA ZONE', type: 'Composition · Rec', img: 'covers/sheriff.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'NAHIR', type: 'Rec', img: 'covers/c/nahir.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'RICKY BISHOP', type: 'Composition · Rec', img: 'covers/c/bishop.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'ASIKI', type: 'Composition · Rec', img: 'covers/c/asiki.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'SOMYKE', type: 'Composition · Rec', img: 'covers/c/somyke.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'RYFLO', type: 'Composition · Rec', img: 'covers/c/ryflo.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'SAKI225', type: 'Composition · Rec', img: 'covers/saki225.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: '63KLUF', type: 'Composition · Rec', img: 'covers/63kluf.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'BERNA', type: 'Rec', img: 'covers/berna.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'GOTTI MARRAS', type: 'Composition · Rec', img: 'covers/gotti.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'MAX DLG', type: 'Composition · Rec', img: 'covers/c/maxdlg.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'GEMEN', type: 'Rec', img: 'covers/gemen.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'CASH DICO × WESTSIDEBOOGIE', type: 'Comp · Rec · Mix/Master', img: 'covers/cashdico.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'TITI33', type: 'Comp · Rec · Mix/Master', img: 'covers/titi33.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' },
-  { nom: 'DETOX', type: 'Mix · Master', img: 'covers/detox.jpg', spotify: '4iJyoBOLtHqaGxP12qzhQI' }];
+  const studio = CREDITS_STUDIO;
 
 
   // Son à l'image — voix off, pub, doc, podcast
   const sonImage = [
-  { nom: 'EMMANUEL GREGOIRE', type: 'Voix Off · Direction artistique', img: 'covers/c/gregoire.jpg' }];
+  { nom: 'EMMANUEL GREGOIRE', type: 'Voix Off · Direction artistique', img: 'covers/c/emmanuel-gregoire-video.jpg', youtube: 'YEXxiuhjl-E' },
+  { nom: 'WECASA', type: 'Voix Off Pub · TV & Radio · Prod. Choses Communes', img: 'covers/c/wecasa.jpg', youtube: '2sXi-eH0k40' }];
 
 
   const list = tab === 'studio' ? studio : sonImage;
@@ -2281,6 +2275,16 @@ function CreditsPage() {
               title={selected.nom}
               src={`https://open.spotify.com/embed/track/${selected.spotify}?theme=0`}
               width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"
+              style={{ borderRadius: 12, border: 'none', display: 'block' }} />
+                </ThirdPartyEmbed>
+              </div> :
+          selected.youtube ?
+          <div style={{ padding: 20 }}>
+                <ThirdPartyEmbed label="YouTube" height={220}>
+                <iframe
+              title={selected.nom}
+              src={`https://www.youtube-nocookie.com/embed/${selected.youtube}?rel=0&modestbranding=1`}
+              width="100%" height="220" frameBorder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen loading="lazy"
               style={{ borderRadius: 12, border: 'none', display: 'block' }} />
                 </ThirdPartyEmbed>
               </div> :
