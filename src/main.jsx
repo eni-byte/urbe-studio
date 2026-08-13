@@ -255,7 +255,7 @@ window.redirectToStripe = redirectToStripe;
 /* ─── LOGO ───────────────────────────────────────────────────── */
 const Logo = ({ light = true }) =>
 <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
-    <img src={R("studio/urbe-logo-c.png")} alt="Urbe Studio" style={{ height: 42, width: 'auto', display: 'block', filter: 'brightness(1.15) saturate(1.15)' }} />
+    <img src={R("studio/urbe-logo-c.png")} alt="Urbe Studio" style={{ height: 34, width: 'auto', display: 'block' }} />
   </div>;
 
 
