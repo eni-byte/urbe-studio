@@ -9,6 +9,7 @@
    - Bonus : clics tel / WhatsApp / mailto -> event contact_click (aligne SPA). */
 (function () {
   var GA4_ID = 'G-4L618KBREM';
+  var ADS_ID = 'AW-18388549810';
   var KEY = 'urbe_cookie_consent';
 
   window.dataLayer = window.dataLayer || [];
@@ -39,6 +40,7 @@
     document.head.appendChild(s);
     gtag('js', new Date());
     gtag('config', GA4_ID, { anonymize_ip: true });
+    gtag('config', ADS_ID);
   }
 
   /* Clics de contact -> meme evenement que sur le site principal. */

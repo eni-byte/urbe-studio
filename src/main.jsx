@@ -94,7 +94,7 @@ const URBE_CONFIG = {
   paymentMode: 'live', /* 'mock' = overlay démo · 'live' = redirige vers Stripe */
   /* ANALYTICS — collez votre ID de mesure GA4 (G-XXXXXXXXXX).
      Vide = désactivé. Chargé UNIQUEMENT après acceptation du bandeau cookies (RGPD). */
-  analytics: { gtmId: '', ga4Id: 'G-4L618KBREM' },
+  analytics: { gtmId: '', ga4Id: 'G-4L618KBREM', googleAdsId: 'AW-18388549810' },
   /* Webhook n8n « Lead Site Web → CRM » : reçoit les leads (formulaire/réservation),
      crée le contact + l'opportunité dans HubSpot. Vide = capture CRM désactivée. */
   leadWebhook: 'https://mpoi.app.n8n.cloud/webhook/urbe-lead-site',
@@ -4549,6 +4549,7 @@ function Analytics() {
     const cfg = (window.URBE_CONFIG && window.URBE_CONFIG.analytics) || {};
     const gtmId = cfg.gtmId || '';
     const ga4Id = cfg.ga4Id || '';
+    const adsId = cfg.googleAdsId || '';
     if (!gtmId && !ga4Id) return; // désactivé tant qu'aucun identifiant n'est fourni
     let loaded = false;
     const consentGranted = () => { try { return localStorage.getItem('urbe_cookie_consent') === 'all'; } catch (e) { return false; } };
@@ -4573,6 +4574,8 @@ function Analytics() {
         // on le confirme explicitement à GA4 avant le config (Consent Mode v2).
         window.gtag('consent', 'update', { analytics_storage: 'granted' });
         window.gtag('config', ga4Id, { anonymize_ip: true });
+        // Google Ads (suivi des conversions) — même script gtag.js, config additionnelle.
+        if (adsId) window.gtag('config', adsId);
       }
     };
     load();
