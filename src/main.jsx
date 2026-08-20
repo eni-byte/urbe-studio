@@ -1553,9 +1553,9 @@ function BookingPage({ initialProductId }) {
   const [contact, setContact] = useState({ firstName: '', lastName: '', email: '', phone: '', artist: '', project: '', hp: '' });
   const setC = (k) => (e) => setContact((c) => ({ ...c, [k]: e.target.value }));
   const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(contact.email.trim());
-  // Téléphone FR (fixe ou mobile, +33 ou 0, séparateurs tolérés).
-  const FR_PHONE_RX = /^(?:\+33\s?|0)[1-9](?:[\s.-]?\d{2}){4}$/;
-  const phoneOk = FR_PHONE_RX.test(contact.phone.trim());
+  // Téléphone international (FR ou étranger : +indicatif ou 0 local, 8 à 15 chiffres, séparateurs tolérés).
+  const PHONE_RX = /^\+?[0-9](?:[\s.-]?[0-9]){7,14}$/;
+  const phoneOk = PHONE_RX.test(contact.phone.trim());
   const contactValid = !!(contact.firstName.trim() && contact.lastName.trim() && emailOk && phoneOk);
   const champStyle = { width: '100%', padding: '11px 13px', borderRadius: 9, background: 'var(--noir)', border: '1px solid var(--br)', color: 'var(--blanc)', fontSize: 13.5, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' };
   const labelStyle = { fontSize: 11, fontWeight: 600, color: 'var(--dim)', marginBottom: 6, display: 'block', letterSpacing: '0.02em' };
@@ -1567,7 +1567,7 @@ function BookingPage({ initialProductId }) {
       case 'firstName': return v ? '' : 'Oups, il manque ton prénom !';
       case 'lastName': return v ? '' : 'Oups, il manque ton nom !';
       case 'email': return !v ? "Il nous faut ton email pour t'envoyer la confirmation." : (emailOk ? '' : "Cet email a l'air incomplet — vérifie-le 🙂");
-      case 'phone': return !v ? 'Ton numéro nous sert à te joindre pour la session.' : (phoneOk ? '' : 'Ce numéro ne ressemble pas à un téléphone français.');
+      case 'phone': return !v ? 'Ton numéro nous sert à te joindre pour la session.' : (phoneOk ? '' : 'Ce numéro ne ressemble pas à un téléphone valide (France ou international).');
       default: return '';
     }
   };
@@ -1686,18 +1686,57 @@ function BookingPage({ initialProductId }) {
       startDate,
     };
   };
+  // Réf encodée (sert aussi au recalcul prix serveur côté n8n + clé de dédoublonnage du lead CRM).
+  // Partagée entre la capture "intérêt" (avant paiement) et l'envoi au clic Payer : même ref tant
+  // que le client ne change pas de créneau/produit → le CRM met à jour la même fiche au lieu d'en créer une 2e.
+  const computeBookingRef = (summary) => {
+    const productKey = product?.stripeKey || product?.id;
+    const hasDate = summary.date && summary.time;
+    const addonsRef = (sel.addons || []).join('.');
+    return hasDate
+      ? `B~${summary.date}~${String(summary.time).replace(':', '')}~${summary.hours || 2}~${productKey}~${addonsRef}`
+      : `M~${productKey}`;
+  };
+
+  // Capture "intérêt" : dès que les coordonnées sont valides — même si le client
+  // n'a jamais cliqué Payer — on envoie un lead au CRM pour ne plus perdre les abandons
+  // de tunnel. La même ref est réutilisée au moment du paiement réel : le workflow n8n
+  // retrouve la fiche existante (via une table de correspondance ref → deal HubSpot) et
+  // la met à jour au lieu d'en créer une 2e.
+  const sentInterestRef = useRef(null);
+  useEffect(() => {
+    if (!contactValid || contact.hp) return;
+    const summary = buildBookingSummary();
+    const ref = computeBookingRef(summary);
+    if (sentInterestRef.current === ref) return; // déjà envoyé pour ce créneau/produit exact
+    sentInterestRef.current = ref;
+    postLead({
+      type: 'reservation',
+      leadStage: 'interet',
+      firstName: contact.firstName.trim(),
+      lastName: contact.lastName.trim(),
+      email: contact.email.trim(),
+      phone: contact.phone.trim(),
+      artist: contact.artist.trim(),
+      project: contact.project.trim(),
+      productLabel: summary.productLabel,
+      productId: product?.id || '',
+      date: summary.date || '',
+      time: summary.time || '',
+      hours: product?.billing === 'hourly' ? (summary.hours || null) : null,
+      addons: summary.addons,
+      total: summary.total,
+      ref,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contactValid, contact.firstName, contact.lastName, contact.email, contact.phone, contact.artist, contact.project, sel.productId, sel.date, sel.time, sel.hours, sel.addons]);
 
   const handlePayWithStripe = () => {
     if (submitting) return;                                            // anti double-soumission
     if (!contactValid) { setTouched((t) => ({ ...t, __all: true })); return; } // révèle toutes les erreurs de champ
     const summary = buildBookingSummary();
+    const ref = computeBookingRef(summary);
     const productKey = product?.stripeKey || product?.id;
-    const hasDate = summary.date && summary.time;
-    const addonsRef = (sel.addons || []).join('.');
-    // Réf encodée (sert aussi au recalcul prix serveur). Calculée avant tout pour le lead.
-    const ref = hasDate
-      ? `B~${summary.date}~${String(summary.time).replace(':', '')}~${summary.hours || 2}~${productKey}~${addonsRef}`
-      : `M~${productKey}`;
     // GA4 : entrée dans le tunnel de paiement (valeur estimée client — le montant
     // exact facturé, recalculé côté serveur, part séparément via n8n → Stripe).
     urbeTrackEvent('begin_checkout', {
@@ -2035,7 +2074,7 @@ function BookingPage({ initialProductId }) {
                 </div>
                 <div className="urbe-r-stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
                   <div><label htmlFor="bk-email" style={labelStyle}>Email *</label><input {...champA11y('email')} type="email" value={contact.email} onChange={setC('email')} onBlur={onBlur('email')} placeholder="toi@email.com" autoComplete="email" style={{ ...champStyle, borderColor: showErr('email') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('email') && <div id="bk-email-err" role="alert" style={errStyle}>{champErr('email')}</div>}</div>
-                  <div><label htmlFor="bk-phone" style={labelStyle}>Téléphone *</label><input {...champA11y('phone')} type="tel" value={contact.phone} onChange={setC('phone')} onBlur={onBlur('phone')} placeholder="06 12 34 56 78" autoComplete="tel" style={{ ...champStyle, borderColor: showErr('phone') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('phone') && <div id="bk-phone-err" role="alert" style={errStyle}>{champErr('phone')}</div>}</div>
+                  <div><label htmlFor="bk-phone" style={labelStyle}>Téléphone *</label><input {...champA11y('phone')} type="tel" value={contact.phone} onChange={setC('phone')} onBlur={onBlur('phone')} placeholder="06 12 34 56 78 ou +225 07 12 34 56 78" autoComplete="tel" style={{ ...champStyle, borderColor: showErr('phone') ? 'var(--rouge)' : 'var(--br)' }} />{showErr('phone') && <div id="bk-phone-err" role="alert" style={errStyle}>{champErr('phone')}</div>}</div>
                 </div>
                 <div style={{ marginBottom: 12 }}><label htmlFor="bk-artist" style={labelStyle}>Nom d'artiste</label><input id="bk-artist" value={contact.artist} onChange={setC('artist')} placeholder="Ton blaze / nom de scène" style={champStyle} /></div>
                 <div><label htmlFor="bk-project" style={labelStyle}>Projet musical</label><textarea id="bk-project" value={contact.project} onChange={setC('project')} placeholder="Quelques mots sur ton projet (style, nb de titres, deadline…)" rows={3} style={{ ...champStyle, resize: 'vertical', lineHeight: 1.5 }} /></div>

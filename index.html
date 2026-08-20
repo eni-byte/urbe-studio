@@ -873,7 +873,7 @@
       <div class="urbe-bm-group">
         <label class="urbe-bm-label" for="urbe-bm-tel">Téléphone (optionnel)</label>
         <input class="urbe-bm-input" id="urbe-bm-tel" type="tel" placeholder="+33 6 12 34 56 78" />
-        <div class="urbe-bm-field-err" data-err="tel">Ce numéro ne ressemble pas à un téléphone français.</div>
+        <div class="urbe-bm-field-err" data-err="tel">Ce numéro ne ressemble pas à un téléphone valide (France ou international).</div>
       </div>
 
       <!-- Honeypot anti-bot : invisible pour les humains, souvent rempli par les bots. -->
@@ -931,7 +931,7 @@
   if (!root) return;
 
   // Téléphone FR (fixe/mobile, +33 ou 0) — champ optionnel mais validé si rempli.
-  var FR_PHONE = /^(?:\+33\s?|0)[1-9](?:[\s.-]?\d{2}){4}$/;
+  var FR_PHONE = /^\+?[0-9](?:[\s.-]?[0-9]){7,14}$/;
 
   var state = {
     step: 1,
