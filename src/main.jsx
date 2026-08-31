@@ -1748,6 +1748,7 @@ function BookingPage({ initialProductId }) {
     //    Honeypot rempli = bot → on saute la capture CRM (le paiement reste possible).
     if (!contact.hp) postLead({
       type: 'reservation',
+      leadStage: 'paiement_lance', // distinct de l'appel "interet" envoye plus tot : ici le client a reellement clique Payer
       firstName: contact.firstName.trim(),
       lastName: contact.lastName.trim(),
       email: contact.email.trim(),
