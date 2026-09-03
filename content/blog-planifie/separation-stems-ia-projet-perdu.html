@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Séparation de stems par IA : sauver un projet sans multipistes | Urbe Studio</title>
+<meta name="description" content="Le beatmaker a disparu, la session est corrompue, il ne reste qu&#x27;un MP3 : ce que la séparation de stems par IA permet vraiment de récupérer, et où sont ses limites audibles.">
+<meta name="keywords" content="séparation de stems, stem splitter IA, extraire voix instrumental, projet perdu, remix, mixage">
+<meta name="author" content="Urbe Studio">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#080808">
+<link rel="canonical" href="https://www.urbestudio.fr/blog/separation-stems-ia-projet-perdu.html">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="Urbe Studio">
+<meta property="og:title" content="Séparation de stems par IA : sauver un projet sans multipistes | Urbe Studio">
+<meta property="og:description" content="Le beatmaker a disparu, la session est corrompue, il ne reste qu&#x27;un MP3 : ce que la séparation de stems par IA permet vraiment de récupérer, et où sont ses limites audibles.">
+<meta property="og:url" content="https://www.urbestudio.fr/blog/separation-stems-ia-projet-perdu.html">
+<meta property="og:image" content="https://www.urbestudio.fr/blog/img/apollo-twin-x.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Séparation de stems par IA : sauver un projet sans multipistes | Urbe Studio">
+<meta name="twitter:description" content="Le beatmaker a disparu, la session est corrompue, il ne reste qu&#x27;un MP3 : ce que la séparation de stems par IA permet vraiment de récupérer, et où sont ses limites audibles.">
+<meta name="twitter:image" content="https://www.urbestudio.fr/blog/img/apollo-twin-x.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800&family=Barlow+Condensed:wght@700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#080808; --ink-2:#101010; --line:rgba(241,236,231,0.10);
+  --cream:#f1ece7; --muted:rgba(241,236,231,0.55); --red:#c12c2c; --red-deep:#8B1E1E;
+  --maxw:720px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--ink); color:var(--cream);
+  font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+  font-weight:300; font-size:17px; line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+img{max-width:100%}
+.wrap{width:100%; max-width:var(--maxw); margin:0 auto; padding:0 22px}
+
+/* header */
+.top{
+  position:sticky; top:0; z-index:20; background:rgba(8,8,8,.92);
+  backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
+}
+.top .wrap{display:flex; align-items:center; justify-content:space-between; height:60px}
+.logo{font-family:'Barlow Condensed',sans-serif; letter-spacing:.06em; font-size:18px; text-decoration:none}
+.logo i{color:var(--red); font-style:normal}
+.top a.book{
+  font-family:'Space Mono',monospace; font-size:13px; letter-spacing:.12em;
+  text-transform:uppercase; text-decoration:none; color:var(--ink);
+  background:var(--red-deep); padding:9px 16px; border-radius:2px;
+}
+.top a.book:hover{background:#f5232f}
+
+/* hero */
+header.hero{padding:56px 0 34px; border-bottom:1px solid var(--line)}
+.cat{
+  display:inline-block; font-family:'Space Mono',monospace; font-size:12px;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--red);
+  border:1px solid var(--red); padding:4px 10px; border-radius:2px; margin-bottom:20px;
+}
+h1{
+  font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase;
+  font-size:clamp(32px,7vw,52px); line-height:1.03; letter-spacing:.005em; margin:0 0 20px;
+}
+.chapo{font-size:19px; line-height:1.65; color:#DCD6CA; margin:0 0 24px}
+.meta{font-family:'Space Mono',monospace; font-size:13px; letter-spacing:.09em; color:var(--muted); text-transform:uppercase}
+
+/* body */
+article{padding:38px 0 10px}
+article h2{
+  font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase;
+  font-size:clamp(23px,4.4vw,30px); line-height:1.15; margin:46px 0 14px;
+}
+article h3{
+  font-family:'Space Mono',monospace; font-weight:600; font-size:19px;
+  letter-spacing:.02em; margin:30px 0 10px;
+}
+article p{margin:0 0 18px}
+article strong{font-weight:600; color:#fff}
+article ul,article ol{margin:0 0 20px; padding-left:20px}
+article li{margin-bottom:9px}
+article a{color:var(--red); text-decoration:none; border-bottom:1px solid rgba(193,44,44,.45)}
+article a:hover{background:rgba(225,29,42,.12)}
+
+.box{
+  background:var(--ink-2); border-left:3px solid var(--red);
+  padding:22px 24px; margin:30px 0; border-radius:0 3px 3px 0;
+}
+.box h3{margin:0 0 10px; color:#fff}
+.box p:last-child,.box ul:last-child{margin-bottom:0}
+
+.figures{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1px;
+  background:var(--line); border:1px solid var(--line); margin:30px 0}
+.fig{background:var(--ink); padding:18px 16px}
+.fig b{display:block; font-family:'Barlow Condensed',sans-serif; font-size:27px; line-height:1.1; color:var(--red)}
+.fig span{display:block; font-size:14px; color:var(--muted); line-height:1.45; margin-top:6px}
+
+.pull{
+  font-family:'Space Mono',monospace; font-weight:500; font-size:21px; line-height:1.4;
+  color:#fff; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  padding:20px 0; margin:32px 0;
+}
+.retenir{background:#0F0F0F; border:1px solid var(--line); padding:22px 24px; margin:34px 0}
+.retenir h3{margin:0 0 12px; font-family:'Barlow Condensed',sans-serif; font-weight:900;
+  text-transform:uppercase; font-size:19px; letter-spacing:.03em}
+.retenir ul{margin:0; padding-left:18px}
+
+/* cta */
+.cta{background:var(--red-deep); color:#0A0A0A; padding:34px 26px; margin:46px 0 0; border-radius:3px}
+.cta .k{font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.2em;
+  text-transform:uppercase; opacity:.75; display:block; margin-bottom:10px}
+.cta h2{font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase;
+  font-size:clamp(22px,4.6vw,30px); line-height:1.1; margin:0 0 12px; color:#0A0A0A}
+.cta p{margin:0 0 22px; font-size:16.5px; line-height:1.65; color:#141414}
+.cta .btns{display:flex; flex-wrap:wrap; gap:12px}
+.cta a.b1{background:#0A0A0A; color:var(--cream); text-decoration:none; padding:13px 22px;
+  font-family:'Space Mono',monospace; letter-spacing:.1em; text-transform:uppercase; font-size:14px; border-radius:2px}
+.cta a.b2{border:1px solid #0A0A0A; color:#0A0A0A; text-decoration:none; padding:13px 22px;
+  font-family:'Space Mono',monospace; letter-spacing:.1em; text-transform:uppercase; font-size:14px; border-radius:2px}
+.cta a.b1:hover{background:#1d1d1d}
+.cta a.b2:hover{background:rgba(0,0,0,.08)}
+
+/* faq + related */
+.faq{margin:48px 0 0}
+.faq h2{margin-top:0}
+.faq details{border-bottom:1px solid var(--line); padding:14px 0}
+.faq summary{cursor:pointer; font-family:'Space Mono',monospace; font-size:17px; color:#fff; list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:before{content:"+"; color:var(--red); margin-right:10px}
+.faq details[open] summary:before{content:"–"}
+.faq p{margin:12px 0 0; color:#D3CDC2}
+
+.sources{margin:46px 0 0; border:1px solid var(--line); padding:22px 24px; background:#0D0D0D}
+.sources h2{font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase;
+  font-size:19px; letter-spacing:.03em; margin:0 0 6px}
+.sources p.intro{font-size:14.5px; color:var(--muted); margin:0 0 14px}
+.sources ul{margin:0; padding-left:18px}
+.sources li{margin-bottom:8px; font-size:15.5px; line-height:1.55}
+.sources li a{color:var(--cream); border-bottom:1px solid rgba(225,29,42,.5); text-decoration:none}
+.sources li a:hover{color:var(--red)}
+.sources li em{font-style:normal; color:var(--muted); font-size:14px}
+
+.related{margin:50px 0 0; border-top:1px solid var(--line); padding-top:26px}
+.related h2{font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase;
+  font-size:20px; margin:0 0 14px}
+.related a{display:block; padding:11px 0; border-bottom:1px solid var(--line);
+  text-decoration:none; color:#DCD6CA; font-family:'Space Mono',monospace; font-size:16px}
+.related a:hover{color:var(--red)}
+
+footer{margin-top:60px; border-top:1px solid var(--line); padding:26px 0 46px;
+  color:var(--muted); font-size:14px}
+footer a{color:var(--muted)}
+:focus-visible{outline:2px solid var(--red); outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "Séparation de stems par IA : sauver un projet sans multipistes | Urbe Studio", "description": "Le beatmaker a disparu, la session est corrompue, il ne reste qu'un MP3 : ce que la séparation de stems par IA permet vraiment de récupérer, et où sont ses limites audibles.", "datePublished": "2026-07-30", "dateModified": "2026-07-30", "inLanguage": "fr-FR", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://www.urbestudio.fr/blog/separation-stems-ia-projet-perdu.html"}, "url": "https://www.urbestudio.fr/blog/separation-stems-ia-projet-perdu.html", "image": "https://www.urbestudio.fr/blog/img/apollo-twin-x.jpg", "articleSection": "Production", "author": {"@type": "Organization", "name": "Urbe Studio", "url": "https://www.urbestudio.fr/"}, "publisher": {"@type": "Organization", "name": "Urbe Studio", "url": "https://www.urbestudio.fr/"}}, {"@type": "LocalBusiness",
+      "@id": "https://www.urbestudio.fr/#studio", "name": "Urbe Studio", "url": "https://www.urbestudio.fr/", "email": "contact@urbestudio.fr", "address": {"@type": "PostalAddress", "streetAddress": "37 rue d'Hauteville", "postalCode": "75010", "addressLocality": "Paris", "addressCountry": "FR"}, "openingHours": "Mo-Su 00:00-23:59"}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Peut-on remixer légalement un titre dont on a extrait les stems&nbsp;?", "acceptedAnswer": {"@type": "Answer", "text": "Techniquement rien ne vous en empêche, juridiquement il vous faut l'accord des ayants droit pour toute exploitation publique. L'extraction ne crée aucun droit."}}, {"@type": "Question", "name": "Quelle qualité de fichier faut-il fournir&nbsp;?", "acceptedAnswer": {"@type": "Answer", "text": "Un WAV à la fréquence d'échantillonnage d'origine. Évitez les MP3 basse qualité et surtout les fichiers récupérés depuis une plateforme vidéo."}}, {"@type": "Question", "name": "Un stem extrait peut-il servir de base à un mix pro&nbsp;?", "acceptedAnswer": {"@type": "Answer", "text": "Comme élément d'appoint, oui. Comme colonne vertébrale d'un morceau destiné à sortir, ce sera toujours en deçà d'une vraie piste."}}]}]}</script>
+<script src="/urbe-analytics.js" defer></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://www.urbestudio.fr/" },
+    { "@type": "ListItem", "position": 2, "name": "Le journal", "item": "https://www.urbestudio.fr/blog/index.html" },
+    { "@type": "ListItem", "position": 3, "name": "Séparation de stems par IA : sauver un projet sans multipistes", "item": "https://www.urbestudio.fr/blog/separation-stems-ia-projet-perdu.html" }
+  ]
+}
+</script>
+</head>
+<body>
+
+<div class="top"><div class="wrap">
+  <a class="logo" href="https://www.urbestudio.fr/">URBE<i>.</i>STUDIO</a>
+  <a class="book" href="https://www.urbestudio.fr/#reserver">Réserver</a>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <span class="cat">Production</span>
+  <h1>Plus de multipistes ? La séparation de stems, mode d'emploi</h1>
+  <p class="chapo">Session perdue, collaborateur injoignable, disque dur mort : le cas arrive plus souvent qu'on ne croit. Voilà ce qu'on peut sauver, et ce qu'on ne peut pas.</p>
+  <p class="meta">30 juillet 2026 · 6 min de lecture · Urbe Studio, Paris 10ᵉ</p>
+</div></header>
+
+<div class="wrap">
+<article>
+
+<p>Le scénario est classique. Vous avez un morceau que vous adorez, une seule version stéréo, et plus aucune trace des pistes séparées. Ou bien vous voulez remixer un titre dont vous n'avez que le master. Les séparateurs de stems entraînés par apprentissage profond savent aujourd'hui isoler voix, batterie, basse et parfois piano ou guitare à partir d'un simple fichier mixé. C'est devenu un outil de travail standard.</p>
+
+<h2>Comment ça marche, en une image</h2>
+<p>Le modèle a écouté des millions de morceaux dont il connaissait à la fois le mix final et les pistes d'origine. Il a appris à reconnaître la signature spectrale et temporelle de chaque famille d'instruments, puis à reconstruire chaque source à partir du mélange. Il ne «&nbsp;retrouve&nbsp;» rien&nbsp;: il <strong>reconstruit une estimation</strong>. C'est toute la nuance.</p>
+
+<div class="box">
+<h3>Le point technique : les artefacts, et où les entendre</h3>
+<p>Quand deux sources partagent la même énergie au même moment, le modèle doit deviner. Résultat&nbsp;: un léger effet «&nbsp;sous l'eau&nbsp;» sur les queues de réverbération, des sifflantes qui se dédoublent, des cymbales qui bavent sur la voix, une caisse claire qui laisse un fantôme dans le stem vocal. Ces défauts sont peu audibles seuls, très audibles une fois le stem compressé et poussé dans un mix.</p>
+</div>
+
+<h2>Ce que vous pouvez raisonnablement récupérer</h2>
+<ul>
+<li><strong>Un a cappella exploitable</strong> pour un remix, un live, un contenu vertical, une version alternative.</li>
+<li><strong>Un instrumental correct</strong> quand la voix n'est pas noyée d'effets — parfait pour un playback de scène ou un clip.</li>
+<li><strong>Des éléments de référence</strong> pour rejouer une partie proprement plutôt que de la sampler.</li>
+</ul>
+
+<h2>Ce qui ne se récupère pas</h2>
+<p>La <strong>dynamique d'origine</strong> et les décisions de mix sont perdues&nbsp;: elles sont figées dans le fichier. Un stem extrait porte déjà la compression du master, la réverbération de la version finale, les automations. Vous ne remontez pas le temps, vous découpez une photo.</p>
+<p class="pull">Un stem extrait est une copie utilisable, pas une piste d'origine. On travaille avec, pas comme si c'était l'original.</p>
+
+<h2>Les quatre règles qui changent le résultat</h2>
+<ol>
+<li><strong>Partez de la meilleure source possible.</strong> Un WAV à la fréquence d'origine donne un résultat nettement plus propre qu'un MP3 récupéré sur une plateforme. Chaque compression perdue à l'entrée ressort en artefact à la sortie.</li>
+<li><strong>Séparez seulement ce dont vous avez besoin.</strong> Extraire quatre stems quand vous ne voulez qu'une voix multiplie les erreurs de reconstruction.</li>
+<li><strong>Nettoyez après.</strong> Un dé-esseur discret, un filtre passe-haut, parfois un débruitage&nbsp;: les artefacts se traitent comme n'importe quel défaut de prise.</li>
+<li><strong>Cachez ce que vous ne pouvez pas réparer.</strong> Une nappe, un delay, une couche de bruit rose au bon endroit masquent une queue de réverbération abîmée bien mieux qu'une correction acharnée.</li>
+</ol>
+
+<h2>Et si on refaisait la prise, tout simplement&nbsp;?</h2>
+<p>Neuf fois sur dix, quand la voix est la partie perdue, la réponse la plus rapide et la moins frustrante reste de la réenregistrer. Deux heures en cabine coûtent moins cher qu'une journée à rafistoler un stem qui ne sonnera jamais tout à fait juste — et vous repartez avec une piste propre, réutilisable pour toutes les versions à venir.</p>
+<p>C'est typiquement le genre de session qu'on cale en soirée ou en pleine nuit au 37 rue d'Hauteville, quand personne ne vous attend derrière la porte.</p>
+
+
+<div class="retenir">
+  <h3>À retenir</h3>
+  <ul><li>Un séparateur de stems reconstruit une estimation ; il ne récupère jamais les pistes d'origine.</li><li>Les artefacts se logent dans les réverbérations, les sifflantes et les transitoires — et ressortent une fois le stem compressé.</li><li>Qualité de source maximale, séparation minimale, nettoyage après : les trois réflexes qui sauvent le résultat.</li><li>Quand c'est la voix qui manque, la réenregistrer coûte souvent moins cher que la restaurer.</li></ul>
+</div>
+
+<section class="cta">
+  <span class="k">Studio Paris 10ᵉ</span>
+  <h2>Réserve une session au 37 rue d'Hauteville</h2>
+  <p>Cabine traitée, régie pro, ouvert 24h/24 et 7j/7. Sessions avec ou sans ingénieur du son à partir de 20&nbsp;€/h, à deux pas de Bonne-Nouvelle.</p>
+  <div class="btns">
+    <a class="b1" href="https://www.urbestudio.fr/#reserver">Réserver une session</a>
+    <a class="b2" href="https://www.urbestudio.fr/blog/studio-enregistrement-paris.html">Découvrir le studio</a>
+  </div>
+</section>
+
+<section class="faq"><h2>Questions fréquentes</h2><details><summary>Peut-on remixer légalement un titre dont on a extrait les stems&nbsp;?</summary><p>Techniquement rien ne vous en empêche, juridiquement il vous faut l'accord des ayants droit pour toute exploitation publique. L'extraction ne crée aucun droit.</p></details><details><summary>Quelle qualité de fichier faut-il fournir&nbsp;?</summary><p>Un WAV à la fréquence d'échantillonnage d'origine. Évitez les MP3 basse qualité et surtout les fichiers récupérés depuis une plateforme vidéo.</p></details><details><summary>Un stem extrait peut-il servir de base à un mix pro&nbsp;?</summary><p>Comme élément d'appoint, oui. Comme colonne vertébrale d'un morceau destiné à sortir, ce sera toujours en deçà d'une vraie piste.</p></details></section>
+
+
+
+<nav class="related">
+  <h2>À lire ensuite</h2>
+  <a href="https://www.urbestudio.fr/blog/mixage-ia-2026-ce-qui-marche.html">Mixage par IA : ce qui marche vraiment</a><a href="https://www.urbestudio.fr/blog/enregistrer-voix-rap-chaine-complete.html">Enregistrer une voix rap : la chaîne complète</a><a href="https://www.urbestudio.fr/blog/studio-enregistrement-paris.html">Studio d'enregistrement à Paris 10ᵉ</a>
+</nav>
+</article>
+
+<footer>
+  Urbe Studio · 37 rue d'Hauteville, 75010 Paris · Ouvert 24h/24 ·
+  <a href="mailto:contact@urbestudio.fr">contact@urbestudio.fr</a><br>
+  <a href="https://www.urbestudio.fr/blog/">← Tous les articles</a>
+</footer>
+</div>
+</body>
+</html>

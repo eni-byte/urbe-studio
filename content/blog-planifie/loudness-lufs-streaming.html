@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>LUFS et loudness : pourquoi votre morceau sonne plus faible | Urbe Studio</title>
+<meta name="description" content="Normalisation, LUFS intégrés, true peak, plage dynamique : le guide clair pour comprendre pourquoi votre master sonne petit à côté des autres, et comment y remédier.">
+<meta name="keywords" content="LUFS, loudness, normalisation streaming, true peak, mastering, dynamique, Spotify">
+<meta name="author" content="Urbe Studio">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#080808">
+<link rel="canonical" href="https://www.urbestudio.fr/blog/loudness-lufs-streaming.html">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="Urbe Studio">
+<meta property="og:title" content="LUFS et loudness : pourquoi votre morceau sonne plus faible | Urbe Studio">
+<meta property="og:description" content="Normalisation, LUFS intégrés, true peak, plage dynamique : le guide clair pour comprendre pourquoi votre master sonne petit à côté des autres, et comment y remédier.">
+<meta property="og:url" content="https://www.urbestudio.fr/blog/loudness-lufs-streaming.html">
+<meta property="og:image" content="https://www.urbestudio.fr/blog/img/rack-mastering.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LUFS et loudness : pourquoi votre morceau sonne plus faible | Urbe Studio">
+<meta name="twitter:description" content="Normalisation, LUFS intégrés, true peak, plage dynamique : le guide clair pour comprendre pourquoi votre master sonne petit à côté des autres, et comment y remédier.">
+<meta name="twitter:image" content="https://www.urbestudio.fr/blog/img/rack-mastering.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800&family=Barlow+Condensed:wght@700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#080808; --ink-2:#101010; --line:rgba(241,236,231,0.10);
+  --cream:#f1ece7; --muted:rgba(241,236,231,0.55); --red:#c12c2c; --red-deep:#8B1E1E;
+  --maxw:720px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--ink); color:var(--cream);
+  font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+  font-weight:300; font-size:17px; line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+img{max-width:100%}
+.wrap{width:100%; max-width:var(--maxw); margin:0 auto; padding:0 22px}
+
+/* header */
+.top{
+  position:sticky; top:0; z-index:20; background:rgba(8,8,8,.92);
+  backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
+}
+.top .wrap{display:flex; align-items:center; justify-content:space-between; height:60px}
+.logo{font-family:'Barlow Condensed',sans-serif; letter-spacing:.06em; font-size:18px; text-decoration:none}
+.logo i{color:var(--red); font-style:normal}
+.top a.book{
+  font-family:'Space Mono',monospace; font-size:13px; letter-spacing:.12em;
+  text-transform:uppercase; text-decoration:none; color:var(--ink);
+  background:var(--red-deep); padding:9px 16px; border-radius:2px;
+}
+.top a.book:hover{background:#f5232f}
+
+/* hero */
+header.hero{padding:56px 0 34px; border-bottom:1px solid var(--line)}
+.cat{
+  display:inline-block; font-family:'Space Mono',monospace; font-size:12px;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--red);
+  border:1px solid var(--red); padding:4px 10px; border-radius:2px; margin-bottom:20px;
+}
+h1{
+  font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase;
+  font-size:clamp(32px,7vw,52px); line-height:1.03; letter-spacing:.005em; margin:0 0 20px;
+}
+.chapo{font-size:19px; line-height:1.65; color:#DCD6CA; margin:0 0 24px}
+.meta{font-family:'Space Mono',monospace; font-size:13px; letter-spacing:.09em; color:var(--muted); text-transform:uppercase}
+
+/* body */
+article{padding:38px 0 10px}
+article h2{
+  font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase;
+  font-size:clamp(23px,4.4vw,30px); line-height:1.15; margin:46px 0 14px;
+}
+article h3{
+  font-family:'Space Mono',monospace; font-weight:600; font-size:19px;
+  letter-spacing:.02em; margin:30px 0 10px;
+}
+article p{margin:0 0 18px}
+article strong{font-weight:600; color:#fff}
+article ul,article ol{margin:0 0 20px; padding-left:20px}
+article li{margin-bottom:9px}
+article a{color:var(--red); text-decoration:none; border-bottom:1px solid rgba(193,44,44,.45)}
+article a:hover{background:rgba(225,29,42,.12)}
+
+.box{
+  background:var(--ink-2); border-left:3px solid var(--red);
+  padding:22px 24px; margin:30px 0; border-radius:0 3px 3px 0;
+}
+.box h3{margin:0 0 10px; color:#fff}
+.box p:last-child,.box ul:last-child{margin-bottom:0}
+
+.figures{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1px;
+  background:var(--line); border:1px solid var(--line); margin:30px 0}
+.fig{background:var(--ink); padding:18px 16px}
+.fig b{display:block; font-family:'Barlow Condensed',sans-serif; font-size:27px; line-height:1.1; color:var(--red)}
+.fig span{display:block; font-size:14px; color:var(--muted); line-height:1.45; margin-top:6px}
+
+.pull{
+  font-family:'Space Mono',monospace; font-weight:500; font-size:21px; line-height:1.4;
+  color:#fff; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  padding:20px 0; margin:32px 0;
+}
+.retenir{background:#0F0F0F; border:1px solid var(--line); padding:22px 24px; margin:34px 0}
+.retenir h3{margin:0 0 12px; font-family:'Barlow Condensed',sans-serif; font-weight:900;
+  text-transform:uppercase; font-size:19px; letter-spacing:.03em}
+.retenir ul{margin:0; padding-left:18px}
+
+/* cta */
+.cta{background:var(--red-deep); color:#0A0A0A; padding:34px 26px; margin:46px 0 0; border-radius:3px}
+.cta .k{font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.2em;
+  text-transform:uppercase; opacity:.75; display:block; margin-bottom:10px}
+.cta h2{font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase;
+  font-size:clamp(22px,4.6vw,30px); line-height:1.1; margin:0 0 12px; color:#0A0A0A}
+.cta p{margin:0 0 22px; font-size:16.5px; line-height:1.65; color:#141414}
+.cta .btns{display:flex; flex-wrap:wrap; gap:12px}
+.cta a.b1{background:#0A0A0A; color:var(--cream); text-decoration:none; padding:13px 22px;
+  font-family:'Space Mono',monospace; letter-spacing:.1em; text-transform:uppercase; font-size:14px; border-radius:2px}
+.cta a.b2{border:1px solid #0A0A0A; color:#0A0A0A; text-decoration:none; padding:13px 22px;
+  font-family:'Space Mono',monospace; letter-spacing:.1em; text-transform:uppercase; font-size:14px; border-radius:2px}
+.cta a.b1:hover{background:#1d1d1d}
+.cta a.b2:hover{background:rgba(0,0,0,.08)}
+
+/* faq + related */
+.faq{margin:48px 0 0}
+.faq h2{margin-top:0}
+.faq details{border-bottom:1px solid var(--line); padding:14px 0}
+.faq summary{cursor:pointer; font-family:'Space Mono',monospace; font-size:17px; color:#fff; list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:before{content:"+"; color:var(--red); margin-right:10px}
+.faq details[open] summary:before{content:"–"}
+.faq p{margin:12px 0 0; color:#D3CDC2}
+
+.sources{margin:46px 0 0; border:1px solid var(--line); padding:22px 24px; background:#0D0D0D}
+.sources h2{font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase;
+  font-size:19px; letter-spacing:.03em; margin:0 0 6px}
+.sources p.intro{font-size:14.5px; color:var(--muted); margin:0 0 14px}
+.sources ul{margin:0; padding-left:18px}
+.sources li{margin-bottom:8px; font-size:15.5px; line-height:1.55}
+.sources li a{color:var(--cream); border-bottom:1px solid rgba(225,29,42,.5); text-decoration:none}
+.sources li a:hover{color:var(--red)}
+.sources li em{font-style:normal; color:var(--muted); font-size:14px}
+
+.related{margin:50px 0 0; border-top:1px solid var(--line); padding-top:26px}
+.related h2{font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase;
+  font-size:20px; margin:0 0 14px}
+.related a{display:block; padding:11px 0; border-bottom:1px solid var(--line);
+  text-decoration:none; color:#DCD6CA; font-family:'Space Mono',monospace; font-size:16px}
+.related a:hover{color:var(--red)}
+
+footer{margin-top:60px; border-top:1px solid var(--line); padding:26px 0 46px;
+  color:var(--muted); font-size:14px}
+footer a{color:var(--muted)}
+:focus-visible{outline:2px solid var(--red); outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "LUFS et loudness : pourquoi votre morceau sonne plus faible | Urbe Studio", "description": "Normalisation, LUFS intégrés, true peak, plage dynamique : le guide clair pour comprendre pourquoi votre master sonne petit à côté des autres, et comment y remédier.", "datePublished": "2026-07-22", "dateModified": "2026-07-22", "inLanguage": "fr-FR", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://www.urbestudio.fr/blog/loudness-lufs-streaming.html"}, "url": "https://www.urbestudio.fr/blog/loudness-lufs-streaming.html", "image": "https://www.urbestudio.fr/blog/img/rack-mastering.jpg", "articleSection": "Mastering", "author": {"@type": "Organization", "name": "Urbe Studio", "url": "https://www.urbestudio.fr/"}, "publisher": {"@type": "Organization", "name": "Urbe Studio", "url": "https://www.urbestudio.fr/"}}, {"@type": "LocalBusiness",
+      "@id": "https://www.urbestudio.fr/#studio", "name": "Urbe Studio", "url": "https://www.urbestudio.fr/", "email": "contact@urbestudio.fr", "address": {"@type": "PostalAddress", "streetAddress": "37 rue d'Hauteville", "postalCode": "75010", "addressLocality": "Paris", "addressCountry": "FR"}, "openingHours": "Mo-Su 00:00-23:59"}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Existe-t-il une valeur LUFS idéale&nbsp;?", "acceptedAnswer": {"@type": "Answer", "text": "Non. La cohérence de genre prime sur le chiffre : un titre club et une ballade n'ont pas les mêmes besoins de densité. Visez la cohérence avec vos références."}}, {"@type": "Question", "name": "Pourquoi mon master distord sur certaines plateformes&nbsp;?", "acceptedAnswer": {"@type": "Answer", "text": "Le plus souvent à cause du true peak : la conversion en format compressé fait dépasser le signal. Laissez une marge sous le maximum."}}, {"@type": "Question", "name": "Le mastering peut-il rattraper un mix déséquilibré&nbsp;?", "acceptedAnswer": {"@type": "Answer", "text": "Il peut améliorer un équilibre global, pas corriger une voix trop basse ou une 808 envahissante. Ces problèmes se traitent sur les pistes séparées."}}]}]}</script>
+<script src="/urbe-analytics.js" defer></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://www.urbestudio.fr/" },
+    { "@type": "ListItem", "position": 2, "name": "Le journal", "item": "https://www.urbestudio.fr/blog/index.html" },
+    { "@type": "ListItem", "position": 3, "name": "LUFS et loudness : pourquoi votre morceau sonne plus faible", "item": "https://www.urbestudio.fr/blog/loudness-lufs-streaming.html" }
+  ]
+}
+</script>
+</head>
+<body>
+
+<div class="top"><div class="wrap">
+  <a class="logo" href="https://www.urbestudio.fr/">URBE<i>.</i>STUDIO</a>
+  <a class="book" href="https://www.urbestudio.fr/#reserver">Réserver</a>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <span class="cat">Mastering</span>
+  <h1>Pourquoi votre son est plus faible que le reste de la playlist</h1>
+  <p class="chapo">Vous avez poussé le limiteur à fond et votre morceau sonne quand même plus petit que celui d'à côté. Ce n'est pas un bug : c'est de la physique, et une histoire de normalisation.</p>
+  <p class="meta">22 juillet 2026 · 7 min de lecture · Urbe Studio, Paris 10ᵉ</p>
+</div></header>
+
+<div class="wrap">
+<article>
+
+<p>Le réflexe est universel&nbsp;: mon son est trop faible, donc je monte. Sauf que depuis que les plateformes normalisent le volume à la lecture, monter ne sert plus à ce que vous croyez. Comprendre ce mécanisme est probablement le meilleur retour sur investissement de temps pour quelqu'un qui produit à la maison.</p>
+
+<h2>La normalisation, expliquée simplement</h2>
+<p>Les services de streaming mesurent le niveau perçu moyen de votre morceau et l'alignent sur une cible commune, pour que l'auditeur ne passe pas son temps sur le bouton de volume. Si votre master est plus fort que la cible, il est <strong>baissé</strong>. S'il est plus faible, il est parfois remonté.</p>
+<p>Conséquence directe&nbsp;: écraser un mix pour gagner du niveau ne vous donne aucun avantage de volume à la lecture. Vous perdez juste la dynamique en échange de rien.</p>
+
+<div class="box">
+<h3>Le point technique : trois mesures, trois usages</h3>
+<p><strong>LUFS intégré</strong>&nbsp;: le niveau perçu moyen sur toute la durée du morceau. C'est la valeur utilisée pour la normalisation.<br>
+<strong>True peak</strong>&nbsp;: le vrai maximum du signal une fois reconstruit en analogique ou converti en fichier compressé. C'est lui qui provoque la distorsion, pas le pic affiché dans votre DAW.<br>
+<strong>Plage dynamique</strong>&nbsp;: l'écart entre les passages forts et faibles. C'est ce qui donne l'impression d'impact quand le refrain arrive.</p>
+</div>
+
+<h2>Ce que ça implique concrètement</h2>
+<p>Un morceau très écrasé et un morceau maîtrisé arrivent au même volume dans l'oreille de l'auditeur. À volume égal, celui qui a conservé de la respiration paraît <strong>plus grand</strong>, pas plus petit. C'est le paradoxe que beaucoup découvrent trop tard.</p>
+<p class="pull">Le volume, c'est la plateforme qui le décide. L'impact, c'est vous.</p>
+<p>Attention toutefois&nbsp;: cela ne veut pas dire qu'il faut viser une dynamique maximale. Un morceau trap dont la 808 doit coller au corps a besoin de densité. Un morceau folk n'a pas les mêmes besoins qu'un club track. La cible n'est pas un chiffre universel, c'est une cohérence de genre.</p>
+
+<h2>Les vrais responsables d'un mix qui sonne petit</h2>
+<ul>
+<li><strong>Un bas du spectre encombré.</strong> Deux ou trois éléments qui se disputent la zone sous 120&nbsp;Hz mangent tout le budget d'énergie. Décidez qui porte le grave.</li>
+<li><strong>Des transitoires écrasés trop tôt.</strong> Si la caisse claire est déjà aplatie au mix, aucun mastering ne lui rendra son claquement.</li>
+<li><strong>Une voix mal placée.</strong> Une voix qui manque de présence donne l'impression d'un morceau lointain, quel que soit le niveau.</li>
+<li><strong>Un true peak au plafond.</strong> Un master collé à 0&nbsp;dBFS distordra à la conversion en format compressé. Gardez une marge.</li>
+<li><strong>Une écoute qui ment.</strong> Mixer trop fort fatigue l'oreille et fausse tous vos arbitrages en une heure.</li>
+</ul>
+
+<h2>La méthode en cinq étapes</h2>
+<ol>
+<li>Réglez votre niveau d'écoute une fois pour toutes, et n'y touchez plus.</li>
+<li>Choisissez deux morceaux de référence du même genre, alignez-les au même niveau perçu que le vôtre pour comparer honnêtement.</li>
+<li>Réglez le problème au mix, pas au master&nbsp;: un mix qui sonne petit ne se répare pas en aval.</li>
+<li>Laissez de la marge sur votre bus de sortie avant d'envoyer en mastering.</li>
+<li>Vérifiez sur trois systèmes différents, dont un téléphone. C'est là que la majorité de votre public écoutera.</li>
+</ol>
+
+<p>Et si, après tout ça, le doute persiste, c'est exactement le rôle d'une oreille extérieure. Un mastering, ce n'est pas «&nbsp;monter le volume&nbsp;»&nbsp;: c'est décider ce que votre morceau garde et ce qu'il sacrifie pour tenir sur tous les systèmes.</p>
+
+
+<div class="retenir">
+  <h3>À retenir</h3>
+  <ul><li>Les plateformes normalisent le volume : écraser votre master ne vous rend pas plus fort, juste plus plat.</li><li>Trois indicateurs à surveiller : LUFS intégré, true peak, plage dynamique.</li><li>À volume égal, un master qui respire paraît plus grand qu'un master compressé à mort.</li><li>Un morceau qui sonne petit se répare au mixage, presque jamais au mastering.</li></ul>
+</div>
+
+<section class="cta">
+  <span class="k">Mastering</span>
+  <h2>Un master qui tient la route sur toutes les plateformes</h2>
+  <p>Casque, enceinte de cuisine, autoradio, Spotify, TikTok&nbsp;: on calibre ton master pour qu'il tienne partout. Mastering à 50&nbsp;€, ou 25&nbsp;€ s'il accompagne un mix.</p>
+  <div class="btns">
+    <a class="b1" href="https://www.urbestudio.fr/#reserver">Commander mon master</a>
+    <a class="b2" href="https://www.urbestudio.fr/blog/ton-son-est-il-pret-a-sortir.html">Tester si ton son est prêt</a>
+  </div>
+</section>
+
+<section class="faq"><h2>Questions fréquentes</h2><details><summary>Existe-t-il une valeur LUFS idéale&nbsp;?</summary><p>Non. La cohérence de genre prime sur le chiffre : un titre club et une ballade n'ont pas les mêmes besoins de densité. Visez la cohérence avec vos références.</p></details><details><summary>Pourquoi mon master distord sur certaines plateformes&nbsp;?</summary><p>Le plus souvent à cause du true peak : la conversion en format compressé fait dépasser le signal. Laissez une marge sous le maximum.</p></details><details><summary>Le mastering peut-il rattraper un mix déséquilibré&nbsp;?</summary><p>Il peut améliorer un équilibre global, pas corriger une voix trop basse ou une 808 envahissante. Ces problèmes se traitent sur les pistes séparées.</p></details></section>
+
+
+
+<nav class="related">
+  <h2>À lire ensuite</h2>
+  <a href="https://www.urbestudio.fr/blog/home-studio-vs-studio-pro.html">Home studio ou studio pro : ce qui change vraiment</a><a href="https://www.urbestudio.fr/blog/ton-son-est-il-pret-a-sortir.html">Ton son est-il prêt à sortir&nbsp;?</a><a href="https://www.urbestudio.fr/blog/master-vinyle-artiste-independant.html">Presser un vinyle quand on est indépendant</a>
+</nav>
+</article>
+
+<footer>
+  Urbe Studio · 37 rue d'Hauteville, 75010 Paris · Ouvert 24h/24 ·
+  <a href="mailto:contact@urbestudio.fr">contact@urbestudio.fr</a><br>
+  <a href="https://www.urbestudio.fr/blog/">← Tous les articles</a>
+</footer>
+</div>
+</body>
+</html>

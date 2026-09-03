@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Mixer pour le téléphone et les formats courts | Urbe Studio</title>
+<meta name="description" content="Haut-parleur de téléphone, extrait de quinze secondes, compression des réseaux : ce qui change dans un mix quand on sait où il sera réellement écouté.">
+<meta name="keywords" content="mixage téléphone, formats courts, TikTok, extrait vertical, mono, compression réseaux sociaux">
+<meta name="author" content="Urbe Studio">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#080808">
+<link rel="canonical" href="https://www.urbestudio.fr/blog/mixer-pour-le-telephone.html">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="Urbe Studio">
+<meta property="og:title" content="Mixer pour le téléphone et les formats courts | Urbe Studio">
+<meta property="og:description" content="Haut-parleur de téléphone, extrait de quinze secondes, compression des réseaux : ce qui change dans un mix quand on sait où il sera réellement écouté.">
+<meta property="og:url" content="https://www.urbestudio.fr/blog/mixer-pour-le-telephone.html">
+<meta property="og:image" content="https://www.urbestudio.fr/blog/img/casque-studio.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mixer pour le téléphone et les formats courts | Urbe Studio">
+<meta name="twitter:description" content="Haut-parleur de téléphone, extrait de quinze secondes, compression des réseaux : ce qui change dans un mix quand on sait où il sera réellement écouté.">
+<meta name="twitter:image" content="https://www.urbestudio.fr/blog/img/casque-studio.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800&family=Barlow+Condensed:wght@700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#080808; --ink-2:#101010; --line:rgba(241,236,231,0.10);
+  --cream:#f1ece7; --muted:rgba(241,236,231,0.55); --red:#c12c2c; --red-deep:#8B1E1E;
+  --maxw:720px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--ink); color:var(--cream);
+  font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+  font-weight:300; font-size:17px; line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+img{max-width:100%}
+.wrap{width:100%; max-width:var(--maxw); margin:0 auto; padding:0 22px}
+
+/* header */
+.top{
+  position:sticky; top:0; z-index:20; background:rgba(8,8,8,.92);
+  backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
+}
+.top .wrap{display:flex; align-items:center; justify-content:space-between; height:60px}
+.logo{font-family:'Barlow Condensed',sans-serif; letter-spacing:.06em; font-size:18px; text-decoration:none}
+.logo i{color:var(--red); font-style:normal}
+.top a.book{
+  font-family:'Space Mono',monospace; font-size:13px; letter-spacing:.12em;
+  text-transform:uppercase; text-decoration:none; color:var(--ink);
+  background:var(--red-deep); padding:9px 16px; border-radius:2px;
+}
+.top a.book:hover{background:#f5232f}
+
+/* hero */
+header.hero{padding:56px 0 34px; border-bottom:1px solid var(--line)}
+.cat{
+  display:inline-block; font-family:'Space Mono',monospace; font-size:12px;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--red);
+  border:1px solid var(--red); padding:4px 10px; border-radius:2px; margin-bottom:20px;
+}
+h1{
+  font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase;
+  font-size:clamp(32px,7vw,52px); line-height:1.03; letter-spacing:.005em; margin:0 0 20px;
+}
+.chapo{font-size:19px; line-height:1.65; color:#DCD6CA; margin:0 0 24px}
+.meta{font-family:'Space Mono',monospace; font-size:13px; letter-spacing:.09em; color:var(--muted); text-transform:uppercase}
+
+/* body */
+article{padding:38px 0 10px}
+article h2{
+  font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase;
+  font-size:clamp(23px,4.4vw,30px); line-height:1.15; margin:46px 0 14px;
+}
+article h3{
+  font-family:'Space Mono',monospace; font-weight:600; font-size:19px;
+  letter-spacing:.02em; margin:30px 0 10px;
+}
+article p{margin:0 0 18px}
+article strong{font-weight:600; color:#fff}
+article ul,article ol{margin:0 0 20px; padding-left:20px}
+article li{margin-bottom:9px}
+article a{color:var(--red); text-decoration:none; border-bottom:1px solid rgba(193,44,44,.45)}
+article a:hover{background:rgba(225,29,42,.12)}
+
+.box{
+  background:var(--ink-2); border-left:3px solid var(--red);
+  padding:22px 24px; margin:30px 0; border-radius:0 3px 3px 0;
+}
+.box h3{margin:0 0 10px; color:#fff}
+.box p:last-child,.box ul:last-child{margin-bottom:0}
+
+.figures{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1px;
+  background:var(--line); border:1px solid var(--line); margin:30px 0}
+.fig{background:var(--ink); padding:18px 16px}
+.fig b{display:block; font-family:'Barlow Condensed',sans-serif; font-size:27px; line-height:1.1; color:var(--red)}
+.fig span{display:block; font-size:14px; color:var(--muted); line-height:1.45; margin-top:6px}
+
+.pull{
+  font-family:'Space Mono',monospace; font-weight:500; font-size:21px; line-height:1.4;
+  color:#fff; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  padding:20px 0; margin:32px 0;
+}
+.retenir{background:#0F0F0F; border:1px solid var(--line); padding:22px 24px; margin:34px 0}
+.retenir h3{margin:0 0 12px; font-family:'Barlow Condensed',sans-serif; font-weight:900;
+  text-transform:uppercase; font-size:19px; letter-spacing:.03em}
+.retenir ul{margin:0; padding-left:18px}
+
+/* cta */
+.cta{background:var(--red-deep); color:#0A0A0A; padding:34px 26px; margin:46px 0 0; border-radius:3px}
+.cta .k{font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.2em;
+  text-transform:uppercase; opacity:.75; display:block; margin-bottom:10px}
+.cta h2{font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase;
+  font-size:clamp(22px,4.6vw,30px); line-height:1.1; margin:0 0 12px; color:#0A0A0A}
+.cta p{margin:0 0 22px; font-size:16.5px; line-height:1.65; color:#141414}
+.cta .btns{display:flex; flex-wrap:wrap; gap:12px}
+.cta a.b1{background:#0A0A0A; color:var(--cream); text-decoration:none; padding:13px 22px;
+  font-family:'Space Mono',monospace; letter-spacing:.1em; text-transform:uppercase; font-size:14px; border-radius:2px}
+.cta a.b2{border:1px solid #0A0A0A; color:#0A0A0A; text-decoration:none; padding:13px 22px;
+  font-family:'Space Mono',monospace; letter-spacing:.1em; text-transform:uppercase; font-size:14px; border-radius:2px}
+.cta a.b1:hover{background:#1d1d1d}
+.cta a.b2:hover{background:rgba(0,0,0,.08)}
+
+/* faq + related */
+.faq{margin:48px 0 0}
+.faq h2{margin-top:0}
+.faq details{border-bottom:1px solid var(--line); padding:14px 0}
+.faq summary{cursor:pointer; font-family:'Space Mono',monospace; font-size:17px; color:#fff; list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:before{content:"+"; color:var(--red); margin-right:10px}
+.faq details[open] summary:before{content:"–"}
+.faq p{margin:12px 0 0; color:#D3CDC2}
+
+.sources{margin:46px 0 0; border:1px solid var(--line); padding:22px 24px; background:#0D0D0D}
+.sources h2{font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase;
+  font-size:19px; letter-spacing:.03em; margin:0 0 6px}
+.sources p.intro{font-size:14.5px; color:var(--muted); margin:0 0 14px}
+.sources ul{margin:0; padding-left:18px}
+.sources li{margin-bottom:8px; font-size:15.5px; line-height:1.55}
+.sources li a{color:var(--cream); border-bottom:1px solid rgba(225,29,42,.5); text-decoration:none}
+.sources li a:hover{color:var(--red)}
+.sources li em{font-style:normal; color:var(--muted); font-size:14px}
+
+.related{margin:50px 0 0; border-top:1px solid var(--line); padding-top:26px}
+.related h2{font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase;
+  font-size:20px; margin:0 0 14px}
+.related a{display:block; padding:11px 0; border-bottom:1px solid var(--line);
+  text-decoration:none; color:#DCD6CA; font-family:'Space Mono',monospace; font-size:16px}
+.related a:hover{color:var(--red)}
+
+footer{margin-top:60px; border-top:1px solid var(--line); padding:26px 0 46px;
+  color:var(--muted); font-size:14px}
+footer a{color:var(--muted)}
+:focus-visible{outline:2px solid var(--red); outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "Mixer pour le téléphone et les formats courts | Urbe Studio", "description": "Haut-parleur de téléphone, extrait de quinze secondes, compression des réseaux : ce qui change dans un mix quand on sait où il sera réellement écouté.", "datePublished": "2026-06-08", "dateModified": "2026-06-08", "inLanguage": "fr-FR", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://www.urbestudio.fr/blog/mixer-pour-le-telephone.html"}, "url": "https://www.urbestudio.fr/blog/mixer-pour-le-telephone.html", "image": "https://www.urbestudio.fr/blog/img/casque-studio.jpg", "articleSection": "Mixage", "author": {"@type": "Organization", "name": "Urbe Studio", "url": "https://www.urbestudio.fr/"}, "publisher": {"@type": "Organization", "name": "Urbe Studio", "url": "https://www.urbestudio.fr/"}}, {"@type": "LocalBusiness",
+      "@id": "https://www.urbestudio.fr/#studio", "name": "Urbe Studio", "url": "https://www.urbestudio.fr/", "email": "contact@urbestudio.fr", "address": {"@type": "PostalAddress", "streetAddress": "37 rue d'Hauteville", "postalCode": "75010", "addressLocality": "Paris", "addressCountry": "FR"}, "openingHours": "Mo-Su 00:00-23:59"}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Faut-il faire un mix différent pour les formats courts&nbsp;?", "acceptedAnswer": {"@type": "Answer", "text": "Non, un seul mix bien vérifié suffit. En revanche, exporter des extraits soignés au bon moment fait une vraie différence."}}, {"@type": "Question", "name": "Comment tester le mono facilement&nbsp;?", "acceptedAnswer": {"@type": "Answer", "text": "Un plugin de correction stéréo ou le bouton mono de votre interface suffisent. L'important est de le faire systématiquement, pas seulement à la fin."}}, {"@type": "Question", "name": "La saturation sur la basse abîme-t-elle le grave&nbsp;?", "acceptedAnswer": {"@type": "Answer", "text": "Utilisée en parallèle et dosée, elle ajoute des harmoniques audibles sans modifier la fondamentale. C'est un ajout, pas un remplacement."}}]}]}</script>
+<script src="/urbe-analytics.js" defer></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://www.urbestudio.fr/" },
+    { "@type": "ListItem", "position": 2, "name": "Le journal", "item": "https://www.urbestudio.fr/blog/index.html" },
+    { "@type": "ListItem", "position": 3, "name": "Mixer pour le téléphone et les formats courts", "item": "https://www.urbestudio.fr/blog/mixer-pour-le-telephone.html" }
+  ]
+}
+</script>
+</head>
+<body>
+
+<div class="top"><div class="wrap">
+  <a class="logo" href="https://www.urbestudio.fr/">URBE<i>.</i>STUDIO</a>
+  <a class="book" href="https://www.urbestudio.fr/#reserver">Réserver</a>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <span class="cat">Mixage</span>
+  <h1>Votre morceau sera écouté sur un téléphone. Mixez pour ça.</h1>
+  <p class="chapo">Enceinte de 8 millimètres, une seule voie, dans le bruit, à côté d'une vidéo de chat. C'est le système d'écoute le plus répandu au monde, et il a ses règles.</p>
+  <p class="meta">8 juin 2026 · 6 min de lecture · Urbe Studio, Paris 10ᵉ</p>
+</div></header>
+
+<div class="wrap">
+<article>
+
+<p>On mixe encore souvent comme si l'auditeur était assis entre deux enceintes. En réalité, une part écrasante des premières écoutes se fait sur un haut-parleur de téléphone, dans le métro, ou dans un extrait de quinze secondes posé sur une vidéo. Ce n'est pas une raison pour mixer moins bien&nbsp;: c'est une raison pour mixer en connaissance de cause.</p>
+
+<h2>Ce que fait un haut-parleur de téléphone</h2>
+<p>Il ne restitue pratiquement rien en dessous de 400&nbsp;Hz. Votre 808, votre kick, votre basse&nbsp;: absents. Ce qui reste audible, c'est la zone médium où vivent la voix, la caisse claire, les hi-hats et les harmoniques des graves.</p>
+
+<div class="box">
+<h3>Le point technique : les harmoniques sauvent les graves</h3>
+<p>Une basse à 50&nbsp;Hz est inaudible sur un téléphone. Mais son contenu harmonique — les multiples de sa fréquence, autour de 100, 150, 200&nbsp;Hz et au-delà — l'est. C'est pourquoi une légère saturation sur la basse ou une couche médium parallèle rend le grave <strong>perceptible sur un petit haut-parleur</strong>, sans toucher au bas du spectre sur un vrai système. Le cerveau reconstruit la fondamentale manquante.</p>
+</div>
+
+<h2>Le mono, ce test que tout le monde oublie</h2>
+<p>Un haut-parleur de téléphone, c'est une seule voie. Tout ce qui est très large en stéréo s'y comporte mal&nbsp;: certains éléments s'affaiblissent, d'autres disparaissent purement et simplement quand les deux canaux s'annulent. Écoutez systématiquement votre mix en mono&nbsp;; si la voix recule ou si un synthé s'évanouit, vous avez un problème de phase à régler avant tout le reste.</p>
+<p class="pull">Un mix qui tient en mono tient partout. L'inverse n'est jamais vrai.</p>
+
+<h2>Les quinze premières secondes</h2>
+<p>Un extrait court ne commence presque jamais au début du morceau&nbsp;: il commence à l'endroit le plus fort. Deux conséquences pratiques&nbsp;:</p>
+<ul>
+<li><strong>Vos moments clés doivent tenir seuls.</strong> Un refrain qui ne fonctionne que parce que le couplet l'a préparé perdra son effet en extrait.</li>
+<li><strong>Prévoyez les points de coupe.</strong> Repérez deux ou trois passages de quinze secondes qui se suffisent, et exportez-les proprement au moment de la livraison plutôt que trois semaines après.</li>
+</ul>
+
+<h2>La compression des plateformes</h2>
+<p>Réseaux sociaux et plateformes vidéo réencodent votre audio dans des formats compressés, souvent à des débits modestes. Un master collé au plafond ressort avec de la distorsion sur les sifflantes et les cymbales. Laisser une marge en crête n'est pas de la coquetterie&nbsp;: c'est ce qui évite que votre morceau grésille sur le format où il sera le plus vu.</p>
+
+<h2>La routine d'écoute qu'on applique</h2>
+<ol>
+<li>Écoute principale sur enceintes de proximité.</li>
+<li>Vérification au casque pour les détails et les défauts d'édition.</li>
+<li>Passage en mono, obligatoire.</li>
+<li>Écoute sur un vrai haut-parleur de téléphone, à faible volume.</li>
+<li>Écoute en voiture si possible&nbsp;: c'est le pire environnement et le plus révélateur.</li>
+</ol>
+<p>Cette routine ne remplace pas les décisions artistiques&nbsp;: elle vérifie qu'elles survivent au monde réel. C'est ce qu'on fait sur chaque projet qui passe par le studio, et c'est souvent ce qui explique qu'un mix professionnel «&nbsp;tienne&nbsp;» là où une maquette s'effondre.</p>
+
+
+<div class="retenir">
+  <h3>À retenir</h3>
+  <ul><li>Un haut-parleur de téléphone ne restitue quasiment rien sous 400 Hz : les harmoniques font le travail.</li><li>Le test mono est non négociable : il révèle les annulations de phase invisibles en stéréo.</li><li>Préparez des extraits de quinze secondes qui tiennent seuls, dès la livraison du morceau.</li><li>Laissez de la marge en crête : les réencodages des plateformes distordent les masters trop poussés.</li></ul>
+</div>
+
+<section class="cta">
+  <span class="k">Mixage & mastering en ligne</span>
+  <h2>Envoie tes pistes, récupère un mix prêt pour le streaming</h2>
+  <p>Un ingénieur du son humain, crédité, qui écoute ton morceau en entier. Mix à 120&nbsp;€, mastering à −50&nbsp;% avec le mix, livraison sous 7 jours (48&nbsp;h en urgence).</p>
+  <div class="btns">
+    <a class="b1" href="https://www.urbestudio.fr/#reserver">Lancer mon mix</a>
+    <a class="b2" href="https://www.urbestudio.fr/blog/mixage-mastering-en-ligne.html">Voir comment ça marche</a>
+  </div>
+</section>
+
+<section class="faq"><h2>Questions fréquentes</h2><details><summary>Faut-il faire un mix différent pour les formats courts&nbsp;?</summary><p>Non, un seul mix bien vérifié suffit. En revanche, exporter des extraits soignés au bon moment fait une vraie différence.</p></details><details><summary>Comment tester le mono facilement&nbsp;?</summary><p>Un plugin de correction stéréo ou le bouton mono de votre interface suffisent. L'important est de le faire systématiquement, pas seulement à la fin.</p></details><details><summary>La saturation sur la basse abîme-t-elle le grave&nbsp;?</summary><p>Utilisée en parallèle et dosée, elle ajoute des harmoniques audibles sans modifier la fondamentale. C'est un ajout, pas un remplacement.</p></details></section>
+
+
+
+<nav class="related">
+  <h2>À lire ensuite</h2>
+  <a href="https://www.urbestudio.fr/blog/loudness-lufs-streaming.html">LUFS : pourquoi votre morceau sonne plus faible</a><a href="https://www.urbestudio.fr/blog/mixage-trap-a-distance.html">Mixage trap à distance</a><a href="https://www.urbestudio.fr/blog/retroplanning-sortie-morceau.html">Le rétroplanning d'une sortie de morceau</a>
+</nav>
+</article>
+
+<footer>
+  Urbe Studio · 37 rue d'Hauteville, 75010 Paris · Ouvert 24h/24 ·
+  <a href="mailto:contact@urbestudio.fr">contact@urbestudio.fr</a><br>
+  <a href="https://www.urbestudio.fr/blog/">← Tous les articles</a>
+</footer>
+</div>
+</body>
+</html>
