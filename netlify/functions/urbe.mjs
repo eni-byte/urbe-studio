@@ -15,10 +15,14 @@ import { getStore } from '@netlify/blobs';
 
 const N8N_BASE = 'https://mpoi.app.n8n.cloud/webhook';
 
-/* Repli sur l'ancienne clé tant que la variable Netlify n'est pas posée :
-   le site continue de fonctionner pendant la bascule. Cette valeur est
-   déjà publique (elle était dans le bundle) — elle doit être remplacée
-   par une nouvelle clé côté propriétaire, puis ce repli supprimé. */
+/* Ancienne clé, le temps de la rotation. Elle est déjà publique (elle était
+   livree dans le bundle), donc la garder ici n'expose rien de neuf.
+
+   La variable Netlify et les nœuds « Verif cle » de n8n ne peuvent pas être
+   changés au même instant. Plutôt que d'imposer un ordre, on tente la clé
+   courante puis on rejoue avec l'ancienne si n8n répond 401 : la bascule
+   fonctionne dans les deux sens, sans coupure. À supprimer une fois les
+   quatre nœuds n8n passés sur la nouvelle clé. */
 const FALLBACK_KEY = 'urbe_web_9Kx7mQp2Lr4Tv';
 
 /* Seuls ces webhooks sont joignables depuis le site, chacun avec son
@@ -79,6 +83,16 @@ function resoudreAction(req, context) {
   return null;
 }
 
+/* Netlify recommande Netlify.env, mais ce global n'existe que dans son
+   runtime : sans ce repli sur process.env, la fonction est intestable hors
+   ligne (elle levait une ReferenceError avalee en 502). */
+function lireVariable(nom) {
+  try {
+    if (typeof Netlify !== 'undefined' && Netlify.env) return Netlify.env.get(nom);
+  } catch (e) { /* ignore */ }
+  return typeof process !== 'undefined' && process.env ? process.env[nom] : undefined;
+}
+
 const refus = (code, message) =>
   new Response(JSON.stringify({ error: message }), {
     status: code,
@@ -99,16 +113,21 @@ export default async (req, context) => {
   const body = await req.text();
   if (body.length > MAX_BODY) return refus(413, 'payload_too_large');
 
-  try {
-    const amont = await fetch(`${N8N_BASE}/${route.path}`, {
+  const appeler = (cle) =>
+    fetch(`${N8N_BASE}/${route.path}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Urbe-Key': process.env.URBE_WEBHOOK_KEY || FALLBACK_KEY,
-      },
+      headers: { 'Content-Type': 'application/json', 'X-Urbe-Key': cle },
       body: body || '{}',
       signal: AbortSignal.timeout(20_000),
     });
+
+  try {
+    const cleCourante = lireVariable('URBE_WEBHOOK_KEY') || FALLBACK_KEY;
+    let amont = await appeler(cleCourante);
+    // n8n n'a pas encore la nouvelle clé : on rejoue avec l'ancienne.
+    if (amont.status === 401 && cleCourante !== FALLBACK_KEY) {
+      amont = await appeler(FALLBACK_KEY);
+    }
     return new Response(await amont.text(), {
       status: amont.status,
       headers: { 'Content-Type': 'application/json' },
