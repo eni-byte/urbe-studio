@@ -15,15 +15,6 @@ import { getStore } from '@netlify/blobs';
 
 const N8N_BASE = 'https://mpoi.app.n8n.cloud/webhook';
 
-/* Ancienne clé, le temps de la rotation. Elle est déjà publique (elle était
-   livree dans le bundle), donc la garder ici n'expose rien de neuf.
-
-   La variable Netlify et les nœuds « Verif cle » de n8n ne peuvent pas être
-   changés au même instant. Plutôt que d'imposer un ordre, on tente la clé
-   courante puis on rejoue avec l'ancienne si n8n répond 401 : la bascule
-   fonctionne dans les deux sens, sans coupure. À supprimer une fois les
-   quatre nœuds n8n passés sur la nouvelle clé. */
-const FALLBACK_KEY = 'urbe_web_9Kx7mQp2Lr4Tv';
 
 /* Seuls ces webhooks sont joignables depuis le site, chacun avec son
    budget d'appels par minute et par IP. Tout le reste est refusé. */
@@ -113,23 +104,20 @@ export default async (req, context) => {
   const body = await req.text();
   if (body.length > MAX_BODY) return refus(413, 'payload_too_large');
 
-  const appeler = (cle) =>
-    fetch(`${N8N_BASE}/${route.path}`, {
+  /* Les webhooks n8n sont protégés par l'authentification Header Auth native,
+     adossée à une credential chiffrée. La même valeur vit ici dans la variable
+     Netlify. Sans elle, on refuse plutôt que d'envoyer une requête qui serait
+     de toute façon rejetée. */
+  const cle = lireVariable('URBE_WEBHOOK_KEY');
+  if (!cle) return refus(500, 'missing_key');
+
+  try {
+    const amont = await fetch(`${N8N_BASE}/${route.path}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Urbe-Key': cle },
       body: body || '{}',
       signal: AbortSignal.timeout(20_000),
     });
-
-  try {
-    const cleCourante = lireVariable('URBE_WEBHOOK_KEY') || FALLBACK_KEY;
-    let amont = await appeler(cleCourante);
-    // n8n n'a pas encore la nouvelle clé : on rejoue avec l'ancienne.
-    // 401 = refus du nœud « Verif cle », 403 = refus de l'authentification
-    // native du webhook. Les deux formes de contrôle sont couvertes.
-    if ((amont.status === 401 || amont.status === 403) && cleCourante !== FALLBACK_KEY) {
-      amont = await appeler(FALLBACK_KEY);
-    }
     return new Response(await amont.text(), {
       status: amont.status,
       headers: { 'Content-Type': 'application/json' },
