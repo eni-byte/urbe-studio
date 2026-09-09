@@ -11,6 +11,8 @@
    URBE_WEBHOOK_KEY et ne quitte jamais le serveur.
    ═══════════════════════════════════════════════════════════════════ */
 
+import { getStore } from '@netlify/blobs';
+
 const N8N_BASE = 'https://mpoi.app.n8n.cloud/webhook';
 
 /* Repli sur l'ancienne clé tant que la variable Netlify n'est pas posée :
@@ -40,18 +42,28 @@ function originAutorisee(origin) {
   return /^https:\/\/[a-z0-9-]+\.netlify\.app$/.test(origin);
 }
 
-/* Compteur glissant en mémoire. Netlify réutilise l'instance quelques
-   minutes : ça coupe le martèlement depuis une même IP. Ce n'est pas une
-   garantie absolue (plusieurs instances peuvent coexister), c'est une
-   barrière de coût pour l'attaquant. */
-const hits = new Map();
-function tropDAppels(cle, max) {
-  const now = Date.now();
-  const recents = (hits.get(cle) || []).filter((t) => now - t < WINDOW_MS);
-  recents.push(now);
-  hits.set(cle, recents);
-  if (hits.size > 5000) hits.clear();
-  return recents.length > max;
+/* Compteur partagé entre toutes les instances de la fonction.
+   Un compteur en mémoire ne marche pas ici : Netlify sert les requêtes
+   concurrentes depuis plusieurs instances, chacune avec sa propre mémoire
+   (constaté en production, le 33e appel passait encore). Netlify Blobs est
+   le stockage partagé recommandé ; en consistance forte pour que deux
+   requêtes simultanées ne lisent pas la même valeur périmée.
+
+   Une entrée par couple (action, IP), réécrite à chaque fenêtre : le nombre
+   de clés reste borné par le nombre d'IP vues, pas par le nombre d'appels. */
+async function tropDAppels(cle, max) {
+  try {
+    const store = getStore({ name: 'urbe-debit', consistency: 'strong' });
+    const fenetre = Math.floor(Date.now() / WINDOW_MS);
+    const brut = await store.get(cle, { type: 'json' });
+    const compte = brut && brut.fenetre === fenetre ? brut.compte : 0;
+    if (compte >= max) return true;
+    await store.setJSON(cle, { fenetre, compte: compte + 1 });
+    return false;
+  } catch (e) {
+    // Un stockage indisponible ne doit jamais bloquer un vrai client.
+    return false;
+  }
 }
 
 /* Selon que Netlify route via config.path ou via la regle de reecriture du
@@ -82,7 +94,7 @@ export default async (req, context) => {
   if (!route) return refus(404, 'unknown_action');
 
   const ip = context?.ip || req.headers.get('x-nf-client-connection-ip') || 'inconnue';
-  if (tropDAppels(action + '|' + ip, route.max)) return refus(429, 'too_many_requests');
+  if (await tropDAppels(action + '|' + ip, route.max)) return refus(429, 'too_many_requests');
 
   const body = await req.text();
   if (body.length > MAX_BODY) return refus(413, 'payload_too_large');
