@@ -54,6 +54,19 @@ function tropDAppels(cle, max) {
   return recents.length > max;
 }
 
+/* Selon que Netlify route via config.path ou via la regle de reecriture du
+   netlify.toml, l'URL vue ici est /api/lead ou /.netlify/functions/urbe/lead.
+   On cherche donc simplement le premier segment qui est une action connue. */
+function resoudreAction(req, context) {
+  const candidat = context?.params?.action;
+  if (candidat && Object.prototype.hasOwnProperty.call(ROUTES, candidat)) return candidat;
+  const segments = new URL(req.url).pathname.split('/').filter(Boolean);
+  for (const seg of segments) {
+    if (Object.prototype.hasOwnProperty.call(ROUTES, seg)) return seg;
+  }
+  return null;
+}
+
 const refus = (code, message) =>
   new Response(JSON.stringify({ error: message }), {
     status: code,
@@ -64,8 +77,8 @@ export default async (req, context) => {
   if (req.method !== 'POST') return refus(405, 'method_not_allowed');
   if (!originAutorisee(req.headers.get('origin'))) return refus(403, 'forbidden_origin');
 
-  const action = new URL(req.url).pathname.split('/').filter(Boolean).pop();
-  const route = Object.prototype.hasOwnProperty.call(ROUTES, action) ? ROUTES[action] : null;
+  const action = resoudreAction(req, context);
+  const route = action ? ROUTES[action] : null;
   if (!route) return refus(404, 'unknown_action');
 
   const ip = context?.ip || req.headers.get('x-nf-client-connection-ip') || 'inconnue';
@@ -93,3 +106,7 @@ export default async (req, context) => {
     return refus(502, 'upstream_unavailable');
   }
 };
+
+/* Route officielle Netlify Functions v2. La regle /api/* du netlify.toml
+   sert de filet si cette forme n'est pas prise en charge. */
+export const config = { path: '/api/:action' };
