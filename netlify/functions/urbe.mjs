@@ -125,7 +125,9 @@ export default async (req, context) => {
     const cleCourante = lireVariable('URBE_WEBHOOK_KEY') || FALLBACK_KEY;
     let amont = await appeler(cleCourante);
     // n8n n'a pas encore la nouvelle clé : on rejoue avec l'ancienne.
-    if (amont.status === 401 && cleCourante !== FALLBACK_KEY) {
+    // 401 = refus du nœud « Verif cle », 403 = refus de l'authentification
+    // native du webhook. Les deux formes de contrôle sont couvertes.
+    if ((amont.status === 401 || amont.status === 403) && cleCourante !== FALLBACK_KEY) {
       amont = await appeler(FALLBACK_KEY);
     }
     return new Response(await amont.text(), {
