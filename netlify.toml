@@ -26,8 +26,8 @@
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
     # Politique de sécurité du contenu (CSP). Build Vite : plus de CDN ni 'unsafe-eval'.
     # 'unsafe-inline' (scripts) reste pour la modale de réservation en JS inline.
-    # connect-src autorise les appels aux webhooks n8n (lead, chat, créneaux) + Google Analytics.
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self'; connect-src 'self' https://mpoi.app.n8n.cloud https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://challenges.cloudflare.com https://*.sentry.io; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://open.spotify.com https://calendar.google.com https://js.stripe.com https://challenges.cloudflare.com; base-uri 'self'; form-action 'self' mailto:; frame-ancestors 'none'; upgrade-insecure-requests"
+    # connect-src : plus besoin d'autoriser n8n, les webhooks passent par /api/* (meme origine).
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self'; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://challenges.cloudflare.com https://*.sentry.io; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://open.spotify.com https://calendar.google.com https://js.stripe.com https://challenges.cloudflare.com; base-uri 'self'; form-action 'self' mailto:; frame-ancestors 'none'; upgrade-insecure-requests"
 
 # ── Cache long pour les médias (images, vidéo, polices) ─────────────
 [[headers]]
@@ -62,6 +62,15 @@
   from = "/credits"
   to = "/artistes"
   status = 301
+
+# ── Proxy des webhooks n8n ──────────────────────────────────────────
+# Le navigateur appelle /api/lead, /api/chat, /api/slots… sur notre propre
+# domaine. La fonction ajoute la cle partagee cote serveur : elle n'est plus
+# livree dans le JS public. Doit rester AVANT la regle 404.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/urbe/:splat"
+  status = 200
 
 # ── 404 propre (DOIT rester la DERNIERE regle) ──────────────────────
 # Netlify sert d'abord un fichier existant (force=false par defaut) : /

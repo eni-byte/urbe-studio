@@ -54,9 +54,9 @@ const { useState, useEffect, useRef } = React;
       rendez-le public, copiez son "Calendar ID" + URL d'embed.
    3) Mettez `paymentMode: 'live'` quand les liens Stripe sont prêts.
    ═══════════════════════════════════════════════════════════════ */
-/* Clé partagée site↔n8n : barrière contre les appels externes / spam des webhooks.
-   (Visible côté client, donc 1ʳᵉ barrière — Cloudflare Turnstile recommandé en complément.) */
-const URBE_WEBHOOK_KEY = 'urbe_web_9Kx7mQp2Lr4Tv';
+/* Les webhooks n8n ne sont plus appelés directement : le navigateur passe par
+   /api/<action> (fonction Netlify netlify/functions/urbe.mjs) qui ajoute la clé
+   partagée côté serveur. Aucun secret ne descend dans le JS public. */
 const URBE_CONFIG = {
   gcal: {
     calendarId: 'urbestudio.contact@gmail.com',
@@ -97,19 +97,19 @@ const URBE_CONFIG = {
   analytics: { gtmId: '', ga4Id: 'G-4L618KBREM', googleAdsId: 'AW-18388549810' },
   /* Webhook n8n « Lead Site Web → CRM » : reçoit les leads (formulaire/réservation),
      crée le contact + l'opportunité dans HubSpot. Vide = capture CRM désactivée. */
-  leadWebhook: 'https://mpoi.app.n8n.cloud/webhook/urbe-lead-site',
+  leadWebhook: '/api/lead',
   /* Webhook n8n « Agent Chat Réservation » : agent IA conversationnel du site.
      Vide = widget de chat masqué. */
-  chatWebhook: 'https://mpoi.app.n8n.cloud/webhook/urbe-chat',
+  chatWebhook: '/api/chat',
   /* Webhook n8n « Créneaux disponibles » : renvoie les heures occupées par date
      (lues sur Google Calendar) pour n'afficher que les créneaux libres. */
-  slotsWebhook: 'https://mpoi.app.n8n.cloud/webhook/urbe-slots',
+  slotsWebhook: '/api/slots',
   /* Webhook n8n « Réservation site → Agenda » : crée l'événement dans le Google
      Agenda du studio (marqué [SITE]) à chaque réservation datée. */
-  bookingWebhook: 'https://mpoi.app.n8n.cloud/webhook/urbe-booking',
+  bookingWebhook: '/api/booking',
   /* Webhook n8n « Créer session Stripe » : génère une session de paiement au bon
      montant (durée incluse) et renvoie l'URL Checkout. */
-  sessionWebhook: 'https://mpoi.app.n8n.cloud/webhook/urbe-create-session',
+  sessionWebhook: '/api/session',
   /* CAPTCHA anti-bot Cloudflare Turnstile. Vide = désactivé (le honeypot reste actif).
      Pour activer : colle ta clé de site Turnstile ici, puis fais vérifier le token
      `cf-turnstile-response` côté n8n (clé secrète) avant de traiter lead/chat. */
@@ -214,7 +214,7 @@ function createStripeSession({ ref, productLabel, email, name }) {
   if (!(URBE_CONFIG.paymentMode === 'live' && URBE_CONFIG.sessionWebhook)) return Promise.resolve(null);
   return fetchWithTimeout(URBE_CONFIG.sessionWebhook, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Urbe-Key': URBE_WEBHOOK_KEY },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ productLabel, ref, email, name, gaClientId: getGaClientId() }),
   }, 15000).then((r) => r.json()).then((d) => (d && d.url) ? d.url : null);
 }
@@ -236,7 +236,7 @@ function postLead(data) {
   if (!url) return Promise.resolve(false);
   return fetchWithTimeout(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Urbe-Key': URBE_WEBHOOK_KEY },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ source: 'Site web Urbe', ...data }),
   }, 10000).then((r) => r.ok).catch(() => false);
 }
@@ -1590,7 +1590,7 @@ function BookingPage({ initialProductId }) {
     const u = URBE_CONFIG.slotsWebhook;
     if (!u) { setSlotsLoaded(true); return; }
     let alive = true;
-    fetchWithTimeout(u, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Urbe-Key': URBE_WEBHOOK_KEY }, body: '{}' }, 8000).
+    fetchWithTimeout(u, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }, 8000).
     then((r) => r.json()).then((d) => { if (alive) { setSlotsBusy((d && d.busy) || {}); setSlotsLoaded(true); } }).
     catch(() => { if (alive) setSlotsLoaded(true); });
     return () => { alive = false; };
@@ -1805,7 +1805,7 @@ function BookingPage({ initialProductId }) {
       const payWin = window.open('', '_blank');
       fetchWithTimeout(URBE_CONFIG.sessionWebhook, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Urbe-Key': URBE_WEBHOOK_KEY },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productLabel: summary.productLabel, ref, email: contact.email.trim(), name: `${contact.firstName.trim()} ${contact.lastName.trim()}`.trim(), gaClientId: getGaClientId() }),
       }, 15000).then((r) => r.json()).then((d) => {
         if (d && d.url) { if (payWin) payWin.location.href = d.url; else window.location.href = d.url; goConfirm(); }
@@ -4541,7 +4541,7 @@ function ChatAgent() {
     setMsgs((m) => [...m, { role: 'user', text }]);
     setInput('');
     setBusy(true);
-    fetchWithTimeout(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Urbe-Key': URBE_WEBHOOK_KEY }, body: JSON.stringify({ message: text, sessionId: sidRef.current }) }, 15000).
+    fetchWithTimeout(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: text, sessionId: sidRef.current }) }, 15000).
     then((r) => r.json()).then((d) => { setMsgs((m) => [...m, { role: 'bot', text: (d && d.reply) || "Petite coupure… réessaie, ou écris-nous à contact@urbestudio.fr." }]); }).
     catch(() => { setMsgs((m) => [...m, { role: 'bot', text: "Connexion impossible. Tu peux réserver directement ou nous écrire à contact@urbestudio.fr." }]); }).
     then(() => setBusy(false));
