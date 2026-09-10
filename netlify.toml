@@ -72,6 +72,47 @@
   to = "/.netlify/functions/urbe/:splat"
   status = 200
 
+# ── Consolidation des pages pays Afrique ───────────────────────────
+# Ces 6 pages etaient des quasi-doublons (64 a 70 % de contenu commun,
+# ~285 mots chacune) : profil typique des pages satellites, penalisant pour
+# tout le domaine. Redirigees vers le hub plutot que supprimees, pour garder
+# l'autorite acquise et n'envoyer personne sur un 404.
+[[redirects]]
+  from = "/blog/mixage-benin.html"
+  to = "/blog/mixage-en-ligne-afrique.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/mixage-burkina-faso.html"
+  to = "/blog/mixage-en-ligne-afrique.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/mixage-cameroun.html"
+  to = "/blog/mixage-en-ligne-afrique.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/mixage-guinee.html"
+  to = "/blog/mixage-en-ligne-afrique.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/mixage-mali.html"
+  to = "/blog/mixage-en-ligne-afrique.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/mixage-rdc.html"
+  to = "/blog/mixage-en-ligne-afrique.html"
+  status = 301
+  force = true
+
 # ── 404 propre (DOIT rester la DERNIERE regle) ──────────────────────
 # Netlify sert d'abord un fichier existant (force=false par defaut) : /
 # (index.html), les pages prerendues /studio.html /tarifs.html… et les pages
